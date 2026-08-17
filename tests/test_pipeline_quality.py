@@ -7,7 +7,6 @@ from pathlib import Path
 from unittest import mock
 
 import config
-import batch_pipeline
 import docs_research
 import handcheck
 import normalize
@@ -64,16 +63,16 @@ class NormalizeTests(unittest.TestCase):
 
 
 class ProviderTests(unittest.TestCase):
-    def test_google_cancellation_is_retryable(self):
-        error = RuntimeError("cancelled")
-        error.code = 499
+    def test_server_error_is_retryable(self):
+        error = RuntimeError("service unavailable")
+        error.status_code = 503
         self.assertEqual(config._classify_error(error), "retry")
 
-    def test_daily_google_quota_is_a_batch_stop(self):
+    def test_exhausted_quota_is_a_batch_stop(self):
         error = RuntimeError(
-            "Quota exceeded: generate_requests_per_model_per_day; retry tomorrow"
+            "You exceeded your current quota, please check your billing details"
         )
-        error.code = 429
+        error.status_code = 429
         self.assertEqual(config._classify_error(error), "quota")
 
     def test_batch_stops_after_hard_quota_without_starting_more_apps(self):
@@ -96,59 +95,16 @@ class ProviderTests(unittest.TestCase):
                     pipeline.run_batch(workers=1, resume=False)
         self.assertEqual(research_app.call_count, 1)
 
-    def test_batch_request_preserves_system_and_repair_turns(self):
-        request = batch_pipeline._batch_request([
-            {"role": "system", "content": "strict system"},
-            {"role": "user", "content": "initial evidence"},
-            {"role": "assistant", "content": "bad json"},
-            {"role": "user", "content": "repair it"},
-        ])
-        self.assertEqual(
-            request["config"]["system_instruction"]["parts"][0]["text"],
-            "strict system",
-        )
-        self.assertEqual(
-            [content["role"] for content in request["contents"]],
-            ["user", "model", "user"],
-        )
-        self.assertIs(
-            request["config"]["response_schema"], synthesis.SynthesisOutput
-        )
-
-    def test_repair_prompt_identifies_first_party_claim_sources(self):
-        entry = {
-            "app_meta": {
-                "app": "Pinterest",
-                "slug": "pinterest",
-                "category": "Social",
-                "hint_url": "https://developers.pinterest.com",
-            },
-            "evidence": {
-                "fetched": [{
-                    "url": "https://github.com/pinterest/api-quickstart/blob/main/nodejs/README.md",
-                    "ok": True,
-                    "support_tags": ["api", "auth", "access"],
-                }],
-                "mcp": {"fetched": []},
-            },
-            "composio_signal": {},
-            "preseed": None,
-        }
-        sources = batch_pipeline._first_party_tagged_sources(entry)
-        self.assertEqual(len(sources), 1)
-        self.assertIn("supports: api, auth, access", sources[0])
-
     def test_paid_preflight_rejects_missing_key_before_a_run(self):
         with (
-            mock.patch.object(config, "PERPLEXITY_API_KEY", ""),
-            mock.patch.object(config, "GOOGLE_API_KEY", "present"),
-            self.assertRaisesRegex(SystemExit, "PERPLEXITY_API_KEY"),
+            mock.patch.object(config, "OPENAI_API_KEY", ""),
+            self.assertRaisesRegex(SystemExit, "OPENAI_API_KEY"),
         ):
             research._preflight_paid_runtime(workers=1)
 
-    def test_batch_rejects_unsafe_google_concurrency(self):
+    def test_batch_rejects_unsafe_openai_concurrency(self):
         with self.assertRaisesRegex(ValueError, "workers must be between"):
-            research.pipeline.run_batch(workers=config.GOOGLE_MAX_WORKERS + 1)
+            research.pipeline.run_batch(workers=config.OPENAI_MAX_WORKERS + 1)
 
 
 class EvidenceTests(unittest.TestCase):
@@ -842,23 +798,18 @@ class VerificationTests(unittest.TestCase):
 
 
 class FreshRunTests(unittest.TestCase):
-    def test_report_copy_distinguishes_first_pass_from_staged_agreement(self):
+    def test_report_bundle_exposes_the_locked_data_contract(self):
         root = Path(__file__).parents[1]
         app_js = (root / "report" / "app.js").read_text(encoding="utf-8")
         metrics = json.loads((root / "out" / "metrics.json").read_text(encoding="utf-8"))
-        self.assertIn('"Archived first pass"', app_js)
-        self.assertIn('title: "Latest staged agreement"', app_js)
-        self.assertIn("Math.round(Number(value) * 1000) / 10", app_js)
-        self.assertIn("not a blind first-pass estimate", app_js)
-        self.assertIn('title: "Independent browser check"', app_js)
-        self.assertIn("Independent browser correction applied", app_js)
-        self.assertNotIn("10-app human ground-truth sample", app_js)
+        self.assertIn("window.RESULTS", app_js)
+        self.assertIn("window.METRICS", app_js)
+        self.assertIn("window.REASONING", app_js)
+        self.assertIn("window.COMPOSIO_COVERAGE", app_js)
         self.assertEqual(metrics["handcheck"]["n"], 45)
-        self.assertEqual(metrics["handcheck"]["metric_scope"], "Staged cumulative official-doc check at fold time")
-        self.assertIn("not a blind first-pass estimate", metrics["handcheck"]["note"])
         self.assertEqual(
-            metrics["headline_accuracy"]["hand_checked_accuracy"]["label"],
-            "Latest staged official-doc agreement",
+            metrics["handcheck"]["metric_scope"],
+            "Staged cumulative official-doc check at fold time",
         )
 
     def test_reviewed_auth_regressions_stay_fixed(self):

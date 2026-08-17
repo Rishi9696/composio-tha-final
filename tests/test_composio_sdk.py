@@ -212,27 +212,30 @@ class AgentToolTests(unittest.TestCase):
         self.assertEqual(verdict["auth_methods"], ["API Key", "OAuth2"])
         self.assertEqual(len(verdict["evidence_urls"]), 2)
 
-    def test_native_google_provider_removes_nested_examples(self):
-        provider = composio_agent._native_google_provider()
-        wrapped = provider.wrap_tool(SimpleNamespace(
-            slug="TEST_TOOL",
-            description="Nested schema test",
-            input_parameters={
-                "type": "object",
-                "properties": {
-                    "tools": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "tool_slug": {"type": "string", "examples": ["ONE"]}
+    def test_sanitize_tool_schemas_removes_nested_examples(self):
+        tools = [{
+            "type": "function",
+            "function": {
+                "name": "TEST_TOOL",
+                "description": "Nested schema test",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "tools": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "tool_slug": {"type": "string", "examples": ["ONE"]}
+                                },
                             },
-                        },
-                    }
+                        }
+                    },
                 },
             },
-        ))
-        schema = wrapped.parameters_json_schema
+        }]
+        sanitized = composio_agent._sanitize_tool_schemas(tools)
+        schema = sanitized[0]["function"]["parameters"]
         self.assertNotIn("examples", json.dumps(schema))
         self.assertEqual(
             schema["properties"]["tools"]["items"]["properties"]["tool_slug"]["type"],
@@ -292,7 +295,7 @@ class AgentToolTests(unittest.TestCase):
         self.assertEqual(len(ctx.calls), 3)
         self.assertEqual(ctx.calls[0][0], composio_agent.BROWSER_CREATE)
         create_payload = json.dumps(ctx.calls[0][1])
-        for secret in (config.COMPOSIO_API_KEY, config.GOOGLE_API_KEY):
+        for secret in (config.COMPOSIO_API_KEY, config.OPENAI_API_KEY):
             if secret:
                 self.assertNotIn(secret, create_payload)
         self.assertIn("otter-ai", state["browser_runs"])
@@ -319,17 +322,34 @@ class AgentToolTests(unittest.TestCase):
     def test_agent_round_limit_does_not_write_verified_results(self):
         before = hashlib.sha256(config.RESULTS_PATH.read_bytes()).hexdigest()
 
-        class FakeResponse:
-            function_calls = [SimpleNamespace(name="GET_RESEARCH_TARGET", args={})]
-            text = ""
+        def fake_tool_call():
+            return SimpleNamespace(
+                id="call_1",
+                function=SimpleNamespace(name="GET_RESEARCH_TARGET", arguments="{}"),
+            )
+
+        class FakeMessage:
+            content = ""
+            tool_calls = [fake_tool_call()]
+
+        class FakeChoice:
+            message = FakeMessage()
+            finish_reason = "tool_calls"
+
+        class FakeCompletion:
+            choices = [FakeChoice()]
+
+        class FakeCompletions:
+            @staticmethod
+            def create(**kwargs):
+                del kwargs
+                return FakeCompletion()
 
         class FakeChat:
-            def send_message(self, message, config=None):
-                del message, config
-                return FakeResponse()
+            completions = FakeCompletions()
 
-        class FakeGoogle:
-            chats = SimpleNamespace(create=lambda **kwargs: FakeChat())
+        class FakeOpenAI:
+            chat = FakeChat()
 
         class FakeSession:
             session_id = "session_test"
@@ -355,7 +375,7 @@ class AgentToolTests(unittest.TestCase):
             composio_agent.run(
                 "otter-ai",
                 composio_client=FakeComposio(),
-                google_client=FakeGoogle(),
+                openai_client=FakeOpenAI(),
                 max_rounds=1,
             )
         after = hashlib.sha256(config.RESULTS_PATH.read_bytes()).hexdigest()
