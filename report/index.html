@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Evidence-backed API integration readiness research across 100 requested apps." />
+  <link rel="icon" href="data:," />
+  <title>Composio Integration Intelligence</title>
+  <link rel="stylesheet" href="theme.css?v=20260711-3" />
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xjr2tym4a8");
+  </script>
+</head>
+
+<body>
+  <header class="app-header">
+    <div class="container header-inner">
+      <a class="brand" href="#overview" aria-label="Composio Integration Intelligence home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="brand-copy"><b>Composio</b><small>Integration intelligence</small></span>
+      </a>
+      <nav class="nav" aria-label="Report sections">
+        <a href="#priorities">Priorities</a>
+        <a href="#catalog">Catalog</a>
+        <a href="#method">Method</a>
+        <a href="#verification">Verification</a>
+      </nav>
+      <a class="header-action" id="repo-link" href="#" target="_blank" rel="noopener">Source <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="overview">
+    <section class="container intro" aria-labelledby="page-title">
+      <div class="intro-copy">
+        <p class="eyebrow">AI Product Ops research / 100-app catalog</p>
+        <h1 id="page-title">100 apps.<br />One integration queue.</h1>
+        <p class="intro-lead" id="hero-copy">API surface, authentication, production access, and MCP coverage distilled into the next engineering move.</p>
+        <div class="snapshot-line" aria-label="Research status">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span id="snapshot-copy">Current research snapshot</span>
+          <span class="snapshot-separator" aria-hidden="true"></span>
+          <span id="generated-note">Generated July 2026</span>
+        </div>
+      </div>
+
+      <aside class="pulse-card" aria-labelledby="pulse-title">
+        <div class="pulse-head">
+          <div>
+            <p class="card-kicker">Decision pulse</p>
+            <h2 id="pulse-title">Coverage at a glance</h2>
+          </div>
+          <span class="quality-badge" id="quality-badge">Audited</span>
+        </div>
+        <p class="pulse-statement" id="decision-title">Loading the current integration queue...</p>
+        <div class="pulse-chart" id="pulse-chart" aria-label="Recommended action distribution"></div>
+        <div class="pulse-legend" id="pulse-legend"></div>
+        <div class="pulse-footer">
+          <p id="decision-summary">Buildable gaps are separated from access and partnership work.</p>
+          <a class="dark-action" href="#catalog">Review the catalog <span aria-hidden="true">→</span></a>
+        </div>
+      </aside>
+    </section>
+
+    <section class="container metric-grid" id="metrics" aria-label="Headline metrics"></section>
+
+    <section class="section-band band-tint" id="priorities">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">01 / Priority</p>
+            <h2>Where engineering should start</h2>
+          </div>
+          <p class="section-note">Ranked by coverage gap, production access, buildability, and source confidence.</p>
+        </div>
+        <div class="insight-strip" id="insights"></div>
+        <div class="queue-grid" id="priority-queue"></div>
+      </div>
+    </section>
+
+    <section class="section-band" id="catalog">
+      <div class="container">
+        <div class="section-heading catalog-heading">
+          <div>
+            <p class="eyebrow">02 / Catalog</p>
+            <h2>Inspect every decision</h2>
+          </div>
+          <div class="reasoning-coverage">
+            <span class="reasoning-count" id="reasoning-count">0</span>
+            <span>reasoning traces available</span>
+          </div>
+        </div>
+
+        <div class="catalog-toolbar">
+          <label class="search-field" for="q">
+            <span class="search-icon" aria-hidden="true"></span>
+            <span class="sr-only">Search catalog</span>
+            <input id="q" type="search" placeholder="Search app, auth, or blocker" autocomplete="off" />
+          </label>
+          <label>
+            <span class="sr-only">Filter by category</span>
+            <select id="f-cat"><option value="">All categories</option></select>
+          </label>
+          <label>
+            <span class="sr-only">Filter by action</span>
+            <select id="f-next"><option value="">All actions</option></select>
+          </label>
+          <label>
+            <span class="sr-only">Filter by buildability</span>
+            <select id="f-build"><option value="">All buildability</option></select>
+          </label>
+        </div>
+
+        <div class="catalog-meta">
+          <p id="matrix-count">Loading apps...</p>
+          <p>Open any row to inspect its full reasoning and sources.</p>
+        </div>
+
+        <div class="sdk-audit-summary" id="sdk-audit-summary" aria-live="polite">
+          <div><b>Composio SDK audit</b><span>Loading executable toolkit depth...</span></div>
+        </div>
+
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th>App</th>
+                <th>Auth</th>
+                <th>Access</th>
+                <th>API</th>
+                <th>MCP</th>
+                <th>Composio</th>
+                <th>Build</th>
+                <th>Action</th>
+                <th>Confidence</th>
+                <th><span class="sr-only">Review reasoning</span></th>
+              </tr>
+            </thead>
+            <tbody id="matrix-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-band band-ink" id="method">
+      <div class="container">
+        <div class="section-heading inverse-heading">
+          <div>
+            <p class="eyebrow">03 / Method</p>
+            <h2>Evidence first. Decisions second.</h2>
+          </div>
+          <p class="section-note">The LLM synthesizes fetched evidence; deterministic checks own schema, citations, catalog identity, and executable toolkit depth.</p>
+        </div>
+        <ol class="method-grid" aria-label="Research pipeline">
+          <li><span>01</span><b>SDK coverage audit</b><p>The Composio SDK classifies every requested app as active, catalog-only, or missing and records tool depth.</p><code>--composio-audit</code></li>
+          <li><span>02</span><b>Docs research</b><p>Official API, authentication, access, and MCP pages are collected.</p><code>docs_research.py</code></li>
+          <li><span>03</span><b>Schema synthesis</b><p>The model returns a locked 19-field record with cited URLs.</p><code>synthesis.py</code></li>
+          <li><span>04</span><b>Source audit</b><p>Invalid labels, weak coverage, contradictions, and invented links fail closed.</p><code>batch_pipeline.py</code></li>
+          <li><span>05</span><b>Official-doc check</b><p>Priority apps are adjudicated against vendor docs, with every recorded miss preserved.</p><code>handcheck.py</code></li>
+          <li><span>06</span><b>Session diagnostic</b><p>A read-only Gemini Session can run one bounded Browser Tool investigation and deterministic comparison.</p><code>--composio-agent</code></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section-band" id="verification">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">04 / Verification</p>
+            <h2>What held up under review</h2>
+          </div>
+          <p class="section-note">Source coverage, staged official-doc adjudication, browser-read evidence, and correction replay are reported separately.</p>
+        </div>
+        <div class="verification-grid" id="verification-grid"></div>
+        <div id="verification-warning"></div>
+      </div>
+    </section>
+
+    <section class="section-band band-tint" id="run">
+      <div class="container run-layout">
+        <div>
+          <p class="eyebrow">05 / Reproduce</p>
+          <h2>Run the same pipeline</h2>
+          <p class="run-copy">The report is a static build artifact from the audited JSON output and packaged reasoning traces.</p>
+        </div>
+        <div class="command-card">
+          <div class="command-tabs" role="tablist" aria-label="Run commands">
+            <button class="command-tab active" type="button" data-command="research" role="tab" aria-selected="true">Research</button>
+            <button class="command-tab" type="button" data-command="verify" role="tab" aria-selected="false">Verify</button>
+            <button class="command-tab" type="button" data-command="composio" role="tab" aria-selected="false">Composio SDK</button>
+          </div>
+          <pre id="command-output">python research.py --batch-submit --fresh-run
+python research.py --batch-status
+python research.py --batch-collect
+python research.py --batch-audit-sources
+python research.py --metrics
+python research.py --build-report</pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner" id="footer"></div>
+  </footer>
+
+  <dialog class="reasoning-dialog" id="reasoning-dialog" aria-labelledby="reasoning-title">
+    <div class="drawer-shell">
+      <header class="drawer-header">
+        <div>
+          <p class="eyebrow">Decision record</p>
+          <h2 id="reasoning-title">App reasoning</h2>
+          <p id="reasoning-subtitle"></p>
+        </div>
+        <form method="dialog">
+          <button class="icon-button" type="submit" aria-label="Close reasoning" title="Close reasoning">×</button>
+        </form>
+      </header>
+      <div class="drawer-body" id="reasoning-content"></div>
+    </div>
+  </dialog>
+
+  <script src="data.js?v=20260712-1"></script>
+  <script src="app.js?v=20260712-2"></script>
+</body>
+
+</html>

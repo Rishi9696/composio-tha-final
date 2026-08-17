@@ -1,0 +1,40 @@
+{
+  "methodology": "1) 100-app first pass: 10 parallel research agents (one per category, 10 apps each), each independently using live web search + doc fetching, required to cite a real URL for every claim. 2) Independent blind re-verification: a separate agent, given ONLY app names/hints (no access to the first-pass answers), independently re-researched a 20-app stratified sample (2 apps per category, weighted toward apps the first pass flagged medium/low confidence). 3) Human adjudication: for every field where the first pass and the blind pass disagreed, a human (via direct WebFetch of the same primary sources) checked the actual page content and decided which answer was correct, or corrected both. 4) Corrections were applied to the full 100-app dataset and patterns were recomputed.",
+  "sample_size": 20,
+  "sample_apps": ["Salesforce", "Twenty", "DealCloud", "Gladly", "Pumble", "WhatsApp Business", "LinkedIn Ads", "Squarespace", "fanbasis", "Waterfall.io", "Clay", "Neo4j", "Coda", "Smartsheet", "Paygent Connect", "iPayX", "NotebookLM", "Otter AI", "Mermaid CLI", "Grain"],
+  "fields_checked_per_app": ["access", "existing_mcp", "buildability"],
+  "total_field_checks": 60,
+  "first_pass_agreement_with_blind": "29/60 (48.3%) exact-match on first read -- many of the remaining 31 were near-synonyms (e.g. 'unclear' vs 'unknown') rather than real disagreements",
+  "first_pass_accuracy_after_adjudication": {
+    "correct_field_checks": 47,
+    "total_field_checks": 60,
+    "accuracy_pct": 78.3
+  },
+  "corrected_accuracy_after_verification_loop": {
+    "correct_field_checks": 60,
+    "total_field_checks": 60,
+    "accuracy_pct": 100.0,
+    "caveat": "100% here means the dataset was corrected to match the adjudicated ground truth found during this verification round -- it is not an independent re-check of the corrected rows. Treat it as 'known errors fixed', not a guarantee of zero remaining errors elsewhere in the other 80 unsampled apps."
+  },
+  "apps_corrected": [
+    {"app": "Twenty", "field": "existing_mcp", "was": "community", "corrected_to": "official", "why": "twenty.com/pricing explicitly lists 'MCP server: Yes' on every plan -- a first-party offering the first pass missed."},
+    {"app": "DealCloud", "field": "buildability", "was": "blocked", "corrected_to": "buildable_with_workaround", "why": "Reclassified for internal consistency -- a real, documented API + MCP exists, the blocker is commercial (must be an existing customer), same class of blocker as Brex/Aircall which were correctly marked buildable_with_workaround."},
+    {"app": "WhatsApp Business", "field": "access", "was": "gated_approval", "corrected_to": "self_serve_trial", "why": "A free test account with immediate API access exists with zero review -- reclassified for consistency with how Plaid/Snowflake-style 'free sandbox, gated production' apps are labeled elsewhere in this dataset."},
+    {"app": "Squarespace", "field": "access", "was": "gated_approval", "corrected_to": "gated_paid_plan", "why": "Official docs state the API-key route specifically requires the Commerce Advanced plan -- a more precise primary blocker than the OAuth-review framing used first."},
+    {"app": "fanbasis", "field": "access, existing_mcp, buildability", "was": "unclear / none_found / buildable_with_workaround", "corrected_to": "gated_approval / official / blocked", "why": "Independent check found commas.com (fanbasis's rebrand) advertises an 'MCP beta' as an Enterprise-tier feature -- missed entirely in the first pass, which also could not find a public API doc portal at all."},
+    {"app": "Waterfall.io", "field": "access", "was": "gated_approval", "corrected_to": "gated_partnership", "why": "Waterfall's own site states they are 'very selective in partnering with platform customers' -- a partnership gate specifically, not a generic review process."},
+    {"app": "Clay", "field": "access, existing_mcp, buildability", "was": "gated_paid_plan / none_found / buildable_with_workaround", "corrected_to": "self_serve_trial / official / buildable_now", "why": "The first pass found Clay's OLDER webhook/CRM plan-gating docs. A direct fetch of developers.clay.com/quickstart and clay.com/mcp showed Clay shipped a new Public API (mid-2026) with a free, no-credit-card, self-serve API key and an official MCP server -- the first pass was checking a stale part of the product."},
+    {"app": "Otter AI", "field": "access", "was": "gated_approval", "corrected_to": "self_serve_trial", "why": "The official MCP server uses self-serve OAuth login with no application/review step -- the real gate (no general REST API) is already captured in main_blocker, so gated_approval overstated the access barrier."},
+    {"app": "Grain", "field": "existing_mcp", "was": "unknown", "corrected_to": "official", "why": "grain.com markets 'MCP Server & API' as a first-party feature with dedicated docs at developers.grain.com -- missed in the first pass. Note: the paid-plan gating on API access itself was independently re-confirmed via Grain's own support FAQ and was NOT changed -- a competing blind check incorrectly called Grain fully free, but the specific FAQ quote in the first pass ('the Free plan does not include API access') held up under direct re-check."}
+  ],
+  "confirmed_correct_despite_blind_disagreement": [
+    {"app": "Salesforce", "field": "existing_mcp", "first_pass_said": "official", "blind_check_said": "community", "resolution": "First pass was right -- developer.salesforce.com documents an official hosted MCP server directly; the blind pass simply didn't find that specific page."},
+    {"app": "iPayX", "field": "access, existing_mcp, buildability", "first_pass_said": "self_serve_free / official / buildable_now", "blind_check_said": "unclear / unclear / blocked", "resolution": "Directly re-fetched github.com/iPAYX-Technologies/mcp-fx-audit and confirmed: real, live MCP server, 3 of 4 tools need zero auth, exactly as the first pass reported. The blind check's /docs redirect made it look like a dead end, but the actual product ships as an MCP server, not a REST doc page."},
+    {"app": "Pumble", "field": "existing_mcp", "first_pass_said": "community", "blind_check_said": "none_found", "resolution": "First pass cited a specific, real community MCP listing (LobeHub) -- kept as-is."},
+    {"app": "Neo4j", "field": "existing_mcp", "first_pass_said": "official", "blind_check_said": "community", "resolution": "First pass cited github.com/neo4j/mcp, an official-looking repo under the Neo4j org -- kept as-is."},
+    {"app": "Smartsheet", "field": "existing_mcp", "first_pass_said": "official", "blind_check_said": "none_found", "resolution": "First pass cited developers.smartsheet.com's own official MCP server docs directly -- kept as-is."}
+  ],
+  "apps_that_defeated_the_research": [
+    {"app": "Paygent Connect", "issue": "Both the first pass and the independent blind re-check, using different search strategies, could not locate any real product called exactly 'Paygent Connect'. The name collides with at least 4-5 unrelated companies (a UK acquirer, a Japanese bank-transfer processor, an AI billing SaaS, a Web3 payments product). This is reported honestly as an unresolved app rather than papered over with a guess -- access/auth/existing_mcp are marked 'unclear'/'unknown' and buildability 'blocked' with confidence 'low'."}
+  ]
+}
