@@ -68,6 +68,42 @@
     "last_verified": "2026-08-17"
   },
   {
+    "app": "Attio",
+    "category": "CRM",
+    "one_liner": "Attio offers REST and an official hosted MCP; OAuth2/API keys supported, MCP is self-serve; REST access unclear.",
+    "auth_methods": [
+      "OAuth2",
+      "API Key",
+      "Basic Auth",
+      "Other Token"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "REST API: docs show OAuth2, API keys, and Basic Auth but do not confirm self-serve production access by plan. MCP: Help Center states “Available on all plans. Available for all workspace members,” using OAuth with one‑click setup."
+    },
+    "api_type": "REST",
+    "api_breadth": "Broad",
+    "existing_mcp": "Official",
+    "composio_toolkit": "Yes",
+    "buildability": "Moderate",
+    "main_blocker": "No explicit proof that REST API production use is self-serve; plan/approval requirements are not stated.",
+    "recommended_next_action": "Needs Outreach",
+    "evidence_urls": [
+      "https://docs.attio.com/rest-api/guides/authentication",
+      "https://docs.attio.com/sdk/server/attio-api-token",
+      "https://docs.attio.com/mcp/overview",
+      "https://attio.com/help/reference/attio-ai/attio-mcp",
+      "https://mcp.attio.com/",
+      "https://attio.com/pricing?utm_source=openai"
+    ],
+    "confidence": 0.6,
+    "verification_status": "Auto",
+    "slug": "attio",
+    "primary_docs_url": "https://docs.attio.com/rest-api/guides/authentication",
+    "rate_limit_note": "Docs mention rate limits and handling but no concrete numeric limits are specified on the cited pages.",
+    "last_verified": "2026-08-18"
+  },
+  {
     "app": "Podio",
     "category": "CRM",
     "one_liner": "Podio offers a broad REST API via OAuth2 and an official MCP server, but production access terms are unclear.",
@@ -165,6 +201,37 @@
     "primary_docs_url": "https://help.close.com/integrations/api-keys-oauth",
     "rate_limit_note": "Not specified in the cited documentation.",
     "last_verified": "2026-08-17"
+  },
+  {
+    "app": "Copper",
+    "category": "CRM",
+    "one_liner": "Copper CRM exposes a broad REST API with API keys and OAuth; production access terms are not clearly stated.",
+    "auth_methods": [
+      "API Key",
+      "OAuth2"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "Docs show API Keys and OAuth2 but provide no evidence that new developers get production credentials self-serve; confirm plan/approval requirements."
+    },
+    "api_type": "REST",
+    "api_breadth": "Broad",
+    "existing_mcp": "None",
+    "composio_toolkit": "No",
+    "buildability": "Moderate",
+    "main_blocker": "No explicit proof of self-serve production API access or plan requirements in the cited docs.",
+    "recommended_next_action": "Needs Outreach",
+    "evidence_urls": [
+      "https://developer.copper.com/introduction/authentication.html",
+      "https://developer.copper.com",
+      "https://www.copper.com/pricing?offset=-600&utm_source=openai"
+    ],
+    "confidence": 0.55,
+    "verification_status": "Auto",
+    "slug": "copper",
+    "primary_docs_url": "https://developer.copper.com/introduction/authentication.html",
+    "rate_limit_note": "No rate limit details found on the cited pages.",
+    "last_verified": "2026-08-18"
   },
   {
     "app": "DealCloud",
@@ -582,6 +649,36 @@
     "last_verified": "2026-08-17"
   },
   {
+    "app": "Discord",
+    "category": "Comms",
+    "one_liner": "Discord has a REST API with OAuth2; some scopes require approval, so plan for gated production access.",
+    "auth_methods": [
+      "OAuth2"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "OAuth2 docs state some scopes require Discord approval; while APIs.io notes API access is free, production scopes can be gated."
+    },
+    "api_type": "REST",
+    "api_breadth": "Broad",
+    "existing_mcp": "None",
+    "composio_toolkit": "Yes",
+    "buildability": "Moderate",
+    "main_blocker": "Obtaining Discord approval for required OAuth2 scopes/permissions.",
+    "recommended_next_action": "Needs Outreach",
+    "evidence_urls": [
+      "https://docs.discord.com/developers/reference",
+      "https://docs.discord.com/developers/topics/oauth2",
+      "https://apis.io/plans/discord/discord-plans-pricing/?utm_source=openai"
+    ],
+    "confidence": 0.68,
+    "verification_status": "Auto",
+    "slug": "discord",
+    "primary_docs_url": "https://docs.discord.com/developers/topics/oauth2",
+    "rate_limit_note": "Discord documents HTTP rate limits; design with bucketed limits and retries per docs.",
+    "last_verified": "2026-08-18"
+  },
+  {
     "app": "WhatsApp Business",
     "category": "Comms",
     "one_liner": "WhatsApp Business Cloud API uses bearer tokens; production access appears gated; community MCP servers exist.",
@@ -645,6 +742,38 @@
     "primary_docs_url": "https://developer.aircall.io/tutorials/basic-authentication/",
     "rate_limit_note": "apis.io notes 120 requests per minute per API key.",
     "last_verified": "2026-08-17"
+  },
+  {
+    "app": "Google Ads",
+    "category": "Ads/Marketing",
+    "one_liner": "Google Ads API uses OAuth2; production access is gated; an official read-only MCP server exists for GAQL querying.",
+    "auth_methods": [
+      "OAuth2"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "Production use appears subject to access levels/approval per the Google Ads API productionize/access-levels page; no evidence of self-serve production credentials."
+    },
+    "api_type": "REST",
+    "api_breadth": "Broad",
+    "existing_mcp": "Official",
+    "composio_toolkit": "Yes",
+    "buildability": "Hard",
+    "main_blocker": "Production access requires access-level approval; explicit self-serve production entitlement is not shown in fetched docs.",
+    "recommended_next_action": "Needs Outreach",
+    "evidence_urls": [
+      "https://developers.google.com/google-ads/api/rest/auth?hl=en&utm_source=openai",
+      "https://developers.google.com/google-ads/api/docs/oauth/user-authentication?hl=en&utm_source=openai",
+      "https://developers.google.com/google-ads/api/docs/productionize/access-levels?utm_source=openai",
+      "https://developers.google.com/google-ads/api/docs/developer-toolkit/mcp-server?utm_source=openai",
+      "https://a2a-mcp.org/entry/google-ads-mcp?utm_source=openai"
+    ],
+    "confidence": 0.56,
+    "verification_status": "Auto",
+    "slug": "google-ads",
+    "primary_docs_url": "https://developers.google.com/google-ads/api/docs/oauth/user-authentication?hl=en&utm_source=openai",
+    "rate_limit_note": "Rate limits are not described in the fetched excerpts.",
+    "last_verified": "2026-08-18"
   },
   {
     "app": "Meta Ads",
@@ -1201,6 +1330,37 @@
     "last_verified": "2026-08-18"
   },
   {
+    "app": "Sherlock",
+    "category": "Research/Scraping",
+    "one_liner": "No official Sherlock API or MCP is documented; integration is blocked pending vendor API details.",
+    "auth_methods": [
+      "None / Not Applicable"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "No official public API or credential issuance is documented; pricing pages describe product self-serve onboarding, not API access."
+    },
+    "api_type": "None",
+    "api_breadth": "Narrow",
+    "existing_mcp": "None",
+    "composio_toolkit": "No",
+    "buildability": "Blocked",
+    "main_blocker": "No official public API/MCP docs or production credential process found.",
+    "recommended_next_action": "Blocked",
+    "evidence_urls": [
+      "https://docs.c-core.app/docs/legacy/sherlock/sherlock-authorization",
+      "https://github.com/sherlock-project/sherlock",
+      "https://www.sherlocks.ai/pricing",
+      "https://www.usesherlock.ai/pricing"
+    ],
+    "confidence": 0.34,
+    "verification_status": "Auto",
+    "slug": "sherlock",
+    "primary_docs_url": "https://docs.c-core.app/docs/legacy/sherlock/sherlock-authorization",
+    "rate_limit_note": "No public rate limit information available.",
+    "last_verified": "2026-08-18"
+  },
+  {
     "app": "Waterfall.io",
     "category": "Research/Scraping",
     "one_liner": "REST B2B enrichment API with API key auth; production access requires sales contact and commercial agreement.",
@@ -1262,6 +1422,38 @@
     "last_verified": "2026-08-18"
   },
   {
+    "app": "GitHub",
+    "category": "DevInfra",
+    "one_liner": "GitHub offers a broad REST API with PAT/OAuth auth, but production access terms aren’t explicitly self-serve in docs.",
+    "auth_methods": [
+      "OAuth2",
+      "Personal Access Token"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "Docs show PAT and OAuth token mechanics, and pricing shows a Free plan, but no explicit statement confirms self‑serve PRODUCTION API entitlement or a hosted self‑serve MCP connection."
+    },
+    "api_type": "REST",
+    "api_breadth": "Broad",
+    "existing_mcp": "Official",
+    "composio_toolkit": "Yes",
+    "buildability": "Moderate",
+    "main_blocker": "No explicit evidence of self‑serve production API entitlement; potential plan or approval requirements unclear.",
+    "recommended_next_action": "Needs Outreach",
+    "evidence_urls": [
+      "https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api",
+      "https://docs.github.com/rest",
+      "https://github.com/pricing?utm_source=openai",
+      "https://github.com/github/github-mcp-server"
+    ],
+    "confidence": 0.62,
+    "verification_status": "Auto",
+    "slug": "github",
+    "primary_docs_url": "https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api",
+    "rate_limit_note": "Authenticated requests have higher limits; exact limits and plan impacts not confirmed in provided evidence.",
+    "last_verified": "2026-08-18"
+  },
+  {
     "app": "Vercel",
     "category": "DevInfra",
     "one_liner": "Vercel offers REST and official MCP; OAuth is documented, but production access appears gated.",
@@ -1291,6 +1483,40 @@
     "slug": "vercel",
     "primary_docs_url": "https://vercel.com/docs/rest-api",
     "rate_limit_note": "No public rate-limit details found in the cited docs.",
+    "last_verified": "2026-08-18"
+  },
+  {
+    "app": "Netlify",
+    "category": "DevInfra",
+    "one_liner": "Netlify offers a broad REST API and an official MCP server, but production access terms need confirmation.",
+    "auth_methods": [
+      "OAuth2",
+      "Personal Access Token"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "Docs show an Authentication mechanism and pricing shows API-based deploys, but there is no explicit statement that new developers get production API credentials self-serve without approval; confirm production entitlement/plan requirements."
+    },
+    "api_type": "REST",
+    "api_breadth": "Broad",
+    "existing_mcp": "Official",
+    "composio_toolkit": "No",
+    "buildability": "Moderate",
+    "main_blocker": "No explicit confirmation that production API/MCP credentials are self-serve without approval or a paid plan.",
+    "recommended_next_action": "Needs Outreach",
+    "evidence_urls": [
+      "https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/?utm_source=openai",
+      "https://docs.netlify.com/api",
+      "https://www.netlify.com/pricing/?utm_source=openai",
+      "https://docs.netlify.com/build/build-with-ai/netlify-mcp-server/",
+      "https://www.netlify.com/press/netlify-launches-official-mcp-server-setting-the-standard-for-agent-native-development/?utm_source=openai",
+      "https://github.com/netlify/netlify-mcp?utm_source=openai"
+    ],
+    "confidence": 0.62,
+    "verification_status": "Auto",
+    "slug": "netlify",
+    "primary_docs_url": "https://www.netlify.com/pricing/?utm_source=openai",
+    "rate_limit_note": "Rate limiting is documented in the API guide, but specific limits were not captured in the fetched text.",
     "last_verified": "2026-08-18"
   },
   {
@@ -1326,6 +1552,39 @@
     "last_verified": "2026-08-18"
   },
   {
+    "app": "Neo4j",
+    "category": "DevInfra",
+    "one_liner": "Neo4j offers REST and MCP integrations, but production access likely requires an Aura account or plan.",
+    "auth_methods": [
+      "OAuth2",
+      "Basic Auth"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "Docs show HTTP/Query API with auth and Aura OAuth2, but no explicit self-serve production entitlement; pricing indicates commercial plans and Aura account/plan needed."
+    },
+    "api_type": "REST",
+    "api_breadth": "Moderate",
+    "existing_mcp": "Official",
+    "composio_toolkit": "Yes",
+    "buildability": "Hard",
+    "main_blocker": "No explicit evidence of self-serve production credentials; Aura access appears tied to commercial plans/accounts.",
+    "recommended_next_action": "Needs Outreach",
+    "evidence_urls": [
+      "https://neo4j.com/docs/http-api/current/authentication-authorization/",
+      "https://neo4j.com/docs/aura/api/authentication/",
+      "https://neo4j.com/pricing/?utm_source=openai",
+      "https://neo4j.com/docs/mcp/current/?utm_source=openai",
+      "https://github.com/neo4j/mcp?utm_source=openai"
+    ],
+    "confidence": 0.49,
+    "verification_status": "Auto",
+    "slug": "neo4j",
+    "primary_docs_url": "https://neo4j.com/docs/aura/api/authentication/",
+    "rate_limit_note": "No public rate limit details found in the cited docs.",
+    "last_verified": "2026-08-18"
+  },
+  {
     "app": "Snowflake",
     "category": "DevInfra",
     "one_liner": "Snowflake provides REST APIs and an official MCP server; production access requires a Snowflake account.",
@@ -1357,6 +1616,39 @@
     "slug": "snowflake",
     "primary_docs_url": "https://docs.snowflake.cn/en/user-guide/api-authentication",
     "rate_limit_note": "No explicit public rate limit details found in the cited docs.",
+    "last_verified": "2026-08-18"
+  },
+  {
+    "app": "MongoDB Atlas",
+    "category": "DevInfra",
+    "one_liner": "Atlas offers a public REST Admin API and official MCP server with self-serve access to start building now.",
+    "auth_methods": [
+      "OAuth2",
+      "API Key"
+    ],
+    "access_model": {
+      "kind": "Self-Serve",
+      "note": "Public Admin REST API docs and an official MCP server are available; no cited requirement for manual approval. A free Atlas tier exists, supporting self-serve signup."
+    },
+    "api_type": "REST",
+    "api_breadth": "Moderate",
+    "existing_mcp": "Official",
+    "composio_toolkit": "No",
+    "buildability": "Moderate",
+    "main_blocker": "None evident beyond standard Atlas account/project setup and configuring API key or OAuth2 service account.",
+    "recommended_next_action": "Build Now",
+    "evidence_urls": [
+      "https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2",
+      "https://mongodb.com/docs/atlas/api",
+      "https://www.mongodb.com/docs/mcp-server/overview/",
+      "https://github.com/mongodb-js/mongodb-mcp-server",
+      "https://pricingapis.com/databases/mongodb-atlas"
+    ],
+    "confidence": 0.52,
+    "verification_status": "Auto",
+    "slug": "mongodb-atlas",
+    "primary_docs_url": "https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2",
+    "rate_limit_note": "No rate limit details found in the cited documentation.",
     "last_verified": "2026-08-18"
   },
   {
@@ -1495,6 +1787,40 @@
     "last_verified": "2026-08-18"
   },
   {
+    "app": "Jira",
+    "category": "Productivity/PM",
+    "one_liner": "Jira offers a broad REST API and an official MCP server, but production access terms aren’t explicitly self-serve.",
+    "auth_methods": [
+      "OAuth2",
+      "Basic Auth",
+      "Personal Access Token",
+      "Other Token"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "Docs show OAuth2/API token and an official MCP server, but no explicit statement that production API/MCP access is self-serve; pricing page doesn’t confirm production API entitlement."
+    },
+    "api_type": "REST",
+    "api_breadth": "Broad",
+    "existing_mcp": "Official",
+    "composio_toolkit": "Yes",
+    "buildability": "Moderate",
+    "main_blocker": "No explicit evidence of self-serve production entitlement; may require existing Jira site/admin and plan confirmation.",
+    "recommended_next_action": "Needs Outreach",
+    "evidence_urls": [
+      "https://developer.atlassian.com/server/jira/platform/basic-authentication/",
+      "https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-oauth-authentication-6291692/",
+      "https://support.atlassian.com/atlassian-rovo-mcp-server/docs/getting-started-with-the-atlassian-remote-mcp-server/",
+      "https://www.atlassian.com/software/jira/jira/pricing?utm_source=openai"
+    ],
+    "confidence": 0.53,
+    "verification_status": "Auto",
+    "slug": "jira",
+    "primary_docs_url": "https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-oauth-authentication-6291692/",
+    "rate_limit_note": "No rate limit details in the cited sources; check Jira REST API limits per plan/site.",
+    "last_verified": "2026-08-18"
+  },
+  {
     "app": "Asana",
     "category": "Productivity/PM",
     "one_liner": "Asana has a robust REST API and official MCP, but production access terms need confirmation.",
@@ -1628,6 +1954,41 @@
     "last_verified": "2026-08-18"
   },
   {
+    "app": "Smartsheet",
+    "category": "Productivity/PM",
+    "one_liner": "Smartsheet offers a robust REST API and official MCP, but production access requires a paid Business+ plan.",
+    "auth_methods": [
+      "OAuth2",
+      "API Key"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "Both REST API and the official MCP require a paid Smartsheet plan (Business, Enterprise, or Advanced Work Management)."
+    },
+    "api_type": "REST",
+    "api_breadth": "Broad",
+    "existing_mcp": "Official",
+    "composio_toolkit": "No",
+    "buildability": "Moderate",
+    "main_blocker": "Access to production API/MCP requires a paid Business/Enterprise/Advanced Work Management plan.",
+    "recommended_next_action": "Needs Outreach",
+    "evidence_urls": [
+      "https://developers.smartsheet.com/api/smartsheet/guides/basics/authentication",
+      "https://developers.smartsheet.com/api/smartsheet/introduction",
+      "https://developers.smartsheet.com/ai-mcp/smartsheet/mcp-server",
+      "https://developers.smartsheet.com/ai-mcp/smartsheet/install-the-smartsheet-mcp-server",
+      "https://developers.smartsheet.com/ai-mcp/smartsheet/mcp-server-tools",
+      "https://www.smartsheet.com/content-center/product-insights/product-updates/introducing-smartsheet-mcp-server",
+      "https://www.smartsheet.com/pricing?utm_source=openai"
+    ],
+    "confidence": 0.86,
+    "verification_status": "Auto",
+    "slug": "smartsheet",
+    "primary_docs_url": "https://developers.smartsheet.com/api/smartsheet/guides/basics/authentication",
+    "rate_limit_note": "MCP tools and underlying REST API are subject to Smartsheet API rate limits and standard limitations.",
+    "last_verified": "2026-08-18"
+  },
+  {
     "app": "Harvest",
     "category": "Productivity/PM",
     "one_liner": "Harvest offers a broad REST API with PAT and OAuth2; confirm production access terms before building.",
@@ -1724,6 +2085,34 @@
     "slug": "plaid",
     "primary_docs_url": "https://plaid.com/docs/api/products/auth/",
     "rate_limit_note": "No rate limit details found in the fetched documentation.",
+    "last_verified": "2026-08-18"
+  },
+  {
+    "app": "Binance",
+    "category": "Fintech",
+    "one_liner": "Community MCP server bridges AI assistants to Binance via API keys; production access appears gated.",
+    "auth_methods": [
+      "API Key"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "No evidence of self-serve production credentials; the only path shown is using an existing Binance API key/secret via an unofficial community MCP server. Production use depends on a user’s Binance account and its API permissions."
+    },
+    "api_type": "MCP-only",
+    "api_breadth": "Broad",
+    "existing_mcp": "Community",
+    "composio_toolkit": "No",
+    "buildability": "Moderate",
+    "main_blocker": "No official production access documentation in allowed sources; only an unofficial MCP bridge that requires user API keys.",
+    "recommended_next_action": "Needs Outreach",
+    "evidence_urls": [
+      "https://mcp.so/servers/BinanceMCPServer?utm_source=openai"
+    ],
+    "confidence": 0.48,
+    "verification_status": "Auto",
+    "slug": "binance",
+    "primary_docs_url": "https://mcp-hub.ink/servers/binance/?utm_source=openai",
+    "rate_limit_note": "No rate limit information in the cited sources.",
     "last_verified": "2026-08-18"
   },
   {
@@ -1884,6 +2273,37 @@
     "last_verified": "2026-08-18"
   },
   {
+    "app": "Otter AI",
+    "category": "AI/Meeting-tools",
+    "one_liner": "Enterprise-gated REST API with API key and an OAuth-based official MCP server for meeting data.",
+    "auth_methods": [
+      "API Key",
+      "OAuth2"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "REST API requires Enterprise workspace with account-manager enablement; MCP uses OAuth but no self-serve production access is documented."
+    },
+    "api_type": "REST",
+    "api_breadth": "Moderate",
+    "existing_mcp": "Official",
+    "composio_toolkit": "No",
+    "buildability": "Hard",
+    "main_blocker": "Enterprise-only enablement by an account manager; no confirmed self-serve production credentials.",
+    "recommended_next_action": "Needs Outreach",
+    "evidence_urls": [
+      "https://help.otter.ai/hc/en-us/articles/36130822688279-Otter-ai-Public-API",
+      "https://help.otter.ai/hc/en-us/articles/35287607569687-Otter-MCP-Server",
+      "https://help.otter.ai"
+    ],
+    "confidence": 0.7,
+    "verification_status": "Auto",
+    "slug": "otter-ai",
+    "primary_docs_url": "https://developer-guides-staging.tryotter.com/docs/guides-authentication/",
+    "rate_limit_note": "Public API rate limit: 10 requests per second.",
+    "last_verified": "2026-08-18"
+  },
+  {
     "app": "Fathom",
     "category": "AI/Meeting-tools",
     "one_liner": "Fathom provides a REST API (API keys/OAuth) and an official MCP, but production access terms are unclear.",
@@ -2008,6 +2428,36 @@
     "slug": "devin",
     "primary_docs_url": "https://docs.devin.ai/api-reference/authentication",
     "rate_limit_note": "Rate limits not specified in the cited docs.",
+    "last_verified": "2026-08-18"
+  },
+  {
+    "app": "Mermaid CLI",
+    "category": "AI/Meeting-tools",
+    "one_liner": "Mermaid CLI is a local tool with no hosted API; a separate Mermaid Chart MCP exists but access is unclear.",
+    "auth_methods": [
+      "None / Not Applicable"
+    ],
+    "access_model": {
+      "kind": "Gated",
+      "note": "Mermaid CLI exposes no hosted API; Mermaid Chart’s MCP Server docs exist but do not state self-serve production credential availability. Navigation shows “Sign in” and “Contact sales,” implying potential gating."
+    },
+    "api_type": "None",
+    "api_breadth": "Narrow",
+    "existing_mcp": "Official",
+    "composio_toolkit": "No",
+    "buildability": "Blocked",
+    "main_blocker": "No documented hosted API/MCP for Mermaid CLI; Mermaid Chart MCP exists but access/auth details are not confirmed.",
+    "recommended_next_action": "Blocked",
+    "evidence_urls": [
+      "https://github.com/mermaid-js/mermaid-cli",
+      "https://github.com/mermaidjs/mermaid.cli?utm_source=openai",
+      "https://mermaid.ai/docs/ai/mcp-server?utm_source=openai"
+    ],
+    "confidence": 0.34,
+    "verification_status": "Auto",
+    "slug": "mermaid-cli",
+    "primary_docs_url": "https://github.com/mermaid-js/mermaid-cli",
+    "rate_limit_note": "No public rate limit information found in the fetched documentation.",
     "last_verified": "2026-08-18"
   },
   {

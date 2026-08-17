@@ -1,49 +1,52 @@
 {
   "patterns": {
-    "n": 60,
+    "n": 78,
     "buildability": {
       "Easy": 8,
-      "Moderate": 37,
-      "Hard": 15
+      "Moderate": 48,
+      "Hard": 20,
+      "Blocked": 2
     },
     "recommended_next_action": {
-      "Build Now": 9,
-      "Needs Outreach": 51
+      "Build Now": 10,
+      "Needs Outreach": 66,
+      "Blocked": 2
     },
     "access_model": {
-      "Self-Serve": 9,
-      "Gated": 51
+      "Self-Serve": 10,
+      "Gated": 68
     },
     "api_type": {
-      "REST": 53,
-      "MCP-only": 3,
-      "GraphQL": 4
+      "REST": 68,
+      "MCP-only": 4,
+      "GraphQL": 4,
+      "None": 2
     },
     "existing_mcp": {
-      "Official": 51,
-      "Community": 6,
-      "None": 3
+      "Official": 62,
+      "None": 7,
+      "Community": 9
     },
     "composio_toolkit": {
-      "Yes": 36,
-      "No": 24
+      "Yes": 45,
+      "No": 33
     },
     "auth_methods_top": [
       [
         "OAuth2",
-        42
+        56
       ],
       [
         "API Key",
-        36
+        45
       ],
       [
         "Personal Access Token",
-        11
+        14
       ],
       [
         "Basic Auth",
-        7
+        11
       ],
       [
         "Bearer Token",
@@ -51,6 +54,10 @@
       ],
       [
         "Other Token",
+        4
+      ],
+      [
+        "None / Not Applicable",
         2
       ],
       [
@@ -61,18 +68,18 @@
     "access_by_category": {
       "CRM": {
         "Self-Serve": 1,
-        "Gated": 5
+        "Gated": 7
       },
       "Support": {
         "Gated": 7,
         "Self-Serve": 1
       },
       "Comms": {
-        "Gated": 4,
+        "Gated": 6,
         "Self-Serve": 1
       },
       "Ads/Marketing": {
-        "Gated": 2
+        "Gated": 6
       },
       "Commerce": {
         "Gated": 4,
@@ -80,21 +87,21 @@
       },
       "Research/Scraping": {
         "Self-Serve": 3,
-        "Gated": 6
+        "Gated": 7
       },
       "DevInfra": {
-        "Gated": 3,
-        "Self-Serve": 1
+        "Gated": 6,
+        "Self-Serve": 2
       },
       "Productivity/PM": {
-        "Gated": 7,
+        "Gated": 9,
         "Self-Serve": 1
       },
       "Fintech": {
-        "Gated": 6
+        "Gated": 7
       },
       "AI/Meeting-tools": {
-        "Gated": 7
+        "Gated": 9
       }
     },
     "top_blockers": [
@@ -104,6 +111,10 @@
       ],
       [
         "No confirmed self-serve production access; ongoing use requires a paid account and public apps face approval.",
+        1
+      ],
+      [
+        "No explicit proof that REST API production use is self-serve; plan/approval requirements are not stated.",
         1
       ],
       [
@@ -117,15 +128,225 @@
       [
         "No explicit proof of self-serve production access; likely requires an active (paid) Close org to use API in production.",
         1
-      ],
-      [
-        "Production credentials appear to require sales approval/customer status; MCP is limited to a client preview.",
-        1
       ]
     ],
-    "build_now": 9,
+    "build_now": 10,
     "partner_gated": 0,
-    "avg_confidence": 0.638
+    "avg_confidence": 0.624
   },
-  "n_results": 60
+  "n_results": 78,
+  "unresolved_failures": [
+    {
+      "slug": "amazon-selling-partner",
+      "phase": "evidence",
+      "message": "insufficient claim-bearing evidence; queries=['Amazon Selling Partner official API authentication developer documentation', 'Amazon Selling Partner API production access approval credentials official documentation', 'Amazon Selling Partner official pricing API access free plan trial production plan']; topics=['access', 'api', 'auth']; access_signals=['nonproduction_only']; candidates=['https://developer-docs.amazon.com/sp-api', 'https://developer-docs.shipping.amazon.com/apis/docs/authorizing-selling-partner-api-applications', 'https://developer-docs.shipping.amazon.com/apis/docs/the-selling-partner-api-sandbox?utm_source=openai', 'https://developer-docs.shipping.amazon.com/apis/docs/authorizing-selling-partner-api-applications?utm_source=openai', 'https://developer.amazon.com', 'https://developers.amazon.com']",
+      "updated": "2026-08-17T19:33:38.433881+00:00"
+    },
+    {
+      "slug": "amazon-selling-partner",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: amazon-selling-partner: evidence is degraded; production access and auth must be resolved before synthesis",
+      "updated": "2026-08-17T19:33:38.435140+00:00"
+    },
+    {
+      "slug": "bigcommerce",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=Gated access requires cited approval, customer, or paid-plan evidence; final=Gated access requires cited approval, customer, or paid-plan evidence",
+      "updated": "2026-08-17T19:33:09.147439+00:00"
+    },
+    {
+      "slug": "datadog",
+      "phase": "evidence",
+      "message": "insufficient claim-bearing evidence; queries=['Datadog official API authentication developer documentation', 'Datadog API production access approval credentials official documentation', 'Datadog official pricing API access free plan trial production plan']; topics=['access', 'api', 'auth', 'mcp']; access_signals=['nonproduction_only']; candidates=['https://docs.datadoghq.com/api', 'https://docs.datadoghq.com/api/latest/authentication/', 'https://www.datadoghq.com/pricing/?utm_source=openai', 'https://apis.io/apis/datadog/datadog-api/', 'https://developer.datadoghq.com', 'https://developers.datadoghq.com']",
+      "updated": "2026-08-17T19:37:20.965527+00:00"
+    },
+    {
+      "slug": "datadog",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: datadog: evidence is degraded; production access and auth must be resolved before synthesis",
+      "updated": "2026-08-17T19:37:20.967984+00:00"
+    },
+    {
+      "slug": "ecwid",
+      "phase": "evidence",
+      "message": "insufficient claim-bearing evidence; queries=['Ecwid official API authentication developer documentation', 'Ecwid API production access approval credentials official documentation', 'Ecwid official pricing API access free plan trial production plan']; topics=['api', 'auth', 'mcp']; access_signals=[]; candidates=['https://api-docs.ecwid.com', 'https://docs.ecwid.com/api-reference', 'https://www.ecwid.com/pricing?utm_source=openai', 'https://docs.ecwid.com/api-reference?utm_source=openai', 'https://developer.ecwid.com', 'https://developers.ecwid.com']",
+      "updated": "2026-08-17T19:32:53.398419+00:00"
+    },
+    {
+      "slug": "ecwid",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: ecwid: evidence is degraded; production access and auth must be resolved before synthesis",
+      "updated": "2026-08-17T19:32:53.400628+00:00"
+    },
+    {
+      "slug": "fanbasis",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=auth_methods must not be empty; final=api_type=None requires buildability=Blocked and next_action=Blocked",
+      "updated": "2026-08-17T19:34:16.231184+00:00"
+    },
+    {
+      "slug": "gumroad",
+      "phase": "evidence",
+      "message": "insufficient claim-bearing evidence; queries=['Gumroad official API authentication developer documentation', 'Gumroad API production access approval credentials official documentation', 'Gumroad official pricing API access free plan trial production plan']; topics=['access', 'api', 'auth', 'mcp']; access_signals=['credential_enablement', 'nonproduction_only']; candidates=['https://gumroad.com/api', 'https://app.gumroad.com/api', 'https://gumroad.com/pricing?utm_source=openai', 'https://www.postman.com/api-reference-library/gumroad/documentation/8sxg1qi/gumroad-api', 'https://gumroad.com/help/article/280-create-application-api', 'https://developer.gumroad.com']",
+      "updated": "2026-08-17T19:33:16.459594+00:00"
+    },
+    {
+      "slug": "gumroad",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: gumroad: evidence is degraded; production access and auth must be resolved before synthesis",
+      "updated": "2026-08-17T19:33:16.462083+00:00"
+    },
+    {
+      "slug": "help-scout",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=high-confidence core claims need first-party coverage; missing topics=['access']; final=cited evidence does not resolve production access; fetch a plan, pricing, approval, production, or official hosted-connection page",
+      "updated": "2026-08-17T19:26:30.829729+00:00"
+    },
+    {
+      "slug": "higgsfield",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=Build Now requires a non-blocked Self-Serve production surface; final=buildability=Easy requires Self-Serve production access",
+      "updated": "2026-08-17T19:41:33.385633+00:00"
+    },
+    {
+      "slug": "ipayx",
+      "phase": "evidence",
+      "message": "insufficient claim-bearing evidence; queries=['iPayX official API authentication developer documentation', 'iPayX API production access approval credentials official documentation', 'iPayX official pricing API access free plan trial production plan']; topics=['access', 'api', 'auth', 'mcp']; access_signals=['credential_enablement', 'nonproduction_only']; candidates=['https://ipayx.ai/docs', 'https://developer.apaya.io/consent_setup?utm_source=openai', 'https://www.ipayx.ai/?lang=en&utm_source=openai', 'https://developer.ipayx.ai', 'https://developers.ipayx.ai', 'https://docs.ipayx.ai']",
+      "updated": "2026-08-17T19:39:25.381443+00:00"
+    },
+    {
+      "slug": "ipayx",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: ipayx: evidence is degraded; production access and auth must be resolved before synthesis",
+      "updated": "2026-08-17T19:39:25.387987+00:00"
+    },
+    {
+      "slug": "lark",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=third-party-only evidence requires confidence <= 0.5; final=third-party-only evidence must be disclosed in the record",
+      "updated": "2026-08-17T19:27:10.094170+00:00"
+    },
+    {
+      "slug": "mailchimp",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=cited evidence explicitly requires HTTP Basic for API requests; include Basic Auth; final=cited evidence does not resolve production access; fetch a plan, pricing, approval, production, or official hosted-connection page",
+      "updated": "2026-08-17T19:29:48.903328+00:00"
+    },
+    {
+      "slug": "paygent-connect",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=existing_mcp=Official requires first-party MCP evidence; final=Gated access requires cited approval, customer, or paid-plan evidence",
+      "updated": "2026-08-17T19:40:09.558970+00:00"
+    },
+    {
+      "slug": "pinterest",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=Gated access requires cited approval, customer, or paid-plan evidence; final=Gated access requires cited approval, customer, or paid-plan evidence",
+      "updated": "2026-08-17T19:31:22.569547+00:00"
+    },
+    {
+      "slug": "pylon",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=evidence_urls do not support all high-risk claims; missing topics=['access'], cited topics=['api', 'auth', 'mcp']; final=evidence_urls do not support all high-risk claims; missing topics=['access'], cited topics=['api', 'auth', 'mcp']",
+      "updated": "2026-08-17T19:25:59.468615+00:00"
+    },
+    {
+      "slug": "quickbooks",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=third-party-only evidence requires confidence <= 0.5; final=third-party-only evidence must be disclosed in the record",
+      "updated": "2026-08-17T19:41:00.896673+00:00"
+    },
+    {
+      "slug": "salesforce",
+      "phase": "evidence",
+      "message": "insufficient claim-bearing evidence; queries=['Salesforce official API authentication developer documentation', 'Salesforce API production access approval credentials official documentation', 'Salesforce official pricing API access free plan trial production plan']; topics=['access', 'api', 'auth', 'mcp']; access_signals=['hosted_connection', 'nonproduction_only']; candidates=['https://salesforce.com', 'https://developer.salesforce.com/docs/platform/connect-rest-api/guide/intro_using_oauth.html', 'https://developer.salesforce.com/docs/marketing/pardot/guide/authentication.html', 'https://developer.salesforce.com/docs/platform/named-credentials/guide/get-started.html', 'https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/intro_rest_compatible_editions.htm', 'https://developer.salesforce.com']",
+      "updated": "2026-08-17T18:59:47.143020+00:00"
+    },
+    {
+      "slug": "salesforce",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=cited evidence does not resolve production access; fetch a plan, pricing, approval, production, or official hosted-connection page; final=cited evidence does not resolve production access; fetch a plan, pricing, approval, production, or official hosted-connection page",
+      "updated": "2026-08-17T19:23:29.546541+00:00"
+    },
+    {
+      "slug": "supabase",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=Build Now requires a non-blocked Self-Serve production surface; final=buildability=Easy requires Self-Serve production access",
+      "updated": "2026-08-17T19:36:51.555772+00:00"
+    },
+    {
+      "slug": "systeme-io",
+      "phase": "evidence",
+      "message": "insufficient claim-bearing evidence; queries=['systeme.io official API authentication developer documentation', 'systeme.io API production access approval credentials official documentation', 'systeme.io official pricing API access free plan trial production plan']; topics=['access', 'api', 'auth', 'mcp']; access_signals=['credential_enablement', 'free_account']; candidates=['https://systeme.io', 'https://help.systeme.io/article/2323-how-to-create-a-public-api-key-on-systeme-io', 'https://sitegrowth.io/systeme-io-pricing/', 'https://help.systeme.io/article/2329-how-to-use-systeme-io-public-api', 'https://developer.systeme.io', 'https://developers.systeme.io']",
+      "updated": "2026-08-17T19:06:08.086706+00:00"
+    },
+    {
+      "slug": "systeme-io",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=cited evidence does not resolve production access; fetch a plan, pricing, approval, production, or official hosted-connection page; final=cited evidence does not resolve production access; fetch a plan, pricing, approval, production, or official hosted-connection page",
+      "updated": "2026-08-17T19:31:06.356499+00:00"
+    },
+    {
+      "slug": "telegram",
+      "phase": "evidence",
+      "message": "insufficient claim-bearing evidence; queries=['Telegram official API authentication developer documentation', 'Telegram API production access approval credentials official documentation', 'Telegram official pricing API access free plan trial production plan']; topics=['access', 'api', 'auth', 'mcp']; access_signals=[]; candidates=['https://core.telegram.org', 'https://core.telegram.org/api/auth', 'https://tlgrm.ru/docs', 'https://core.telegram.org/api', 'https://developer.telegram.org', 'https://developers.telegram.org']",
+      "updated": "2026-08-17T19:04:20.051663+00:00"
+    },
+    {
+      "slug": "telegram",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=auth_methods includes 'Bot Token', but cited evidence does not name that scheme; final=cited evidence does not resolve production access; fetch a plan, pricing, approval, production, or official hosted-connection page",
+      "updated": "2026-08-17T19:28:28.878005+00:00"
+    },
+    {
+      "slug": "threads",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=high-confidence core claims need first-party coverage; missing topics=['access']; final=high-confidence core claims need first-party coverage; missing topics=['access']",
+      "updated": "2026-08-17T19:32:25.737948+00:00"
+    },
+    {
+      "slug": "twenty",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: invalid synthesis after one repair; first=cited evidence does not resolve production access; fetch a plan, pricing, approval, production, or official hosted-connection page; final=Gated access requires cited approval, customer, or paid-plan evidence",
+      "updated": "2026-08-17T19:24:56.550861+00:00"
+    },
+    {
+      "slug": "vonage",
+      "phase": "evidence",
+      "message": "insufficient claim-bearing evidence; queries=['Vonage official API authentication developer documentation', 'Vonage API production access approval credentials official documentation', 'Vonage official pricing API access free plan trial production plan']; topics=['access', 'api', 'auth', 'mcp']; access_signals=['credential_enablement', 'free_account']; candidates=['https://developer.vonage.com', 'https://developer.vonage.com/en/getting-started/concepts/authentication?source=number-insight', 'https://www.vonage.com/pricing/?utm_source=openai', 'https://developer.vonage.com/en/api/pricing?utm_source=openai', 'https://developers.vonage.com', 'https://docs.vonage.com']",
+      "updated": "2026-08-17T19:28:19.232556+00:00"
+    },
+    {
+      "slug": "vonage",
+      "phase": "pipeline",
+      "message": "pipeline error: ValueError: vonage: evidence is degraded; production access and auth must be resolved before synthesis",
+      "updated": "2026-08-17T19:28:19.235602+00:00"
+    }
+  ],
+  "quality": {
+    "source_audit_complete": false,
+    "source_audited_rows": 0,
+    "browser_evidence_pages": 5,
+    "browser_evidence_apps": 4
+  },
+  "headline_accuracy": {
+    "hand_checked_accuracy": {
+      "value": null,
+      "n": null,
+      "label": "Latest staged official-doc agreement"
+    }
+  },
+  "repo_url": "https://github.com/dheeraj3587/composio-ai-product-ops",
+  "live_url": "https://composio-ai-product-ops.vercel.app",
+  "generated": "2026-08-18",
+  "composio_sdk": {
+    "n_apps": 100,
+    "active": 53,
+    "catalog_only": 1,
+    "missing": 46,
+    "tools_total": 6943,
+    "tools_median": 86.0,
+    "trigger_enabled": 17,
+    "without_triggers": 37
+  }
 }

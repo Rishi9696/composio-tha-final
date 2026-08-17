@@ -254,9 +254,9 @@ def url_resolves(url: str, timeout: int = 10) -> bool:
 # --------------------------------------------------------------------------- #
 _SEARCH_SYSTEM = (
     "You are a documentation-discovery assistant. Use the web_search tool to find "
-    "the most authoritative, first-party pages that answer the given queries "
-    "(official API reference, authentication, pricing/production-access, and MCP "
-    "pages). Return ONLY a JSON object of the form "
+    "the most authoritative, first-party pages that answer the given query "
+    "(official API reference, authentication, pricing/production-access, or MCP "
+    "pages, as relevant). Return ONLY a JSON object of the form "
     '{"results": [{"title": str, "url": str, "snippet": str}]} listing up to K real '
     "URLs discovered through search, most relevant first, with no duplicates. Every "
     "URL must be one actually returned by web_search; never invent a URL."
@@ -299,33 +299,19 @@ def _citations_from_response(response) -> list[dict]:
     return found
 
 
-def search_many(queries: list[str], k: int = 6) -> list[dict]:
-    """Run related queries in one OpenAI web-search request and cache the result."""
-    clean_queries = list(dict.fromkeys(query.strip() for query in queries if query.strip()))
-    if not clean_queries:
-        return []
-    cached = _cached_search(clean_queries, k)
-    if cached is not None:
-        return cached
-
+def _search_one(query: str, k: int) -> tuple[list[dict], float]:
+    """Run a single OpenAI web-search request; return (results, actual USD cost)."""
     import usage_tracker
 
-    # Conservative pre-flight reservation: one web_search tool call plus a small
-    # completion. Actual token cost is recorded from usage after the call.
     input_price, output_price = config._openai_token_prices(config.SEARCH_MODEL)
     web_search_call_cost = 0.025  # web_search tool call fee, USD (conservative)
     usage_tracker.ensure_budget("openai", web_search_call_cost + 0.01)
 
-    prompt = (
-        "Queries:\n"
-        + "\n".join(f"- {query}" for query in clean_queries)
-        + f"\n\nReturn up to {k} results as JSON."
-    )
     response = config.get_client().responses.create(
         model=config.SEARCH_MODEL,
         tools=[{"type": "web_search"}],
         instructions=_SEARCH_SYSTEM,
-        input=prompt,
+        input=f"Query: {query}\n\nReturn up to {k} results as JSON.",
     )
 
     text = getattr(response, "output_text", "") or ""
@@ -352,16 +338,17 @@ def search_many(queries: list[str], k: int = 6) -> list[dict]:
         elif not existing.get("title"):
             existing["title"] = citation["title"]
 
-    results = []
-    for entry in list(by_url.values())[: max(k, 1) * 2]:
-        results.append({
+    results = [
+        {
             "title": entry.get("title", ""),
             "url": entry.get("url", ""),
             "snippet": entry.get("snippet", "")[:4_000],
             "date": "",
             "last_updated": "",
             "search_provider": "openai",
-        })
+        }
+        for entry in list(by_url.values())[: max(k, 1) * 2]
+    ]
 
     usage = getattr(response, "usage", None)
     input_tokens = int(getattr(usage, "input_tokens", 0) or 0)
@@ -370,17 +357,48 @@ def search_many(queries: list[str], k: int = 6) -> list[dict]:
         input_tokens * input_price / 1_000_000
         + output_tokens * output_price / 1_000_000
     )
+    total_cost = web_search_call_cost + token_cost
+    usage_tracker.record("openai", "web_search", total_cost, {
+        "model": config.SEARCH_MODEL,
+        "query": query,
+        "result_count": len(results),
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+    })
+    return results, total_cost
+
+
+def search_many(queries: list[str], k: int = 6) -> list[dict]:
+    """Run each query as its own OpenAI web-search request and merge the results.
+
+    Perplexity's Search API natively batches multiple queries into one balanced
+    result set; OpenAI's web_search tool does not, so a single combined request
+    would skew toward whichever query the model happens to search first (e.g.
+    always covering auth pages while starving the production-access query).
+    Searching per query guarantees each topic gets its own coverage.
+    """
+    clean_queries = list(dict.fromkeys(query.strip() for query in queries if query.strip()))
+    if not clean_queries:
+        return []
+    cached = _cached_search(clean_queries, k)
+    if cached is not None:
+        return cached
+
+    per_query_k = max(3, k // max(len(clean_queries), 1))
+    by_url: dict[str, dict] = {}
+    for query in clean_queries:
+        for result in _search_one(query, per_query_k)[0]:
+            existing = by_url.get(result["url"])
+            if existing is None:
+                by_url[result["url"]] = result
+            elif not existing.get("snippet") and result.get("snippet"):
+                existing["snippet"] = result["snippet"]
+
+    results = list(by_url.values())
     config.save_json(_search_cache_path(clean_queries, k), {
         "generated": dt.datetime.now(dt.timezone.utc).isoformat(),
         "queries": clean_queries,
         "results": results,
-    })
-    usage_tracker.record("openai", "web_search", web_search_call_cost + token_cost, {
-        "model": config.SEARCH_MODEL,
-        "query_count": len(clean_queries),
-        "result_count": len(results),
-        "input_tokens": input_tokens,
-        "output_tokens": output_tokens,
     })
     return results
 

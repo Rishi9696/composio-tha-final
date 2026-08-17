@@ -18,7 +18,7 @@
   };
   var BUILD_RANK = { Easy: 0, Moderate: 1, Hard: 2, Blocked: 3 };
   var VIEW_META = {
-    overview: ["Overview", "Live audit of the 100-app catalog"],
+    overview: ["Overview", "Live audit — " + RESULTS.length + " of 100 requested apps resolved"],
     queue: ["Queue", "Uncovered, build-ready apps ranked for engineering"],
     catalog: ["Catalog", "Every app, every cited decision"],
     verify: ["Verify", "Independent checks against official documentation"],
@@ -110,11 +110,13 @@
     var avgConf = PATTERNS.avg_confidence != null
       ? pct(PATTERNS.avg_confidence)
       : pct(RESULTS.reduce(function (s, r) { return s + (Number(r.confidence) || 0); }, 0) / (RESULTS.length || 1));
+    var unresolvedSlugs = {};
+    (METRICS.unresolved_failures || []).forEach(function (f) { unresolvedSlugs[f.slug] = 1; });
     var facts = [
       ["Schema fields", "19 locked"],
       ["Avg. confidence", avgConf + "%"],
+      ["Unresolved (fail-closed)", Object.keys(unresolvedSlugs).length + " apps"],
       ["Hand-checked", (hc.n || 0) + " apps"],
-      ["API type accuracy", hc.api_type_accuracy != null ? pct(hc.api_type_accuracy) + "%" : "—"],
       ["Reasoning traces", Object.keys(REASONING).length],
     ];
     el("fact-list").innerHTML = facts.map(function (f) {
