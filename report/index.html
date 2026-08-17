@@ -4,186 +4,138 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Evidence-backed API integration readiness across 100 requested apps, synthesized with OpenAI." />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2310a37f'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='white' font-family='monospace'%3E%E2%97%8E%3C/text%3E%3C/svg%3E" />
-  <title>Integration Readiness</title>
-  <link rel="stylesheet" href="theme.css?v=20260817-1" />
+  <meta name="description" content="Console for reviewing evidence-backed API integration readiness across 100 requested apps." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236366f1'/%3E%3Cpath d='M28 62 L44 30 L60 62 M34 50 L54 50' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <title>Readiness Console</title>
+  <link rel="stylesheet" href="theme.css?v=20260818-1" />
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="wrap topbar-inner">
-      <a class="brand" href="#top" aria-label="Integration Readiness home">
-        <span class="brand-dot" aria-hidden="true"></span>
-        <span class="brand-copy"><b>Integration Readiness</b><small>Composio × OpenAI research</small></span>
-      </a>
-      <nav class="nav" aria-label="Report sections">
-        <a href="#priorities">Priorities</a>
-        <a href="#catalog">Catalog</a>
-        <a href="#method">Method</a>
-        <a href="#verification">Verification</a>
+  <div class="shell">
+    <aside class="rail" aria-label="Console navigation">
+      <div class="rail-mark" aria-hidden="true">Δ</div>
+      <nav class="rail-nav">
+        <button class="rail-item active" data-view="overview" type="button">
+          <span class="rail-glyph">◇</span><span>Overview</span>
+        </button>
+        <button class="rail-item" data-view="queue" type="button">
+          <span class="rail-glyph">▤</span><span>Queue</span>
+        </button>
+        <button class="rail-item" data-view="catalog" type="button">
+          <span class="rail-glyph">▦</span><span>Catalog</span>
+        </button>
+        <button class="rail-item" data-view="verify" type="button">
+          <span class="rail-glyph">◈</span><span>Verify</span>
+        </button>
+        <button class="rail-item" data-view="method" type="button">
+          <span class="rail-glyph">↝</span><span>Method</span>
+        </button>
       </nav>
-      <a class="ghost-btn" id="repo-link" href="#" target="_blank" rel="noopener">Source ↗</a>
-    </div>
-  </header>
-
-  <main id="top">
-    <!-- HERO -->
-    <section class="wrap hero">
-      <div class="hero-copy">
-        <p class="eyebrow">AI Product Ops · 100-app catalog</p>
-        <h1>100 apps, ranked into one integration queue.</h1>
-        <p class="lead">API surface, authentication, production access, and MCP coverage — distilled from official documentation into the next engineering move. Synthesized on OpenAI, gated by deterministic checks.</p>
-        <div class="snapshot">
-          <span class="pulse-dot" aria-hidden="true"></span>
-          <span id="snapshot-copy">Current research snapshot</span>
-          <span class="dot-sep" aria-hidden="true"></span>
-          <span id="generated-note">—</span>
-        </div>
+      <div class="rail-foot">
+        <a id="repo-link" href="#" target="_blank" rel="noopener" title="Source">⌥</a>
       </div>
-      <aside class="pulse-card">
-        <div class="pulse-head">
-          <p class="kicker">Decision pulse</p>
-          <span class="chip chip-live" id="quality-badge">Audited</span>
+    </aside>
+
+    <div class="deck">
+      <header class="strip">
+        <div class="strip-title">
+          <h1 id="view-title">Overview</h1>
+          <span class="strip-sub" id="view-sub">Live audit of the 100-app catalog</span>
         </div>
-        <p class="pulse-statement" id="decision-title">Loading the current integration queue…</p>
-        <div class="action-bar" id="action-bar" aria-label="Recommended action distribution"></div>
-        <div class="action-legend" id="action-legend"></div>
-        <a class="text-link" href="#catalog">Review the catalog →</a>
-      </aside>
-    </section>
+        <div class="strip-stats" id="strip-stats" aria-label="Quick stats"></div>
+      </header>
 
-    <!-- KPI TILES -->
-    <section class="wrap kpi-grid" id="kpi-grid" aria-label="Headline metrics"></section>
+      <!-- ============ OVERVIEW ============ -->
+      <section class="view active" id="view-overview" data-view="overview">
+        <div class="ov-grid">
+          <div class="ov-primary">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>Recommended action</h2>
+                <span class="tag tag-live" id="quality-badge">audited</span>
+              </div>
+              <p class="ov-statement" id="decision-title">loading current queue…</p>
+              <div class="dist" id="action-bar" aria-label="Recommended action distribution"></div>
+              <div class="dist-legend" id="action-legend"></div>
+            </div>
 
-    <!-- PRIORITIES -->
-    <section class="band" id="priorities">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">01 · Priority</p>
-            <h2>Where engineering should start</h2>
+            <div class="panel">
+              <div class="panel-head"><h2>Composio SDK depth</h2></div>
+              <div class="meter-row" id="sdk-meters"></div>
+            </div>
           </div>
-          <p class="section-note">Build-ready apps with no active Composio toolkit yet — ranked by production access, buildability, and source confidence.</p>
-        </div>
-        <div class="queue-grid" id="priority-queue"></div>
-      </div>
-    </section>
 
-    <!-- CATALOG -->
-    <section class="band band-tint" id="catalog">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">02 · Catalog</p>
-            <h2>Inspect every decision</h2>
+          <div class="ov-side">
+            <div class="panel panel-tight">
+              <div class="panel-head"><h2>Signals</h2></div>
+              <dl class="fact-list" id="fact-list"></dl>
+            </div>
+            <div class="panel panel-tight">
+              <div class="panel-head"><h2>Top categories</h2></div>
+              <div class="bar-list" id="category-bars"></div>
+            </div>
           </div>
-          <div class="trace-count"><span id="reasoning-count">0</span> reasoning traces</div>
         </div>
+      </section>
 
-        <div class="toolbar">
-          <label class="search">
-            <span class="search-icon" aria-hidden="true">⌕</span>
-            <span class="sr-only">Search catalog</span>
-            <input id="q" type="search" placeholder="Search app, auth, or blocker" autocomplete="off" />
-          </label>
-          <select id="f-cat" aria-label="Filter by category"><option value="">All categories</option></select>
-          <select id="f-next" aria-label="Filter by action"><option value="">All actions</option></select>
-          <select id="f-build" aria-label="Filter by buildability"><option value="">All buildability</option></select>
-        </div>
-
-        <div class="sdk-summary" id="sdk-summary" aria-live="polite">Loading executable toolkit depth…</div>
-        <p class="catalog-count" id="catalog-count">Loading apps…</p>
-
+      <!-- ============ QUEUE ============ -->
+      <section class="view" id="view-queue" data-view="queue">
+        <p class="view-note">Build-ready apps with no active Composio toolkit — ranked by production access, then buildability, then source confidence.</p>
         <div class="table-shell">
-          <table>
+          <table class="rank-table">
             <thead>
-              <tr>
-                <th>App</th><th>Auth</th><th>Access</th><th>API</th>
-                <th>MCP</th><th>Composio</th><th>Build</th><th>Action</th><th>Conf.</th><th></th>
-              </tr>
+              <tr><th>#</th><th>App</th><th>Category</th><th>API</th><th>Access</th><th>Build</th><th>Conf.</th></tr>
             </thead>
-            <tbody id="catalog-body"></tbody>
+            <tbody id="queue-body"></tbody>
           </table>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- VERIFICATION -->
-    <section class="band" id="verification">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">03 · Verification</p>
-            <h2>What held up under review</h2>
+      <!-- ============ CATALOG (master-detail) ============ -->
+      <section class="view" id="view-catalog" data-view="catalog">
+        <div class="split">
+          <div class="split-list">
+            <div class="list-toolbar">
+              <input id="q" type="search" placeholder="filter apps…" autocomplete="off" />
+              <select id="f-cat" aria-label="Filter by category"><option value="">category</option></select>
+              <select id="f-next" aria-label="Filter by action"><option value="">action</option></select>
+            </div>
+            <p class="list-count" id="catalog-count">—</p>
+            <ul class="row-list" id="catalog-rows"></ul>
           </div>
-          <p class="section-note">Official-doc adjudication, correction replay, and independent browser verification are reported separately.</p>
-        </div>
-        <div class="verify-grid" id="verification-grid"></div>
-      </div>
-    </section>
-
-    <!-- METHOD -->
-    <section class="band band-ink" id="method">
-      <div class="wrap">
-        <div class="section-head inverse">
-          <div>
-            <p class="eyebrow">04 · Method</p>
-            <h2>Evidence first. Decisions second.</h2>
+          <div class="split-detail" id="catalog-detail">
+            <div class="detail-empty">Select an app from the list to inspect its evidence-backed decision.</div>
           </div>
-          <p class="section-note">OpenAI synthesizes fetched evidence into a locked schema; deterministic checks own citations, catalog identity, and executable toolkit depth.</p>
         </div>
-        <ol class="method-grid">
-          <li><span class="step-n">01</span><b>SDK coverage audit</b><p>The Composio SDK classifies every app as active, catalog-only, or missing and records tool depth.</p><code>--composio-audit</code></li>
-          <li><span class="step-n">02</span><b>Docs research</b><p>OpenAI web search plus direct fetch collect official API, auth, access, and MCP pages.</p><code>docs_research.py</code></li>
-          <li><span class="step-n">03</span><b>Schema synthesis</b><p>OpenAI returns a locked 19-field record with cited URLs via structured output.</p><code>synthesis.py</code></li>
-          <li><span class="step-n">04</span><b>Deterministic gate</b><p>Invalid labels, weak coverage, contradictions, and invented links fail closed.</p><code>schema.py</code></li>
-          <li><span class="step-n">05</span><b>Official-doc check</b><p>Priority apps are adjudicated against vendor docs, with every recorded miss preserved.</p><code>handcheck.py</code></li>
-          <li><span class="step-n">06</span><b>Session diagnostic</b><p>A read-only OpenAI Session runs one bounded Browser Tool investigation and deterministic comparison.</p><code>--composio-agent</code></li>
-        </ol>
-      </div>
-    </section>
+      </section>
 
-    <!-- REPRODUCE -->
-    <section class="band band-tint" id="reproduce">
-      <div class="wrap run-layout">
-        <div>
-          <p class="eyebrow">05 · Reproduce</p>
-          <h2>Run the same pipeline</h2>
-          <p class="section-note">The report is a static build artifact from the audited JSON output and packaged reasoning traces.</p>
-        </div>
-        <div class="command-card">
-          <div class="command-tabs" role="tablist" aria-label="Run commands">
-            <button class="command-tab active" type="button" data-command="research" role="tab" aria-selected="true">Research</button>
-            <button class="command-tab" type="button" data-command="verify" role="tab" aria-selected="false">Verify</button>
-            <button class="command-tab" type="button" data-command="composio" role="tab" aria-selected="false">Composio</button>
+      <!-- ============ VERIFY ============ -->
+      <section class="view" id="view-verify" data-view="verify">
+        <p class="view-note">Official-doc adjudication, correction replay, and independent browser verification, reported separately.</p>
+        <div class="score-grid" id="score-grid"></div>
+      </section>
+
+      <!-- ============ METHOD ============ -->
+      <section class="view" id="view-method" data-view="method">
+        <p class="view-note">OpenAI synthesizes fetched evidence into a locked schema; deterministic checks own citations, catalog identity, and executable toolkit depth.</p>
+        <div class="flow" id="flow"></div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Reproduce</h2>
+            <div class="seg-tabs" role="tablist">
+              <button class="seg-tab active" data-cmd="research" type="button">research</button>
+              <button class="seg-tab" data-cmd="verify" type="button">verify</button>
+              <button class="seg-tab" data-cmd="composio" type="button">composio</button>
+            </div>
           </div>
           <pre id="command-output"></pre>
         </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="wrap footer-inner" id="footer"></div>
-  </footer>
-
-  <dialog class="drawer" id="detail-dialog" aria-labelledby="detail-title">
-    <div class="drawer-shell">
-      <header class="drawer-head">
-        <div>
-          <p class="eyebrow">Decision record</p>
-          <h2 id="detail-title">App reasoning</h2>
-          <p id="detail-sub"></p>
-        </div>
-        <form method="dialog"><button class="icon-btn" type="submit" aria-label="Close">×</button></form>
-      </header>
-      <div class="drawer-body" id="detail-body"></div>
+      </section>
     </div>
-  </dialog>
+  </div>
 
-  <script src="data.js?v=20260817-1"></script>
-  <script src="app.js?v=20260817-1"></script>
+  <script src="data.js?v=20260818-1"></script>
+  <script src="app.js?v=20260818-1"></script>
 </body>
 
 </html>

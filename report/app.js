@@ -1,6 +1,6 @@
-/* Integration Readiness dashboard — renders the static audited dataset.
-   Data globals are provided by data.js:
-     window.RESULTS, window.METRICS, window.REASONING, window.COMPOSIO_COVERAGE */
+/* Readiness Console — sidebar app shell over the static audited dataset.
+   Data globals from data.js: window.RESULTS, window.METRICS, window.REASONING,
+   window.COMPOSIO_COVERAGE */
 (function () {
   "use strict";
 
@@ -12,89 +12,129 @@
   var PATTERNS = METRICS.patterns || {};
 
   var ACTIONS = ["Build Now", "Needs Outreach", "Partner-Gated", "Blocked"];
-  var ACTION_CLASS = {
-    "Build Now": "a-build",
-    "Needs Outreach": "a-outreach",
-    "Partner-Gated": "a-partner",
-    "Blocked": "a-blocked",
+  var ACTION_TAG = {
+    "Build Now": "tag-build", "Needs Outreach": "tag-outreach",
+    "Partner-Gated": "tag-partner", "Blocked": "tag-blocked",
   };
   var BUILD_RANK = { Easy: 0, Moderate: 1, Hard: 2, Blocked: 3 };
+  var VIEW_META = {
+    overview: ["Overview", "Live audit of the 100-app catalog"],
+    queue: ["Queue", "Uncovered, build-ready apps ranked for engineering"],
+    catalog: ["Catalog", "Every app, every cited decision"],
+    verify: ["Verify", "Independent checks against official documentation"],
+    method: ["Method", "How a raw evidence trail becomes a locked record"],
+  };
 
-  // --- helpers ---------------------------------------------------------------
+  function el(id) { return document.getElementById(id); }
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
-  function el(id) { return document.getElementById(id); }
   function pct(x) { return Math.round((Number(x) || 0) * 100); }
   function count(arr, fn) { return arr.reduce(function (n, r) { return n + (fn(r) ? 1 : 0); }, 0); }
   function coverStatus(slug) { return (COVER_APPS[slug] || {}).status || "Missing"; }
+  function tag(text, cls) { return '<span class="tag ' + (cls || "") + '">' + esc(text) + '</span>'; }
 
-  // --- hero: action distribution --------------------------------------------
-  function renderPulse() {
+  // ---------------------------------------------------------------- routing
+  function setView(name) {
+    if (!VIEW_META[name]) name = "overview";
+    document.querySelectorAll(".view").forEach(function (v) {
+      v.classList.toggle("active", v.dataset.view === name);
+    });
+    document.querySelectorAll(".rail-item").forEach(function (b) {
+      b.classList.toggle("active", b.dataset.view === name);
+    });
+    el("view-title").textContent = VIEW_META[name][0];
+    el("view-sub").textContent = VIEW_META[name][1];
+    if (history.replaceState) history.replaceState(null, "", "#" + name);
+  }
+
+  // ---------------------------------------------------------------- overview
+  function renderStrip() {
+    var buildNow = count(RESULTS, function (r) { return r.recommended_next_action === "Build Now"; });
+    var sum = COVERAGE.summary || {};
+    var stats = [
+      [String(RESULTS.length), "apps"],
+      [String(buildNow), "build now"],
+      [sum.active != null ? String(sum.active) : "—", "active toolkits"],
+    ];
+    el("strip-stats").innerHTML = stats.map(function (s) {
+      return '<div class="strip-stat"><b>' + esc(s[0]) + '</b><span>' + esc(s[1]) + '</span></div>';
+    }).join("");
+  }
+
+  function renderOverview() {
     var dist = {};
     ACTIONS.forEach(function (a) { dist[a] = count(RESULTS, function (r) { return r.recommended_next_action === a; }); });
-    var total = RESULTS.length || 1;
 
-    var bar = el("action-bar");
-    var legend = el("action-legend");
+    var bar = el("action-bar"), legend = el("action-legend");
     bar.innerHTML = "";
     legend.innerHTML = "";
     ACTIONS.forEach(function (a) {
       var n = dist[a];
       if (n > 0) {
         var seg = document.createElement("span");
-        seg.className = "seg " + ACTION_CLASS[a];
+        seg.className = "seg " + ACTION_TAG[a];
         seg.style.flex = String(n);
         seg.title = a + ": " + n;
         bar.appendChild(seg);
       }
       var li = document.createElement("span");
-      li.className = "legend-item";
-      li.innerHTML = '<i class="dot ' + ACTION_CLASS[a] + '"></i>' + esc(a) +
-        ' <b>' + n + '</b>';
+      li.className = "dist-item";
+      li.innerHTML = '<i class="dot ' + ACTION_TAG[a] + '"></i>' + esc(a) + '<b>' + n + '</b>';
       legend.appendChild(li);
     });
 
-    var buildNow = dist["Build Now"];
     el("decision-title").innerHTML =
-      "<b>" + buildNow + "</b> of " + RESULTS.length +
-      " apps are build-ready today; the rest need outreach, a partner path, or are blocked.";
+      '<b>' + dist["Build Now"] + '</b> of ' + RESULTS.length +
+      ' apps are self-serve buildable today; the rest need outreach, a partner path, or are blocked.';
     var q = METRICS.quality;
     if (q && q.label) el("quality-badge").textContent = q.label;
-  }
 
-  // --- KPI tiles -------------------------------------------------------------
-  function tile(value, label, sub) {
-    return '<div class="kpi"><div class="kpi-value">' + esc(value) + '</div>' +
-      '<div class="kpi-label">' + esc(label) + '</div>' +
-      (sub ? '<div class="kpi-sub">' + esc(sub) + '</div>' : '') + '</div>';
-  }
-  function renderKpis() {
     var sum = COVERAGE.summary || {};
-    var buildNow = count(RESULTS, function (r) { return r.recommended_next_action === "Build Now"; });
-    var queue = count(RESULTS, function (r) {
-      return r.recommended_next_action === "Build Now" && coverStatus(r.slug) !== "Active";
-    });
-    var avgConf = PATTERNS.avg_confidence != null
-      ? PATTERNS.avg_confidence
-      : (RESULTS.reduce(function (s, r) { return s + (Number(r.confidence) || 0); }, 0) / (RESULTS.length || 1));
-    var hc = METRICS.handcheck || {};
-    var acc = hc.api_type_accuracy != null ? hc.api_type_accuracy : METRICS.headline_accuracy;
+    var meters = [
+      ["active", sum.active, sum.n_apps],
+      ["catalog-only", sum.catalog_only, sum.n_apps],
+      ["missing", sum.missing, sum.n_apps],
+    ];
+    el("sdk-meters").innerHTML = meters.map(function (m) {
+      var p = m[2] ? Math.round((m[1] / m[2]) * 100) : 0;
+      return '<div class="meter"><div class="meter-top"><span>' + esc(m[0]) + '</span><b>' + m[1] + '</b></div>' +
+        '<div class="meter-track"><span style="width:' + p + '%"></span></div></div>';
+    }).join("") + '<p class="meter-foot">' + Number(sum.tools_total || 0).toLocaleString() +
+      ' tools exposed · median ' + (sum.tools_median != null ? sum.tools_median : "—") +
+      ' · ' + (sum.trigger_enabled != null ? sum.trigger_enabled : "—") + ' trigger-enabled</p>';
 
-    var html = "";
-    html += tile(RESULTS.length, "Apps evaluated", "Locked 19-field schema");
-    html += tile(buildNow, "Build Now", "Self-serve, documented surface");
-    html += tile(queue, "Uncovered build queue", "Build-ready, no active toolkit");
-    html += tile(sum.active != null ? sum.active : "—", "Active toolkits", "In the Composio SDK");
-    html += tile(sum.tools_total != null ? Number(sum.tools_total).toLocaleString() : "—", "Tools exposed", "Median " + (sum.tools_median != null ? sum.tools_median : "—"));
-    html += tile((acc != null ? pct(acc) + "%" : "—"), "Hand-checked API type", (hc.n ? hc.n + " apps vs official docs" : "Adjudicated"));
-    el("kpi-grid").innerHTML = html;
+    var hc = METRICS.handcheck || {};
+    var avgConf = PATTERNS.avg_confidence != null
+      ? pct(PATTERNS.avg_confidence)
+      : pct(RESULTS.reduce(function (s, r) { return s + (Number(r.confidence) || 0); }, 0) / (RESULTS.length || 1));
+    var facts = [
+      ["Schema fields", "19 locked"],
+      ["Avg. confidence", avgConf + "%"],
+      ["Hand-checked", (hc.n || 0) + " apps"],
+      ["API type accuracy", hc.api_type_accuracy != null ? pct(hc.api_type_accuracy) + "%" : "—"],
+      ["Reasoning traces", Object.keys(REASONING).length],
+    ];
+    el("fact-list").innerHTML = facts.map(function (f) {
+      return '<div class="fact"><dt>' + esc(f[0]) + '</dt><dd>' + esc(f[1]) + '</dd></div>';
+    }).join("");
+
+    var byCat = {};
+    RESULTS.forEach(function (r) { byCat[r.category] = (byCat[r.category] || 0) + 1; });
+    var top = Object.keys(byCat).map(function (k) { return [k, byCat[k]]; })
+      .sort(function (a, b) { return b[1] - a[1]; }).slice(0, 6);
+    var max = top.length ? top[0][1] : 1;
+    el("category-bars").innerHTML = top.map(function (c) {
+      var w = Math.round((c[1] / max) * 100);
+      return '<div class="cat-row"><span>' + esc(c[0]) + '</span>' +
+        '<div class="cat-track"><span style="width:' + w + '%"></span></div><b>' + c[1] + '</b></div>';
+    }).join("");
   }
 
-  // --- priority queue --------------------------------------------------------
-  function renderPriorities() {
+  // ---------------------------------------------------------------- queue
+  function renderQueue() {
     var queue = RESULTS.filter(function (r) {
       return r.recommended_next_action === "Build Now" && coverStatus(r.slug) !== "Active";
     });
@@ -107,118 +147,87 @@
       if (ab !== bb) return ab - bb;
       return (Number(b.confidence) || 0) - (Number(a.confidence) || 0);
     });
-    var host = el("priority-queue");
-    if (!queue.length) { host.innerHTML = '<p class="empty">No uncovered build-ready apps in the current dataset.</p>'; return; }
-    host.innerHTML = queue.slice(0, 9).map(function (r, i) {
+    el("queue-body").innerHTML = queue.map(function (r, i) {
       var kind = (r.access_model || {}).kind || "—";
-      return '<button class="queue-card" data-slug="' + esc(r.slug) + '">' +
-        '<div class="queue-top"><span class="rank">' + (i + 1) + '</span>' +
-        '<span class="chip ' + ACTION_CLASS[r.recommended_next_action] + '">' + esc(r.recommended_next_action) + '</span></div>' +
-        '<h3>' + esc(r.app) + '</h3>' +
-        '<p class="queue-line">' + esc(r.one_liner || "") + '</p>' +
-        '<div class="queue-meta">' +
-        '<span>' + esc(r.api_type) + '</span><span>' + esc(kind) + '</span><span>' + esc(r.buildability) + '</span>' +
-        '</div></button>';
-    }).join("");
+      return '<tr data-slug="' + esc(r.slug) + '">' +
+        '<td class="q-rank">' + (i + 1) + '</td>' +
+        '<td><b>' + esc(r.app) + '</b></td>' +
+        '<td>' + esc(r.category) + '</td>' +
+        '<td>' + esc(r.api_type) + '</td>' +
+        '<td>' + tag(kind, kind === "Self-Serve" ? "tag-build" : "tag-blocked") + '</td>' +
+        '<td>' + esc(r.buildability) + '</td>' +
+        '<td class="q-conf">' + pct(r.confidence) + '%</td>' +
+        '</tr>';
+    }).join("") || '<tr><td colspan="7" class="empty">No uncovered build-ready apps in the current dataset.</td></tr>';
   }
 
-  // --- catalog ---------------------------------------------------------------
-  function chip(text, cls) { return '<span class="chip ' + (cls || "") + '">' + esc(text) + '</span>'; }
-  function confBar(v) {
-    var p = pct(v);
-    return '<div class="conf"><span class="conf-fill" style="width:' + p + '%"></span></div><small>' + p + '%</small>';
-  }
-
-  function renderFilters() {
-    var cats = {}, builds = {};
-    RESULTS.forEach(function (r) { if (r.category) cats[r.category] = 1; if (r.buildability) builds[r.buildability] = 1; });
-    fill("f-cat", Object.keys(cats).sort());
-    fill("f-next", ACTIONS);
-    fill("f-build", ["Easy", "Moderate", "Hard", "Blocked"].filter(function (b) { return builds[b]; }));
-  }
-  function fill(id, values) {
+  // ---------------------------------------------------------------- catalog
+  function fillSelect(id, values) {
     var sel = el(id);
     values.forEach(function (v) {
       var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o);
     });
   }
-
+  function initFilters() {
+    var cats = {};
+    RESULTS.forEach(function (r) { if (r.category) cats[r.category] = 1; });
+    fillSelect("f-cat", Object.keys(cats).sort());
+    fillSelect("f-next", ACTIONS);
+  }
   function catalogRows() {
     var q = (el("q").value || "").toLowerCase().trim();
-    var fc = el("f-cat").value, fn = el("f-next").value, fb = el("f-build").value;
+    var fc = el("f-cat").value, fn = el("f-next").value;
     return RESULTS.filter(function (r) {
       if (fc && r.category !== fc) return false;
       if (fn && r.recommended_next_action !== fn) return false;
-      if (fb && r.buildability !== fb) return false;
       if (q) {
-        var hay = [r.app, r.category, (r.auth_methods || []).join(" "), r.main_blocker, r.api_type].join(" ").toLowerCase();
+        var hay = [r.app, r.category, (r.auth_methods || []).join(" "), r.main_blocker].join(" ").toLowerCase();
         if (hay.indexOf(q) === -1) return false;
       }
       return true;
     });
   }
-  function renderCatalog() {
+  var selectedSlug = null;
+  function renderCatalogList() {
     var rows = catalogRows();
-    el("catalog-count").textContent = rows.length + " of " + RESULTS.length + " apps — open any row for full reasoning and sources.";
-    el("catalog-body").innerHTML = rows.map(function (r) {
+    el("catalog-count").textContent = rows.length + " / " + RESULTS.length;
+    el("catalog-rows").innerHTML = rows.map(function (r) {
       var cov = coverStatus(r.slug);
-      var covCls = cov === "Active" ? "s-active" : (cov === "Catalog-only" ? "s-catalog" : "s-missing");
-      var kind = (r.access_model || {}).kind || "—";
-      return '<tr data-slug="' + esc(r.slug) + '">' +
-        '<td class="c-app"><b>' + esc(r.app) + '</b><small>' + esc(r.category) + '</small></td>' +
-        '<td>' + esc((r.auth_methods || []).join(", ") || "—") + '</td>' +
-        '<td>' + chip(kind, kind === "Self-Serve" ? "s-active" : "s-missing") + '</td>' +
-        '<td>' + esc(r.api_type) + '</td>' +
-        '<td>' + esc(r.existing_mcp) + '</td>' +
-        '<td>' + chip(cov, covCls) + '</td>' +
-        '<td>' + esc(r.buildability) + '</td>' +
-        '<td>' + chip(r.recommended_next_action, ACTION_CLASS[r.recommended_next_action]) + '</td>' +
-        '<td class="c-conf">' + confBar(r.confidence) + '</td>' +
-        '<td class="c-open">›</td>' +
-        '</tr>';
-    }).join("");
+      var active = r.slug === selectedSlug ? " active" : "";
+      return '<li class="row-item' + active + '" data-slug="' + esc(r.slug) + '">' +
+        '<div class="row-main"><b>' + esc(r.app) + '</b><span>' + esc(r.category) + '</span></div>' +
+        '<div class="row-tags">' +
+        tag(r.recommended_next_action, ACTION_TAG[r.recommended_next_action]) +
+        (cov === "Active" ? tag("composio", "tag-build") : "") +
+        '</div></li>';
+    }).join("") || '<li class="empty">No apps match these filters.</li>';
   }
 
-  function renderSdkSummary() {
-    var s = COVERAGE.summary;
-    if (!s) { el("sdk-summary").textContent = "Composio SDK coverage unavailable."; return; }
-    el("sdk-summary").innerHTML =
-      '<b>Composio SDK audit</b> · ' +
-      '<span class="s-active">' + s.active + ' active</span> · ' +
-      s.catalog_only + ' catalog-only · ' +
-      '<span class="s-missing">' + s.missing + ' missing</span> · ' +
-      Number(s.tools_total).toLocaleString() + ' tools · ' + s.trigger_enabled + ' trigger-enabled';
-  }
-
-  // --- detail drawer ---------------------------------------------------------
   function mdSection(md, heading) {
     if (!md) return "";
     var re = new RegExp("##\\s*" + heading + "\\s*\\n([\\s\\S]*?)(?:\\n##\\s|$)", "i");
     var m = md.match(re);
     return m ? m[1].trim() : "";
   }
-  function openDetail(slug) {
+  function renderDetail(slug) {
+    selectedSlug = slug;
     var r = RESULTS.filter(function (x) { return x.slug === slug; })[0];
-    if (!r) return;
-    el("detail-title").textContent = r.app;
-    el("detail-sub").textContent = r.category + " · " + r.slug + " · verified " + (r.last_verified || "—");
+    var host = el("catalog-detail");
+    if (!r) { host.innerHTML = '<div class="detail-empty">Select an app from the list to inspect its evidence-backed decision.</div>'; return; }
     var access = r.access_model || {};
     var cov = COVER_APPS[slug] || {};
     var reasoning = mdSection(REASONING[slug], "Model reasoning");
-
     function row(dt, dd) { return '<div class="d-row"><dt>' + esc(dt) + '</dt><dd>' + dd + '</dd></div>'; }
     var links = (r.evidence_urls || []).map(function (u) {
       return '<li><a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u) + '</a></li>';
     }).join("");
 
-    el("detail-body").innerHTML =
-      '<p class="d-liner">' + esc(r.one_liner || "") + '</p>' +
-      '<div class="d-badges">' +
-        chip(r.recommended_next_action, ACTION_CLASS[r.recommended_next_action]) +
-        chip(access.kind || "—", access.kind === "Self-Serve" ? "s-active" : "s-missing") +
-        chip(r.buildability, "") +
-        chip(r.verification_status, "s-catalog") +
+    host.innerHTML =
+      '<div class="detail-head">' +
+        '<div><h2>' + esc(r.app) + '</h2><span>' + esc(r.category) + ' · ' + esc(r.slug) + ' · verified ' + esc(r.last_verified || "—") + '</span></div>' +
+        tag(r.recommended_next_action, ACTION_TAG[r.recommended_next_action]) +
       '</div>' +
+      '<p class="detail-liner">' + esc(r.one_liner || "") + '</p>' +
       '<dl class="d-grid">' +
         row("API type", esc(r.api_type) + " · " + esc(r.api_breadth) + " breadth") +
         row("Auth methods", esc((r.auth_methods || []).join(", ") || "—")) +
@@ -226,103 +235,101 @@
         row("Existing MCP", esc(r.existing_mcp)) +
         row("Composio", esc(cov.status || "—") + (cov.tools_count != null ? " · " + cov.tools_count + " tools" : "")) +
         row("Main blocker", esc(r.main_blocker || "—")) +
-        row("Rate limits", esc(r.rate_limit_note || "—")) +
         row("Confidence", pct(r.confidence) + "%") +
       '</dl>' +
       (reasoning ? '<div class="d-section"><h3>Model reasoning</h3><p>' + esc(reasoning) + '</p></div>' : '') +
       (links ? '<div class="d-section"><h3>Evidence</h3><ul class="d-links">' + links + '</ul></div>' : '');
-
-    var dlg = el("detail-dialog");
-    if (typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open", "");
   }
 
-  // --- verification ----------------------------------------------------------
-  function vcard(title, note, stats) {
+  // ---------------------------------------------------------------- verify
+  function scoreCard(title, note, stats) {
     var body = stats.map(function (s) {
-      return '<div class="v-stat"><span>' + esc(s[0]) + '</span><b>' + esc(s[1]) + '</b></div>';
+      return '<div class="sc-stat"><span>' + esc(s[0]) + '</span><b>' + esc(s[1]) + '</b></div>';
     }).join("");
-    return '<div class="v-card"><h3>' + esc(title) + '</h3>' +
-      (note ? '<p>' + esc(note) + '</p>' : '') + '<div class="v-stats">' + body + '</div></div>';
+    return '<div class="score-card"><h3>' + esc(title) + '</h3>' +
+      (note ? '<p>' + esc(note) + '</p>' : '') + '<div class="sc-stats">' + body + '</div></div>';
   }
-  function renderVerification() {
+  function renderVerify() {
     var out = [];
     var hc = METRICS.handcheck;
-    if (hc) {
-      out.push(vcard("Official-doc adjudication", hc.metric_scope || "", [
-        ["Apps", hc.n],
-        ["API type", pct(hc.api_type_accuracy) + "%"],
-        ["Auth set", pct(hc.auth_accuracy) + "%"],
-        ["Access", pct(hc.access_accuracy) + "%"],
-        ["MCP", pct(hc.mcp_accuracy) + "%"],
-      ]));
-    }
+    if (hc) out.push(scoreCard("Official-doc adjudication", hc.metric_scope || "", [
+      ["apps", hc.n], ["api type", pct(hc.api_type_accuracy) + "%"],
+      ["auth set", pct(hc.auth_accuracy) + "%"], ["access", pct(hc.access_accuracy) + "%"],
+      ["mcp", pct(hc.mcp_accuracy) + "%"],
+    ]));
     var am = METRICS.accuracy_movement;
-    if (am) {
-      out.push(vcard("Correction replay", "First-pass snapshot vs corrected dataset against the same truth set.", [
-        ["First pass", am.first_pass != null ? pct(am.first_pass) + "%" : "—"],
-        ["Corrected", am.corrected != null ? pct(am.corrected) + "%" : "—"],
-        ["Truth apps", am.n != null ? am.n : "—"],
-      ]));
-    }
+    if (am) out.push(scoreCard("Correction replay", "First pass vs corrected, same truth set.", [
+      ["first pass", am.first_pass != null ? pct(am.first_pass) + "%" : "—"],
+      ["corrected", am.corrected != null ? pct(am.corrected) + "%" : "—"],
+      ["truth apps", am.n != null ? am.n : "—"],
+    ]));
     var bu = METRICS.browser_use;
-    if (bu) {
-      out.push(vcard("Independent browser check", "Browser Use Cloud re-derived key fields from live docs.", [
-        ["Sampled", bu.sample != null ? bu.sample : (bu.n != null ? bu.n : "—")],
-        ["Agreed", bu.agreement != null ? pct(bu.agreement) + "%" : (bu.agreed != null ? bu.agreed : "—")],
-      ]));
-    }
-    if (!out.length) out.push('<p class="empty">Verification metrics will populate after a run.</p>');
-    el("verification-grid").innerHTML = out.join("");
+    if (bu) out.push(scoreCard("Independent browser check", "Browser Use Cloud re-derived key fields.", [
+      ["sampled", bu.sample != null ? bu.sample : (bu.n != null ? bu.n : "—")],
+      ["agreed", bu.agreement != null ? pct(bu.agreement) + "%" : (bu.agreed != null ? bu.agreed : "—")],
+    ]));
+    el("score-grid").innerHTML = out.join("") || '<p class="empty">Verification metrics populate after a run.</p>';
   }
 
-  // --- reproduce tabs --------------------------------------------------------
+  // ---------------------------------------------------------------- method
+  var STEPS = [
+    ["SDK coverage audit", "Composio SDK classifies every app active / catalog-only / missing and records tool depth.", "--composio-audit"],
+    ["Docs research", "OpenAI web search plus direct fetch collect official API, auth, access, and MCP pages.", "docs_research.py"],
+    ["Schema synthesis", "OpenAI returns a locked 19-field record with cited URLs via structured output.", "synthesis.py"],
+    ["Deterministic gate", "Invalid labels, weak coverage, contradictions, and invented links fail closed.", "schema.py"],
+    ["Official-doc check", "Priority apps adjudicated against vendor docs; every miss preserved.", "handcheck.py"],
+    ["Session diagnostic", "A read-only OpenAI Session runs one bounded Browser Tool check.", "--composio-agent"],
+  ];
+  function renderMethod() {
+    el("flow").innerHTML = STEPS.map(function (s, i) {
+      return '<div class="flow-node">' +
+        '<div class="flow-num">' + String(i + 1).padStart(2, "0") + '</div>' +
+        '<div class="flow-body"><b>' + esc(s[0]) + '</b><p>' + esc(s[1]) + '</p><code>' + esc(s[2]) + '</code></div>' +
+        '</div>';
+    }).join('<div class="flow-link" aria-hidden="true"></div>');
+  }
   var COMMANDS = {
-    research: "python research.py --all --fresh-run --model gpt-4.1\npython research.py --metrics\npython research.py --build-report",
+    research: "python research.py --all --fresh-run --model gpt-5\npython research.py --metrics\npython research.py --build-report",
     verify: "python browser_verify.py --sample 12\npython research.py --fold-handcheck\npython research.py --apply-handcheck\npython research.py --accuracy-movement",
     composio: "python research.py --composio-audit\npython research.py --composio-agent otter-ai\npython research.py --build-report",
   };
-  function bindTabs() {
+  function bindMethodTabs() {
     el("command-output").textContent = COMMANDS.research;
-    Array.prototype.forEach.call(document.querySelectorAll(".command-tab"), function (btn) {
+    document.querySelectorAll(".seg-tab").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        document.querySelectorAll(".command-tab").forEach(function (b) { b.classList.remove("active"); b.setAttribute("aria-selected", "false"); });
-        btn.classList.add("active"); btn.setAttribute("aria-selected", "true");
-        el("command-output").textContent = COMMANDS[btn.dataset.command] || "";
+        document.querySelectorAll(".seg-tab").forEach(function (b) { b.classList.remove("active"); });
+        btn.classList.add("active");
+        el("command-output").textContent = COMMANDS[btn.dataset.cmd] || "";
       });
     });
   }
 
-  // --- chrome ----------------------------------------------------------------
-  function renderChrome() {
-    el("reasoning-count").textContent = Object.keys(REASONING).length;
-    if (METRICS.generated) el("generated-note").textContent = "Generated " + String(METRICS.generated).slice(0, 10);
-    var repo = METRICS.repo_url;
-    if (repo) el("repo-link").href = repo;
-    var live = METRICS.live_url;
-    el("footer").innerHTML =
-      '<div><b>Composio × OpenAI Integration Readiness</b><span>' + RESULTS.length + ' apps · static build from audited JSON</span></div>' +
-      '<div class="footer-links">' +
-      (repo ? '<a href="' + esc(repo) + '" target="_blank" rel="noopener">Source ↗</a>' : '') +
-      (live ? '<a href="' + esc(live) + '" target="_blank" rel="noopener">Live report ↗</a>' : '') +
-      '</div>';
-  }
-
-  // --- wire up ---------------------------------------------------------------
+  // ---------------------------------------------------------------- wire up
   function bindEvents() {
-    ["q", "f-cat", "f-next", "f-build"].forEach(function (id) {
-      el(id).addEventListener("input", renderCatalog);
-      el(id).addEventListener("change", renderCatalog);
+    document.querySelectorAll(".rail-item").forEach(function (b) {
+      b.addEventListener("click", function () { setView(b.dataset.view); });
     });
-    el("catalog-body").addEventListener("click", function (e) {
+    ["q", "f-cat", "f-next"].forEach(function (id) {
+      el(id).addEventListener("input", renderCatalogList);
+      el(id).addEventListener("change", renderCatalogList);
+    });
+    el("catalog-rows").addEventListener("click", function (e) {
+      var li = e.target.closest("li[data-slug]");
+      if (!li) return;
+      renderDetail(li.dataset.slug);
+      renderCatalogList();
+    });
+    el("queue-body").addEventListener("click", function (e) {
       var tr = e.target.closest("tr[data-slug]");
-      if (tr) openDetail(tr.dataset.slug);
+      if (!tr) return;
+      setView("catalog");
+      renderDetail(tr.dataset.slug);
+      renderCatalogList();
     });
-    el("priority-queue").addEventListener("click", function (e) {
-      var card = e.target.closest("[data-slug]");
-      if (card) openDetail(card.dataset.slug);
+    if (el("repo-link") && METRICS.repo_url) el("repo-link").href = METRICS.repo_url;
+    window.addEventListener("hashchange", function () {
+      setView(location.hash.replace("#", ""));
     });
-    var dlg = el("detail-dialog");
-    dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });
   }
 
   function init() {
@@ -330,16 +337,16 @@
       el("decision-title").textContent = "No data loaded. Run `python research.py --build-report` to generate report/data.js.";
       return;
     }
-    renderPulse();
-    renderKpis();
-    renderPriorities();
-    renderFilters();
-    renderSdkSummary();
-    renderCatalog();
-    renderVerification();
-    renderChrome();
-    bindTabs();
+    renderStrip();
+    renderOverview();
+    renderQueue();
+    initFilters();
+    renderCatalogList();
+    renderVerify();
+    renderMethod();
+    bindMethodTabs();
     bindEvents();
+    setView(location.hash ? location.hash.replace("#", "") : "overview");
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

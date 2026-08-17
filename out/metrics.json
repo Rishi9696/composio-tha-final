@@ -1,0 +1,131 @@
+{
+  "patterns": {
+    "n": 60,
+    "buildability": {
+      "Easy": 8,
+      "Moderate": 37,
+      "Hard": 15
+    },
+    "recommended_next_action": {
+      "Build Now": 9,
+      "Needs Outreach": 51
+    },
+    "access_model": {
+      "Self-Serve": 9,
+      "Gated": 51
+    },
+    "api_type": {
+      "REST": 53,
+      "MCP-only": 3,
+      "GraphQL": 4
+    },
+    "existing_mcp": {
+      "Official": 51,
+      "Community": 6,
+      "None": 3
+    },
+    "composio_toolkit": {
+      "Yes": 36,
+      "No": 24
+    },
+    "auth_methods_top": [
+      [
+        "OAuth2",
+        42
+      ],
+      [
+        "API Key",
+        36
+      ],
+      [
+        "Personal Access Token",
+        11
+      ],
+      [
+        "Basic Auth",
+        7
+      ],
+      [
+        "Bearer Token",
+        6
+      ],
+      [
+        "Other Token",
+        2
+      ],
+      [
+        "Service Account",
+        1
+      ]
+    ],
+    "access_by_category": {
+      "CRM": {
+        "Self-Serve": 1,
+        "Gated": 5
+      },
+      "Support": {
+        "Gated": 7,
+        "Self-Serve": 1
+      },
+      "Comms": {
+        "Gated": 4,
+        "Self-Serve": 1
+      },
+      "Ads/Marketing": {
+        "Gated": 2
+      },
+      "Commerce": {
+        "Gated": 4,
+        "Self-Serve": 1
+      },
+      "Research/Scraping": {
+        "Self-Serve": 3,
+        "Gated": 6
+      },
+      "DevInfra": {
+        "Gated": 3,
+        "Self-Serve": 1
+      },
+      "Productivity/PM": {
+        "Gated": 7,
+        "Self-Serve": 1
+      },
+      "Fintech": {
+        "Gated": 6
+      },
+      "AI/Meeting-tools": {
+        "Gated": 7
+      }
+    },
+    "top_blockers": [
+      [
+        "None beyond requiring a HubSpot portal and adhering to plan-based API limits.",
+        1
+      ],
+      [
+        "No confirmed self-serve production access; ongoing use requires a paid account and public apps face approval.",
+        1
+      ],
+      [
+        "No explicit confirmation of free, self-serve production entitlement; need to verify production access terms or plan requirements.",
+        1
+      ],
+      [
+        "Production API use appears tied to an active Zoho CRM org/plan; self-serve production entitlement is not documented.",
+        1
+      ],
+      [
+        "No explicit proof of self-serve production access; likely requires an active (paid) Close org to use API in production.",
+        1
+      ],
+      [
+        "Production credentials appear to require sales approval/customer status; MCP is limited to a client preview.",
+        1
+      ]
+    ],
+    "build_now": 9,
+    "partner_gated": 0,
+    "avg_confidence": 0.638
+  },
+  "n_results": 60
+}
