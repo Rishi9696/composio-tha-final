@@ -86,18 +86,29 @@ COMPOSIO_API_KEY = os.getenv("COMPOSIO_API_KEY", "")
 LLM_TIMEOUT_SECONDS = float(os.getenv("LLM_TIMEOUT_SECONDS", "180"))
 OPENAI_MAX_WORKERS = int(os.getenv("OPENAI_MAX_WORKERS", "2"))
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-PRIMARY_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
-# Model used by the OpenAI web-search step in docs_research.py. A lighter model
-# is enough for query-and-cite discovery; synthesis uses PRIMARY_MODEL.
+PRIMARY_MODEL = os.getenv("OPENAI_MODEL", "gpt-5")
+# Reasoning effort for PRIMARY_MODEL when it is a reasoning model (see
+# _is_reasoning_model). Synthesis repair calls may override this per-call.
+OPENAI_REASONING_EFFORT = os.getenv("OPENAI_REASONING_EFFORT", "medium")
+# Model used by the OpenAI web-search step in docs_research.py. A lighter,
+# non-reasoning model is enough for query-and-cite discovery.
 SEARCH_MODEL = os.getenv("OPENAI_SEARCH_MODEL", "gpt-4.1-mini")
 OPENAI_TOKEN_PRICES = {
     # USD per 1M (input, output) tokens.
+    "gpt-5": (1.25, 10.0),
     "gpt-4.1": (2.0, 8.0),
     "gpt-4.1-mini": (0.4, 1.6),
     "gpt-4.1-nano": (0.1, 0.4),
     "gpt-4o": (2.5, 10.0),
     "gpt-4o-mini": (0.15, 0.6),
 }
+# Models that only accept reasoning_effort/max_completion_tokens, not
+# temperature/max_tokens, via the Chat Completions API.
+_REASONING_MODEL_PREFIXES = ("gpt-5", "o1", "o3", "o4")
+
+
+def _is_reasoning_model(model: str) -> bool:
+    return model.startswith(_REASONING_MODEL_PREFIXES)
 
 
 def _openai_token_prices(model: str) -> tuple[float, float]:
@@ -200,11 +211,16 @@ def llm_json(
     import usage_tracker
 
     selected_model = model or PRIMARY_MODEL
+    is_reasoning = _is_reasoning_model(selected_model)
+    # Reasoning models spend part of max_completion_tokens on hidden reasoning
+    # tokens before any visible output; give them headroom beyond the caller's
+    # nominal budget so a dense rubric doesn't get truncated mid-answer.
+    effective_max = max(max_tokens, 8000) if is_reasoning else max_tokens
     input_price, output_price = _openai_token_prices(selected_model)
     input_estimate = sum(len(str(message.get("content", ""))) for message in messages) / 4
     conservative_cost = (
         input_estimate * input_price / 1_000_000
-        + max_tokens * output_price / 1_000_000
+        + effective_max * output_price / 1_000_000
     )
     usage_tracker.ensure_budget("openai", conservative_cost)
 
@@ -218,12 +234,13 @@ def llm_json(
         reraise=True,
     )
     def _call():
-        common = {
-            "model": selected_model,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-        }
+        common = {"model": selected_model, "messages": messages}
+        if is_reasoning:
+            common["max_completion_tokens"] = effective_max
+            common["reasoning_effort"] = thinking_level or OPENAI_REASONING_EFFORT
+        else:
+            common["temperature"] = temperature
+            common["max_tokens"] = effective_max
         if use_schema:
             parse = getattr(client.chat.completions, "parse", None)
             if parse is None:

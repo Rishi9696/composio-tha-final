@@ -89,7 +89,7 @@ Provider keys:
 Run a fresh paid pipeline (synchronous, resumable):
 
 ```bash
-python research.py --all --fresh-run --model gpt-4.1
+python research.py --all --fresh-run --model gpt-5
 python research.py --metrics
 ```
 

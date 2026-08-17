@@ -469,18 +469,23 @@ def run(
     ]
 
     def _complete(required_tool: str | None):
-        return client.chat.completions.create(
-            model=selected_model,
-            messages=messages,
-            tools=wrapped_tools,
-            tool_choice=(
+        kwargs = {
+            "model": selected_model,
+            "messages": messages,
+            "tools": wrapped_tools,
+            "tool_choice": (
                 {"type": "function", "function": {"name": required_tool}}
                 if required_tool
                 else "none"
             ),
-            temperature=0,
-            max_tokens=4096,
-        )
+        }
+        if config._is_reasoning_model(selected_model):
+            kwargs["max_completion_tokens"] = 8000
+            kwargs["reasoning_effort"] = config.OPENAI_REASONING_EFFORT
+        else:
+            kwargs["temperature"] = 0
+            kwargs["max_tokens"] = 4096
+        return client.chat.completions.create(**kwargs)
 
     trace: list[str] = []
     last_message = None

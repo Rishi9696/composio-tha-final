@@ -30,15 +30,22 @@ def _clip120(text: str, limit: int = 120) -> str:
     return (cut + "...") if cut else text[:limit]
 
 
-SYSTEM = f"""You are an API-integration analyst. Produce one STRICT JSON object from the supplied evidence.
+SYSTEM = f"""# Role and Objective
+You are an API-integration analyst. Produce one STRICT JSON object from the supplied evidence, deciding auth, production access, and buildability for one app.
 
-Evidence rules:
+# Reasoning Steps
+`reasoning` is the FIRST field you write. Before any other field, use `reasoning` to think step by step, in this order:
+1. List what the fetched evidence actually states about the API surface, MCP, and auth credentials — do not infer beyond it.
+2. Apply the Production Access Rubric below explicitly: quote or paraphrase the specific evidence sentence that proves Self-Serve vs Gated, or state that none exists.
+3. Only after 1 and 2, decide auth_methods, api_type, existing_mcp, access_model, buildability, and recommended_next_action so they follow from what you just wrote — never state a conclusion in `reasoning` that contradicts the structured fields that follow it.
+If evidence is thin or contradictory, say so in `reasoning` and lower confidence. Never fill a gap by guessing.
+
+# Evidence Rules
 - Use only fetched documentation. Search-result snippets help discovery but cannot support a final claim by themselves.
 - evidence_urls must contain only URLs from ALLOWED_URLS and must cite the pages supporting your decisions.
-- If evidence is thin or contradictory, state that in reasoning and lower confidence. Never fill a gap by guessing.
 - Historical preseeds are deliberately withheld from synthesis to avoid anchoring. Decide only from fetched evidence.
 
-Controlled vocabularies:
+# Controlled Vocabularies
 - auth_methods must use ONLY: {json.dumps(normalize.CANONICAL)}.
 - OAuth2 means an OAuth grant, including authorization-code and client-credentials flows. Do not also add Bearer Token merely because an OAuth access token is sent in a Bearer header.
 - Bearer Token means a static vendor-issued bearer token with no OAuth grant. API Key means a static API key/token. Use Other Token only when official docs identify a distinct credential that fits no other label.
@@ -49,10 +56,10 @@ Controlled vocabularies:
 - Prefer the vendor's most specific credential label. A personal access token or bot token sent in an Authorization: Bearer header is one method, not both that label and Bearer Token.
 - OAuth2 and a static token may coexist only when official docs show they are independently issued alternatives for API access.
 - Use None / Not Applicable only when there is no hosted API/MCP authentication surface.
-- api_type: REST | GraphQL | SDK | SOAP | MCP-only | None. Choose the dominant public integration surface; explain additional protocols in notes/reasoning.
-- existing_mcp: Official only for a vendor-hosted/published server; Community for a credible third party; None otherwise. Base this primarily on MCP EVIDENCE.
+- api_type: REST | GraphQL | SDK | SOAP | MCP-only | None. Choose the dominant public integration surface; explain additional protocols in reasoning.
+- existing_mcp: Official only for a vendor-hosted/published server; Community for a credible third party; None otherwise. Base this primarily on MCP evidence.
 
-Production access rubric:
+# Production Access Rubric
 - Self-Serve means a new developer can obtain credentials usable in production without manual vendor approval, partnership, business verification, or already being a paying customer.
 - A sandbox/trial alone does not make production access Self-Serve.
 - Gated means production use needs approval, review, partnership, business verification, or an existing paid account.
@@ -60,14 +67,18 @@ Production access rubric:
 - If free access expires and continued API use needs a paid plan, classify Gated. Do not treat a temporary trial as a free production tier.
 - If REST is gated but an official MCP is self-serve, describe both surfaces in access_model.note and base the recommendation on the surface actually proposed.
 
-Decision rubric:
+# Decision Rubric
 - buildability Easy = self-serve credentials + clear REST/GraphQL docs; Moderate = OAuth/app setup or partial docs; Hard = review/verification or thin docs; Blocked = no usable hosted API/MCP.
 - Build Now requires a usable self-serve surface. Needs Outreach means access approval/review. Partner-Gated means no entry point without an existing customer/partner relationship. Blocked means no usable hosted surface.
 - one_liner must be a complete sentence of at most 120 characters.
 
-Return EXACTLY these keys:
-one_liner, auth_methods, access_model, api_type, api_breadth, existing_mcp, buildability, main_blocker, recommended_next_action, rate_limit_note, evidence_urls, confidence, reasoning.
-access_model must be {{"kind":"Self-Serve"|"Gated","note":"..."}}. confidence must be 0..1."""
+# Output Format
+Return EXACTLY these keys, with `reasoning` written first:
+reasoning, auth_methods, access_model, api_type, api_breadth, existing_mcp, buildability, main_blocker, recommended_next_action, rate_limit_note, evidence_urls, confidence, one_liner.
+access_model must be {{"kind":"Self-Serve"|"Gated","note":"..."}}. confidence must be 0..1.
+
+# Critical Reminder (read this before writing access_model)
+Self-Serve is the narrow case, not the default: it requires evidence that a NEW developer can get PRODUCTION credentials with NO manual approval, NO partnership, and NO existing paid account. Generating an API key alone, having an OAuth flow alone, or a free/trial tier alone is NOT sufficient proof of Self-Serve — if you cannot point to a specific evidence sentence confirming free or self-serve PRODUCTION entitlement, you MUST choose Gated. When in doubt, choose Gated."""
 
 
 class SynthesisAccess(BaseModel):
@@ -76,8 +87,10 @@ class SynthesisAccess(BaseModel):
 
 
 class SynthesisOutput(BaseModel):
-    """OpenAI structured-output schema; deterministic checks remain the final gate."""
-    one_liner: str
+    """OpenAI structured-output schema; fields are generated in this declared order,
+    so ``reasoning`` comes first to give the model a chain-of-thought pass before it
+    commits to any decision field. Deterministic checks remain the final gate."""
+    reasoning: str
     auth_methods: list[str]
     access_model: SynthesisAccess
     api_type: Literal["REST", "GraphQL", "SDK", "SOAP", "MCP-only", "None"]
@@ -91,7 +104,7 @@ class SynthesisOutput(BaseModel):
     rate_limit_note: str
     evidence_urls: list[str]
     confidence: float = Field(ge=0.0, le=1.0)
-    reasoning: str
+    one_liner: str
 
 
 def _pick(value, allowed: list[str], field: str, default: str | None = None) -> str:
