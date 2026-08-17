@@ -4,7 +4,8 @@ Reproducible research pipeline and static decision dashboard for the Composio AI
 
 The pipeline runs on a single official paid provider — **OpenAI** — for both documentation discovery (Responses API `web_search` tool) and strict structured synthesis. There is no model gateway and no fallback provider.
 
-- Repository: https://github.com/dheeraj3587/composio-ai-product-ops
+- Live report: https://composio-tha-final-ltbpjdgh7-rishi96.vercel.app/
+- Repository: https://github.com/Rishi9696/composio-tha-final
 
 ## Results
 
