@@ -1,777 +1,347 @@
-"use strict";
+/* Integration Readiness dashboard — renders the static audited dataset.
+   Data globals are provided by data.js:
+     window.RESULTS, window.METRICS, window.REASONING, window.COMPOSIO_COVERAGE */
+(function () {
+  "use strict";
 
-const $ = (id) => document.getElementById(id);
-const esc = (value) => String(value == null ? "" : value)
-  .replace(/&/g, "&amp;")
-  .replace(/</g, "&lt;")
-  .replace(/>/g, "&gt;")
-  .replace(/"/g, "&quot;")
-  .replace(/'/g, "&#039;");
+  var RESULTS = Array.isArray(window.RESULTS) ? window.RESULTS : [];
+  var METRICS = window.METRICS || {};
+  var REASONING = window.REASONING || {};
+  var COVERAGE = window.COMPOSIO_COVERAGE || {};
+  var COVER_APPS = COVERAGE.apps || {};
+  var PATTERNS = METRICS.patterns || {};
 
-const tone = {
-  "Self-Serve": "green",
-  Gated: "amber",
-  Easy: "green",
-  Moderate: "blue",
-  Hard: "amber",
-  Blocked: "red",
-  "Build Now": "green",
-  "Needs Outreach": "blue",
-  "Partner-Gated": "violet",
-  Official: "green",
-  Community: "blue",
-  None: "gray",
-  Auto: "gray",
-  "Hand-Checked": "green",
-  Active: "green",
-  "Catalog-only": "amber",
-  Missing: "gray",
-  Yes: "green",
-  No: "gray",
-};
-
-const commandSets = {
-  research: [
-    "python research.py --batch-submit --fresh-run",
-    "python research.py --batch-status",
-    "python research.py --batch-collect",
-    "python research.py --batch-audit-sources",
-    "python research.py --metrics",
-    "python research.py --build-report",
-  ].join("\n"),
-  verify: [
-    "python research.py --handcheck-template 18",
-    "python research.py --fold-handcheck",
-    "python research.py --apply-handcheck",
-    "python research.py --accuracy-movement",
-    "python browser_verify.py --sample 12",
-  ].join("\n"),
-  composio: [
-    "python research.py --composio-audit",
-    "python research.py --composio-agent otter-ai",
-    "python research.py --build-report",
-  ].join("\n"),
-};
-
-let rows = [];
-let metrics = {};
-let reasoning = {};
-let composioCoverage = {};
-
-const pct = (value) => Number.isFinite(Number(value))
-  ? `${Math.round(Number(value) * 1000) / 10}%`
-  : "Pending";
-
-const pill = (text, kind) => (
-  `<span class="pill ${tone[kind || text] || "gray"}">${esc(text || "—")}</span>`
-);
-
-function safeUrl(value) {
-  try {
-    const url = new URL(String(value || ""));
-    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
-  } catch {
-    return "";
-  }
-}
-
-function compactHost(value) {
-  try {
-    return new URL(value).hostname.replace(/^www\./, "");
-  } catch {
-    return "Official docs";
-  }
-}
-
-function sourcePath(value) {
-  try {
-    const url = new URL(value);
-    return `${url.pathname}${url.search}` || "/";
-  } catch {
-    return value;
-  }
-}
-
-function initials(name) {
-  const parts = String(name || "")
-    .replace(/[^a-zA-Z0-9 ]/g, " ")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-  if (!parts.length) return "?";
-  if (parts.length === 1) return parts[0].slice(0, 2);
-  return `${parts[0][0]}${parts[1][0]}`;
-}
-
-function formatDate(value) {
-  if (!value) return "date unavailable";
-  const date = new Date(`${value}T00:00:00`);
-  if (Number.isNaN(date.getTime())) return String(value);
-  return date.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-function loadData() {
-  return {
-    rows: Array.isArray(window.RESULTS) ? window.RESULTS : [],
-    metrics: window.METRICS || {},
-    reasoning: window.REASONING || {},
-    composioCoverage: window.COMPOSIO_COVERAGE || {},
+  var ACTIONS = ["Build Now", "Needs Outreach", "Partner-Gated", "Blocked"];
+  var ACTION_CLASS = {
+    "Build Now": "a-build",
+    "Needs Outreach": "a-outreach",
+    "Partner-Gated": "a-partner",
+    "Blocked": "a-blocked",
   };
-}
+  var BUILD_RANK = { Easy: 0, Moderate: 1, Hard: 2, Blocked: 3 };
 
-function coverageFor(record) {
-  const profile = composioCoverage.apps?.[record.slug];
-  if (profile) return profile;
-  return {
-    app: record.app,
-    status: record.composio_toolkit === "Yes" ? "Active" : "Missing",
-    toolkit_slug: null,
-    tools_count: null,
-    triggers_count: null,
-    auth_schemes: [],
-    managed_auth_schemes: [],
-    categories: [],
-    inferred: true,
-  };
-}
-
-function coverageSummary() {
-  return composioCoverage.summary || metrics.composio_sdk || {};
-}
-
-function renderHeader() {
-  const repo = safeUrl(metrics.repo_url);
-  if (repo) {
-    $("repo-link").href = repo;
-  } else {
-    $("repo-link").hidden = true;
-  }
-}
-
-function renderHero() {
-  const patterns = metrics.patterns || {};
-  const quality = metrics.quality || {};
-  const actions = patterns.recommended_next_action || {};
-  const toolkit = patterns.composio_toolkit || {};
-  const sdk = coverageSummary();
-  const total = patterns.n || rows.length || 1;
-  const buildQueue = rows.filter((row) => (
-    row.composio_toolkit === "No" && row.recommended_next_action === "Build Now"
-  ));
-  const reasoningCount = Object.keys(reasoning).length;
-
-  $("hero-copy").textContent = `${total} requested apps ranked by API surface, authentication, production access, MCP ownership, and buildability.`;
-  $("snapshot-copy").textContent = `${quality.source_audited_rows || 0}/${total} rows source-audited`;
-  $("generated-note").textContent = `${reasoningCount} reasoning traces · ${formatDate(metrics.generated)}`;
-  $("reasoning-count").textContent = `${reasoningCount}/${total}`;
-  $("quality-badge").textContent = quality.source_audit_complete ? "Source audit complete" : "Audit incomplete";
-  $("decision-title").textContent = `${buildQueue.length} uncovered integrations are ready to build now.`;
-  $("decision-summary").textContent = sdk.n_apps
-    ? `${sdk.active || 0} active toolkits, ${sdk.catalog_only || 0} catalog-only entry, and ${sdk.missing || 0} missing. Front is tracked separately as a toolkit-expansion opportunity.`
-    : `${toolkit.No || 0} apps have no Composio toolkit. The rest of the queue is separated into access, partnership, and no-build work.`;
-
-  const actionOrder = [
-    ["Build Now", "build"],
-    ["Needs Outreach", "outreach"],
-    ["Partner-Gated", "partner"],
-    ["Blocked", "blocked"],
-  ];
-  $("pulse-chart").innerHTML = actionOrder.map(([label, cssClass]) => {
-    const value = Number(actions[label] || 0);
-    const height = value ? Math.max(18, Math.round(22 + (value / total) * 55)) : 2;
-    return `<span class="pulse-segment ${cssClass}" style="flex:${Math.max(value, 1)};height:${height}px" title="${esc(label)}: ${value}"></span>`;
-  }).join("");
-  $("pulse-legend").innerHTML = actionOrder.map(([label, cssClass]) => (
-    `<span class="legend-item"><i class="${cssClass}"></i>${esc(label)} <b>${actions[label] || 0}</b></span>`
-  )).join("");
-}
-
-function renderMetrics() {
-  const patterns = metrics.patterns || {};
-  const access = patterns.access_model || {};
-  const toolkit = patterns.composio_toolkit || {};
-  const sdk = coverageSummary();
-  const actions = patterns.recommended_next_action || {};
-  const movement = metrics.accuracy_movement || {};
-  const cards = [
-    [access["Self-Serve"] || 0, "Self-serve paths", "Credentials available without manual production approval"],
-    [patterns.build_now || actions["Build Now"] || 0, "Ready to build", "Usable API surface and a clear implementation path"],
-    [actions["Needs Outreach"] || 0, "Needs outreach", "Customer, vendor, or account access is the next move"],
-    [sdk.missing ?? toolkit.No ?? 0, "Toolkit gaps", sdk.catalog_only
-      ? `${sdk.catalog_only} additional catalog entry has no executable tools`
-      : "Requested apps not currently covered by Composio"],
-    [
-      movement.first_pass_accuracy != null ? pct(movement.first_pass_accuracy) : "—",
-      "Archived first pass",
-      `${movement.n || 0} priority apps scored against the final verified truth set`,
-    ],
-  ];
-
-  $("metrics").innerHTML = cards.map(([value, label, note], index) => `
-    <article class="metric-card">
-      <div class="metric-top"><span class="metric-label">${esc(label)}</span><span class="metric-index">0${index + 1}</span></div>
-      <div>
-        <div class="metric-value">${esc(value)}</div>
-        <p class="metric-foot">${esc(note)}</p>
-      </div>
-    </article>
-  `).join("");
-}
-
-function renderCoverageAudit() {
-  const target = $("sdk-audit-summary");
-  if (!target) return;
-  const sdk = coverageSummary();
-  if (!sdk.n_apps) {
-    target.innerHTML = `
-      <div><b>SDK depth unavailable</b><span>The catalog still uses the locked binary research field.</span></div>
-    `;
-    return;
-  }
-  target.innerHTML = `
-    <div class="sdk-audit-lead">
-      <span class="sdk-live-dot" aria-hidden="true"></span>
-      <span><b>Composio SDK audit</b><small>${esc(composioCoverage.sdk_version ? `v${composioCoverage.sdk_version}` : "current snapshot")}</small></span>
-    </div>
-    <div class="sdk-audit-counts" aria-label="Composio SDK coverage counts">
-      <span><b>${sdk.active || 0}</b> active</span>
-      <span><b>${sdk.catalog_only || 0}</b> catalog-only</span>
-      <span><b>${sdk.missing || 0}</b> missing</span>
-    </div>
-    <p>${Number(sdk.tools_total || 0).toLocaleString()} executable tools · median ${esc(sdk.tools_median ?? "—")} per catalog entry · ${sdk.trigger_enabled || 0} trigger-enabled toolkits</p>
-  `;
-}
-
-function renderInsights() {
-  const patterns = metrics.patterns || {};
-  const topAuth = (patterns.auth_methods_top || [])[0] || ["OAuth2", 0];
-  const uncovered = rows.filter((row) => row.composio_toolkit === "No");
-  const buildable = uncovered.filter((row) => row.recommended_next_action === "Build Now");
-  const gated = rows.filter((row) => row.api_type !== "None" && row.access_model?.kind === "Gated");
-  const officialMcp = rows.filter((row) => row.existing_mcp === "Official");
-  const cards = [
-    ["Immediate queue", `${buildable.length} build-ready apps have no Composio toolkit. These are the cleanest engineering opportunities.`],
-    ["Access is the real blocker", `${gated.length} apps expose a usable API but require payment, approval, verification, partnership, or an existing customer account.`],
-    ["MCP changes the build decision", `${officialMcp.length} vendors already publish an official MCP server. ${topAuth[0]} is the most common auth pattern across the catalog.`],
-  ];
-
-  $("insights").innerHTML = cards.map(([title, body]) => `
-    <article class="insight-item"><h3>${esc(title)}</h3><p>${esc(body)}</p></article>
-  `).join("");
-}
-
-function queueItem(record) {
-  return `
-    <li class="queue-item">
-      <span class="app-avatar" aria-hidden="true">${esc(initials(record.app))}</span>
-      <span class="queue-name"><b>${esc(record.app)}</b><small>${esc(record.category)}</small></span>
-      <span class="queue-score">${Math.round(Number(record.confidence || 0) * 100)}%</span>
-    </li>
-  `;
-}
-
-function renderPriorityQueue() {
-  const confidence = (record) => Number(record.confidence || 0);
-  const build = rows
-    .filter((row) => row.composio_toolkit === "No" && row.recommended_next_action === "Build Now")
-    .sort((a, b) => confidence(b) - confidence(a) || a.app.localeCompare(b.app))
-    .slice(0, 6);
-  const access = rows
-    .filter((row) => ["Needs Outreach", "Partner-Gated"].includes(row.recommended_next_action))
-    .sort((a, b) => confidence(b) - confidence(a) || a.app.localeCompare(b.app))
-    .slice(0, 6);
-  const mcp = rows
-    .filter((row) => row.existing_mcp === "Official")
-    .sort((a, b) => confidence(b) - confidence(a) || a.app.localeCompare(b.app))
-    .slice(0, 6);
-  const cards = [
-    ["Build next", "Uncovered and build-ready", build],
-    ["Open access", "Approval or customer access", access],
-    ["Use vendor MCP", "Official server already exists", mcp],
-  ];
-
-  $("priority-queue").innerHTML = cards.map(([title, subtitle, list]) => `
-    <article class="queue-card">
-      <header class="queue-card-head">
-        <div><h3>${esc(title)}</h3><p>${esc(subtitle)}</p></div>
-        <span>${list.length} shown</span>
-      </header>
-      <ol class="queue-list">${list.map(queueItem).join("")}</ol>
-    </article>
-  `).join("");
-}
-
-function initFilters() {
-  const categories = [...new Set(rows.map((row) => row.category).filter(Boolean))].sort();
-  const actions = [...new Set(rows.map((row) => row.recommended_next_action).filter(Boolean))].sort();
-  const builds = ["Easy", "Moderate", "Hard", "Blocked"];
-
-  categories.forEach((value) => $("f-cat").insertAdjacentHTML(
-    "beforeend",
-    `<option value="${esc(value)}">${esc(value)}</option>`,
-  ));
-  actions.forEach((value) => $("f-next").insertAdjacentHTML(
-    "beforeend",
-    `<option value="${esc(value)}">${esc(value)}</option>`,
-  ));
-  builds.forEach((value) => $("f-build").insertAdjacentHTML(
-    "beforeend",
-    `<option value="${esc(value)}">${esc(value)}</option>`,
-  ));
-
-  ["q", "f-cat", "f-next", "f-build"].forEach((id) => {
-    $(id).addEventListener("input", renderTable);
-  });
-}
-
-function renderTable() {
-  const query = $("q").value.trim().toLowerCase();
-  const category = $("f-cat").value;
-  const action = $("f-next").value;
-  const build = $("f-build").value;
-  const actionRank = { "Build Now": 0, "Needs Outreach": 1, "Partner-Gated": 2, Blocked: 3 };
-
-  const visible = rows.filter((row) => {
-    if (category && row.category !== category) return false;
-    if (action && row.recommended_next_action !== action) return false;
-    if (build && row.buildability !== build) return false;
-    if (!query) return true;
-    const coverage = coverageFor(row);
-    return [
-      row.app,
-      row.category,
-      row.one_liner,
-      (row.auth_methods || []).join(" "),
-      row.main_blocker,
-      row.recommended_next_action,
-      coverage.status,
-      coverage.toolkit_slug,
-    ].join(" ").toLowerCase().includes(query);
-  }).sort((a, b) => (
-    (actionRank[a.recommended_next_action] ?? 9) - (actionRank[b.recommended_next_action] ?? 9)
-    || Number(b.confidence || 0) - Number(a.confidence || 0)
-    || a.app.localeCompare(b.app)
-  ));
-
-  $("matrix-count").textContent = `${visible.length} of ${rows.length} apps`;
-  $("matrix-body").innerHTML = visible.map((record) => {
-    const confidence = Math.round(Number(record.confidence || 0) * 100);
-    const auth = (record.auth_methods || []).join(", ") || "—";
-    const hasReasoning = Boolean(reasoning[record.slug]);
-    const coverage = coverageFor(record);
-    return `
-      <tr>
-        <td>
-          <div class="app-cell">
-            <span class="app-avatar" aria-hidden="true">${esc(initials(record.app))}</span>
-            <span class="app-meta"><b>${esc(record.app)}</b><span>${esc(record.category)}</span></span>
-          </div>
-        </td>
-        <td><span class="truncate" title="${esc(auth)}">${esc(auth)}</span></td>
-        <td>${pill(record.access_model?.kind, record.access_model?.kind)}</td>
-        <td><span class="truncate" title="${esc(record.api_type)} · ${esc(record.api_breadth)}">${esc(record.api_type)} · ${esc(record.api_breadth)}</span></td>
-        <td>${pill(record.existing_mcp, record.existing_mcp)}</td>
-        <td>${pill(coverage.status, coverage.status)}</td>
-        <td>${pill(record.buildability, record.buildability)}</td>
-        <td>${pill(record.recommended_next_action, record.recommended_next_action)}</td>
-        <td>
-          <div class="confidence-cell" aria-label="${confidence}% confidence">
-            <span>${confidence}</span>
-            <span class="confidence-track"><span class="confidence-fill" style="width:${confidence}%"></span></span>
-          </div>
-        </td>
-        <td><button class="review-button" type="button" data-slug="${esc(record.slug)}" data-testid="reasoning-${esc(record.slug)}">${hasReasoning ? "Reasoning" : "Details"}</button></td>
-      </tr>
-    `;
-  }).join("");
-}
-
-function markdownSection(raw, heading) {
-  const marker = `## ${heading}`;
-  const start = String(raw || "").indexOf(marker);
-  if (start < 0) return "";
-  const contentStart = start + marker.length;
-  const remainder = raw.slice(contentStart).replace(/^\s+/, "");
-  const next = remainder.search(/\n##\s+/);
-  return (next >= 0 ? remainder.slice(0, next) : remainder).trim();
-}
-
-function stripMarkdown(value) {
-  return String(value || "")
-    .replace(/\*\*/g, "")
-    .replace(/^[-*]\s+/gm, "")
-    .replace(/`([^`]+)`/g, "$1")
-    .trim();
-}
-
-function parseResearchTrace(raw) {
-  const section = markdownSection(raw, "Research trace");
-  const lines = section.split("\n").map((line) => line.trim()).filter(Boolean);
-  const queryLine = lines.find((line) => line.startsWith("- queries:")) || "";
-  const qualityLine = lines.find((line) => line.startsWith("- evidence quality:")) || "";
-  const sources = lines.map((line) => {
-    const match = line.match(/^- (https?:\/\/\S+) \| HTTP (\d+) \| ([^|]+) \| topics=(.+)$/);
-    if (!match) return null;
-    return { url: match[1], status: Number(match[2]), kind: match[3].trim(), topics: match[4].trim() };
-  }).filter(Boolean);
-  return {
-    queries: stripMarkdown(queryLine.replace("- queries:", "")),
-    quality: stripMarkdown(qualityLine.replace("- evidence quality:", "")) || "unknown",
-    sources,
-  };
-}
-
-function handcheckFor(record) {
-  const handcheck = metrics.handcheck || {};
-  const checked = (handcheck.checked || []).find((item) => item.slug === record.slug);
-  const misses = (handcheck.misses || []).filter((item) => item.slug === record.slug);
-  return { checked, misses };
-}
-
-function composioMarkup(record) {
-  const coverage = coverageFor(record);
-  if (coverage.inferred) {
-    return `
-      <div class="verification-note">
-        <p><b>${esc(coverage.status)} from the locked dataset.</b> The separate SDK depth audit was not packaged in this build.</p>
-      </div>
-    `;
-  }
-  if (coverage.status === "Missing") {
-    return `
-      <div class="composio-status-line"><span>No identity-matched Composio catalog entry was returned by the SDK.</span></div>
-    `;
-  }
-  const catalogUrl = safeUrl(coverage.catalog_url);
-  const auth = (coverage.auth_schemes || []).join(", ") || "None advertised";
-  const managed = (coverage.managed_auth_schemes || []).join(", ") || "None advertised";
-  const expansion = coverage.status === "Catalog-only"
-    ? `<p class="composio-expansion"><b>Toolkit-expansion opportunity.</b> Front exists in the catalog but currently exposes zero executable tools.</p>`
-    : "";
-  return `
-    <div class="composio-status-line"><span>${esc(coverage.toolkit_name || coverage.toolkit_slug || record.app)} · SDK catalog metadata</span></div>
-    ${expansion}
-    <dl class="decision-list composio-decision-list">
-      <div class="decision-row"><dt>Toolkit slug</dt><dd>${esc(coverage.toolkit_slug || "—")}</dd></div>
-      <div class="decision-row"><dt>Executable depth</dt><dd>${esc(coverage.tools_count ?? "—")} tools · ${esc(coverage.triggers_count ?? "—")} triggers</dd></div>
-      <div class="decision-row"><dt>SDK auth schemes</dt><dd>${esc(auth)}</dd></div>
-      <div class="decision-row"><dt>Managed auth</dt><dd>${esc(managed)}</dd></div>
-      <div class="decision-row"><dt>Version depth</dt><dd>${esc(coverage.latest_version || "Not advertised")} · ${esc(coverage.versions_count ?? 0)} versions</dd></div>
-      <div class="decision-row"><dt>Categories</dt><dd>${esc((coverage.categories || []).join(", ") || "Uncategorized")}</dd></div>
-      ${catalogUrl ? `<div class="decision-row"><dt>Catalog</dt><dd><a class="inline-link" href="${esc(catalogUrl)}" target="_blank" rel="noopener">Open Composio toolkit ↗</a></dd></div>` : ""}
-    </dl>
-  `;
-}
-
-function evidenceMarkup(record) {
-  const urls = [];
-  [...(record.evidence_urls || []), record.primary_docs_url].forEach((value) => {
-    const url = safeUrl(value);
-    if (url && !urls.includes(url)) urls.push(url);
-  });
-  if (!urls.length) return "<p>No valid evidence URL was retained for this record.</p>";
-  return `<ul class="evidence-list">${urls.map((url, index) => `
-    <li>
-      <a href="${esc(url)}" target="_blank" rel="noopener">
-        <span class="source-index">0${index + 1}</span>
-        <span class="source-copy"><b>${esc(compactHost(url))}</b><small>${esc(sourcePath(url))}</small></span>
-        <span class="source-arrow" aria-hidden="true">↗</span>
-      </a>
-    </li>
-  `).join("")}</ul>`;
-}
-
-function traceMarkup(trace) {
-  if (!trace.sources.length && !trace.queries) {
-    return "<p>The original fetch trace is not available in this build.</p>";
-  }
-  const query = trace.queries
-    ? `<div class="trace-query">${esc(trace.queries)}</div>`
-    : "";
-  const sources = trace.sources.length
-    ? `<ul class="trace-list">${trace.sources.map((source) => `
-        <li class="trace-item">
-          <span class="trace-status ${source.status >= 400 ? "bad" : ""}">HTTP ${source.status}</span>
-          <span class="trace-url" title="${esc(source.url)}">${esc(source.url)}</span>
-          <span class="trace-kind">${esc(source.kind)}</span>
-        </li>
-      `).join("")}</ul>`
-    : "";
-  return `${query}${sources}`;
-}
-
-function verificationMarkup(record) {
-  const { checked, misses } = handcheckFor(record);
-  const checkedCount = metrics.handcheck?.n || 0;
-  const browserCorrected = (metrics.browser_use?.adjudicated_correction_apps || []).includes(record.slug);
-  if (!checked && browserCorrected) {
-    return `
-      <div class="verification-note missed">
-        <p><b>Browser-adjudicated.</b> An independent live-browser review found a disagreement, and the final record was corrected against official docs.</p>
-      </div>
-    `;
-  }
-  if (!checked) {
-    return `
-      <div class="verification-note">
-        <p><b>Source-audited, not manually adjudicated.</b> This row passed schema, citation, identity, and claim-coverage checks but was not part of the ${checkedCount}-app official-doc sample.</p>
-      </div>
-    `;
-  }
-  if (!misses.length) {
-    return `
-      <div class="verification-note">
-        <p><b>Matched official docs.</b> API type, canonical auth set, production access, and MCP ownership all matched the recorded adjudication.</p>
-      </div>
-    `;
-  }
-  return `
-    <div class="verification-note missed">
-      <p><b>${misses.length} first-pass mismatch${misses.length === 1 ? "" : "es"}, corrected after review.</b></p>
-      <ul class="miss-list">${misses.map((miss) => `
-        <li><b>${esc(miss.field)}</b>: ${esc(miss.notes)}</li>
-      `).join("")}</ul>
-    </div>
-  `;
-}
-
-function openReasoning(slug, updateUrl = true) {
-  const record = rows.find((item) => item.slug === slug);
-  if (!record) return;
-  const raw = reasoning[slug] || "";
-  const modelReasoning = stripMarkdown(markdownSection(raw, "Model reasoning"));
-  const trace = parseResearchTrace(raw);
-  const metaLine = raw.split("\n").find((line) => line.startsWith("_generated ")) || "";
-  const meta = stripMarkdown(metaLine.replace(/^_+|_+$/g, ""));
-  const confidence = Math.round(Number(record.confidence || 0) * 100);
-  const adjudication = handcheckFor(record);
-  const browserCorrected = (metrics.browser_use?.adjudicated_correction_apps || []).includes(record.slug);
-  const dialog = $("reasoning-dialog");
-
-  $("reasoning-title").textContent = record.app;
-  $("reasoning-subtitle").textContent = `${record.category} · ${record.verification_status} · ${meta || `verified ${record.last_verified || "—"}`}`;
-  $("reasoning-content").innerHTML = `
-    <div class="drawer-summary">
-      <div class="drawer-stat"><span>Recommendation</span><b>${esc(record.recommended_next_action)}</b></div>
-      <div class="drawer-stat"><span>Production access</span><b>${esc(record.access_model?.kind || "—")}</b></div>
-      <div class="drawer-stat"><span>Confidence</span><b>${confidence}%</b></div>
-    </div>
-
-    ${adjudication.misses.length ? `
-      <div class="adjudication-alert">
-        <b>Official-doc correction applied</b>
-        <p>${adjudication.misses.length} first-pass field${adjudication.misses.length === 1 ? " was" : "s were"} corrected against official docs. The model paragraph below is preserved verbatim; the decision details are the final adjudicated record.</p>
-      </div>
-    ` : browserCorrected ? `
-      <div class="adjudication-alert">
-        <b>Independent browser correction applied</b>
-        <p>A live-browser review disagreed with the model and was adjudicated against official documentation. The model paragraph below is preserved verbatim; the decision details are the final record.</p>
-      </div>
-    ` : ""}
-
-    <section class="drawer-section">
-      <div class="drawer-section-head"><h3>Model reasoning</h3><span class="pill blue">Verbatim trace</span></div>
-      ${modelReasoning
-        ? `<div class="model-note"><p>${esc(modelReasoning)}</p></div>`
-        : `<div class="empty-reasoning"><p>No model-reasoning paragraph was packaged for this record.</p></div>`}
-    </section>
-
-    <section class="drawer-section">
-      <div class="drawer-section-head"><h3>Decision details</h3></div>
-      <dl class="decision-list">
-        <div class="decision-row"><dt>Summary</dt><dd>${esc(record.one_liner)}</dd></div>
-        <div class="decision-row"><dt>Authentication</dt><dd>${esc((record.auth_methods || []).join(", ") || "—")}</dd></div>
-        <div class="decision-row"><dt>API surface</dt><dd>${esc(record.api_type)} · ${esc(record.api_breadth)}</dd></div>
-        <div class="decision-row"><dt>Access rule</dt><dd>${esc(record.access_model?.note || "—")}</dd></div>
-        <div class="decision-row"><dt>Existing MCP</dt><dd>${esc(record.existing_mcp)}</dd></div>
-        <div class="decision-row"><dt>Composio dataset field</dt><dd>${esc(record.composio_toolkit)} · preserved from the locked 19-field record</dd></div>
-        <div class="decision-row"><dt>Buildability</dt><dd>${esc(record.buildability)}</dd></div>
-        <div class="decision-row"><dt>Main blocker</dt><dd>${esc(record.main_blocker || "None recorded")}</dd></div>
-        <div class="decision-row"><dt>Rate limits</dt><dd>${esc(record.rate_limit_note || "Not documented")}</dd></div>
-      </dl>
-    </section>
-
-    <section class="drawer-section">
-      <div class="drawer-section-head"><h3>Composio SDK audit</h3>${pill(coverageFor(record).status, coverageFor(record).status)}</div>
-      ${composioMarkup(record)}
-    </section>
-
-    <section class="drawer-section">
-      <div class="drawer-section-head"><h3>Verification status</h3>${pill(record.verification_status, record.verification_status)}</div>
-      ${verificationMarkup(record)}
-    </section>
-
-    <section class="drawer-section">
-      <div class="drawer-section-head"><h3>Official evidence</h3><span class="pill gray">${(record.evidence_urls || []).length} cited</span></div>
-      ${evidenceMarkup(record)}
-    </section>
-
-    <section class="drawer-section">
-      <div class="drawer-section-head"><h3>Research trace</h3><span class="pill ${trace.quality === "adequate" ? "green" : "amber"}">${esc(trace.quality)}</span></div>
-      ${traceMarkup(trace)}
-    </section>
-  `;
-
-  if (!dialog.open) dialog.showModal();
-  document.body.classList.add("dialog-open");
-  if (updateUrl) {
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.set("app", slug);
-      window.history.replaceState({}, "", url);
-    } catch {
-      // Local file previews can disallow history changes; the drawer still works.
-    }
-  }
-}
-
-function closeReasoningUrl() {
-  document.body.classList.remove("dialog-open");
-  try {
-    const url = new URL(window.location.href);
-    if (url.searchParams.has("app")) {
-      url.searchParams.delete("app");
-      window.history.replaceState({}, "", url);
-    }
-  } catch {
-    // See openReasoning: file:// history is browser-dependent.
-  }
-}
-
-function renderVerification() {
-  const quality = metrics.quality || {};
-  const handcheck = metrics.handcheck || {};
-  const movement = metrics.accuracy_movement || {};
-  const browserUse = metrics.browser_use || {};
-  const misses = handcheck.misses || [];
-  const checked = handcheck.checked || [];
-  const correctedSlugs = new Set(misses.map((miss) => miss.slug));
-  const checkedPills = [
-    pill(`${checked.length} apps`, "Official"),
-    pill(`${checked.length - correctedSlugs.size} matched at stage`, "Self-Serve"),
-    pill(`${correctedSlugs.size} corrected this stage`, correctedSlugs.size ? "Hard" : "Self-Serve"),
-  ].join("");
-
-  const cards = [
-    {
-      title: "Source quality gate",
-      value: quality.source_audit_complete ? `${quality.source_audited_rows}/${rows.length}` : "Open",
-      body: "Rows must pass schema, citation, app identity, claim coverage, and first-party source checks.",
-      detail: `<span class="pill green">${quality.source_audit_complete ? "Complete" : "Incomplete"}</span>`,
-    },
-    {
-      title: "Latest staged agreement",
-      value: handcheck.n ? pct(handcheck.accuracy) : "Pending",
-      body: `${handcheck.n || 0} cumulative priority-app checks. Earlier batches were corrected before later batches were added, so this is the final stage's pre-fold agreement, not a blind first-pass estimate across all checked apps.`,
-      detail: checkedPills,
-      misses,
-    },
-    {
-      title: "After adjudication",
-      value: movement.post_verification_accuracy != null ? pct(movement.post_verification_accuracy) : "Pending",
-      body: movement.first_pass_accuracy != null
-        ? `${pct(movement.first_pass_accuracy)} first pass to ${pct(movement.post_verification_accuracy)} after applying the same verified truth set. ${(movement.improved_apps || []).length} apps improved; ${(movement.regressed_apps || []).length} regressed.`
-        : "Accuracy movement has not been calculated for this run.",
-      detail: `<span class="pill green">${(movement.improved_apps || []).length} improved</span><span class="pill gray">${(movement.regressed_apps || []).length} regressed</span>`,
-    },
-    {
-      title: "Independent browser check",
-      value: browserUse.n_checked || 0,
-      body: browserUse.n_checked
-        ? `${browserUse.n_checked} additional apps were independently re-researched in a live browser. ${browserUse.n_disagreements || 0} disagreements were reviewed against official docs; ${browserUse.n_adjudicated_corrections || 0} corrections were applied.`
-        : "No independent cloud browser verification is available for this run.",
-      detail: `<span class="pill blue">Independent re-search</span><span class="pill green">${browserUse.n_adjudicated_corrections || 0} applied</span>`,
-    },
-  ];
-
-  $("verification-grid").innerHTML = cards.map((card) => `
-    <article class="verification-card">
-      <div class="verification-card-head"><h3>${esc(card.title)}</h3><span class="verification-value">${esc(card.value)}</span></div>
-      <p>${esc(card.body)}</p>
-      <div class="verification-detail">${card.detail}</div>
-      ${card.misses?.length ? `
-        <details>
-          <summary>Inspect ${card.misses.length} first-pass mismatch${card.misses.length === 1 ? "" : "es"}</summary>
-          <ul class="miss-list">${card.misses.map((miss) => `<li><b>${esc(miss.app)} · ${esc(miss.field)}</b>: ${esc(miss.notes)}</li>`).join("")}</ul>
-        </details>
-      ` : ""}
-    </article>
-  `).join("");
-
-  const warnings = [];
-  if (!handcheck.n) warnings.push("Independent human accuracy is pending for this run.");
-  $("verification-warning").innerHTML = warnings.length
-    ? `<div class="warning">${esc(warnings.join(" "))}</div>`
-    : "";
-}
-
-function renderFooter() {
-  const repo = safeUrl(metrics.repo_url);
-  const live = safeUrl(metrics.live_url);
-  const links = [
-    repo ? `<a href="${esc(repo)}" target="_blank" rel="noopener">GitHub repository ↗</a>` : "",
-    live ? `<a href="${esc(live)}" target="_blank" rel="noopener">Live report ↗</a>` : "",
-  ].filter(Boolean).join("");
-  $("footer").innerHTML = `
-    <p>Locked 19-field schema · ${rows.length} apps · generated ${esc(formatDate(metrics.generated))}</p>
-    <div class="footer-links">${links}</div>
-  `;
-}
-
-function bindInteractions() {
-  $("matrix-body").addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-slug]");
-    if (button) openReasoning(button.dataset.slug);
-  });
-
-  $("reasoning-dialog").addEventListener("close", closeReasoningUrl);
-  $("reasoning-dialog").addEventListener("click", (event) => {
-    if (event.target === $("reasoning-dialog")) $("reasoning-dialog").close();
-  });
-
-  document.querySelectorAll(".command-tab").forEach((button) => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll(".command-tab").forEach((item) => {
-        const active = item === button;
-        item.classList.toggle("active", active);
-        item.setAttribute("aria-selected", String(active));
-      });
-      $("command-output").textContent = commandSets[button.dataset.command];
+  // --- helpers ---------------------------------------------------------------
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
-  });
-}
+  }
+  function el(id) { return document.getElementById(id); }
+  function pct(x) { return Math.round((Number(x) || 0) * 100); }
+  function count(arr, fn) { return arr.reduce(function (n, r) { return n + (fn(r) ? 1 : 0); }, 0); }
+  function coverStatus(slug) { return (COVER_APPS[slug] || {}).status || "Missing"; }
 
-function init() {
-  const loaded = loadData();
-  rows = loaded.rows || [];
-  metrics = loaded.metrics || {};
-  reasoning = loaded.reasoning || {};
-  composioCoverage = loaded.composioCoverage || {};
+  // --- hero: action distribution --------------------------------------------
+  function renderPulse() {
+    var dist = {};
+    ACTIONS.forEach(function (a) { dist[a] = count(RESULTS, function (r) { return r.recommended_next_action === a; }); });
+    var total = RESULTS.length || 1;
 
-  if (!rows.length) {
-    $("hero-copy").textContent = "No report data is packaged yet. Run python research.py --build-report.";
+    var bar = el("action-bar");
+    var legend = el("action-legend");
+    bar.innerHTML = "";
+    legend.innerHTML = "";
+    ACTIONS.forEach(function (a) {
+      var n = dist[a];
+      if (n > 0) {
+        var seg = document.createElement("span");
+        seg.className = "seg " + ACTION_CLASS[a];
+        seg.style.flex = String(n);
+        seg.title = a + ": " + n;
+        bar.appendChild(seg);
+      }
+      var li = document.createElement("span");
+      li.className = "legend-item";
+      li.innerHTML = '<i class="dot ' + ACTION_CLASS[a] + '"></i>' + esc(a) +
+        ' <b>' + n + '</b>';
+      legend.appendChild(li);
+    });
+
+    var buildNow = dist["Build Now"];
+    el("decision-title").innerHTML =
+      "<b>" + buildNow + "</b> of " + RESULTS.length +
+      " apps are build-ready today; the rest need outreach, a partner path, or are blocked.";
+    var q = METRICS.quality;
+    if (q && q.label) el("quality-badge").textContent = q.label;
   }
 
-  renderHeader();
-  renderHero();
-  renderMetrics();
-  renderInsights();
-  renderPriorityQueue();
-  renderCoverageAudit();
-  initFilters();
-  renderTable();
-  renderVerification();
-  renderFooter();
-  bindInteractions();
-
-  const requestedSlug = new URLSearchParams(window.location.search).get("app");
-  if (requestedSlug && rows.some((row) => row.slug === requestedSlug)) {
-    openReasoning(requestedSlug, false);
+  // --- KPI tiles -------------------------------------------------------------
+  function tile(value, label, sub) {
+    return '<div class="kpi"><div class="kpi-value">' + esc(value) + '</div>' +
+      '<div class="kpi-label">' + esc(label) + '</div>' +
+      (sub ? '<div class="kpi-sub">' + esc(sub) + '</div>' : '') + '</div>';
   }
-}
+  function renderKpis() {
+    var sum = COVERAGE.summary || {};
+    var buildNow = count(RESULTS, function (r) { return r.recommended_next_action === "Build Now"; });
+    var queue = count(RESULTS, function (r) {
+      return r.recommended_next_action === "Build Now" && coverStatus(r.slug) !== "Active";
+    });
+    var avgConf = PATTERNS.avg_confidence != null
+      ? PATTERNS.avg_confidence
+      : (RESULTS.reduce(function (s, r) { return s + (Number(r.confidence) || 0); }, 0) / (RESULTS.length || 1));
+    var hc = METRICS.handcheck || {};
+    var acc = hc.api_type_accuracy != null ? hc.api_type_accuracy : METRICS.headline_accuracy;
 
-document.addEventListener("DOMContentLoaded", init);
+    var html = "";
+    html += tile(RESULTS.length, "Apps evaluated", "Locked 19-field schema");
+    html += tile(buildNow, "Build Now", "Self-serve, documented surface");
+    html += tile(queue, "Uncovered build queue", "Build-ready, no active toolkit");
+    html += tile(sum.active != null ? sum.active : "—", "Active toolkits", "In the Composio SDK");
+    html += tile(sum.tools_total != null ? Number(sum.tools_total).toLocaleString() : "—", "Tools exposed", "Median " + (sum.tools_median != null ? sum.tools_median : "—"));
+    html += tile((acc != null ? pct(acc) + "%" : "—"), "Hand-checked API type", (hc.n ? hc.n + " apps vs official docs" : "Adjudicated"));
+    el("kpi-grid").innerHTML = html;
+  }
+
+  // --- priority queue --------------------------------------------------------
+  function renderPriorities() {
+    var queue = RESULTS.filter(function (r) {
+      return r.recommended_next_action === "Build Now" && coverStatus(r.slug) !== "Active";
+    });
+    queue.sort(function (a, b) {
+      var ax = (a.access_model || {}).kind === "Self-Serve" ? 0 : 1;
+      var bx = (b.access_model || {}).kind === "Self-Serve" ? 0 : 1;
+      if (ax !== bx) return ax - bx;
+      var ab = BUILD_RANK[a.buildability] == null ? 9 : BUILD_RANK[a.buildability];
+      var bb = BUILD_RANK[b.buildability] == null ? 9 : BUILD_RANK[b.buildability];
+      if (ab !== bb) return ab - bb;
+      return (Number(b.confidence) || 0) - (Number(a.confidence) || 0);
+    });
+    var host = el("priority-queue");
+    if (!queue.length) { host.innerHTML = '<p class="empty">No uncovered build-ready apps in the current dataset.</p>'; return; }
+    host.innerHTML = queue.slice(0, 9).map(function (r, i) {
+      var kind = (r.access_model || {}).kind || "—";
+      return '<button class="queue-card" data-slug="' + esc(r.slug) + '">' +
+        '<div class="queue-top"><span class="rank">' + (i + 1) + '</span>' +
+        '<span class="chip ' + ACTION_CLASS[r.recommended_next_action] + '">' + esc(r.recommended_next_action) + '</span></div>' +
+        '<h3>' + esc(r.app) + '</h3>' +
+        '<p class="queue-line">' + esc(r.one_liner || "") + '</p>' +
+        '<div class="queue-meta">' +
+        '<span>' + esc(r.api_type) + '</span><span>' + esc(kind) + '</span><span>' + esc(r.buildability) + '</span>' +
+        '</div></button>';
+    }).join("");
+  }
+
+  // --- catalog ---------------------------------------------------------------
+  function chip(text, cls) { return '<span class="chip ' + (cls || "") + '">' + esc(text) + '</span>'; }
+  function confBar(v) {
+    var p = pct(v);
+    return '<div class="conf"><span class="conf-fill" style="width:' + p + '%"></span></div><small>' + p + '%</small>';
+  }
+
+  function renderFilters() {
+    var cats = {}, builds = {};
+    RESULTS.forEach(function (r) { if (r.category) cats[r.category] = 1; if (r.buildability) builds[r.buildability] = 1; });
+    fill("f-cat", Object.keys(cats).sort());
+    fill("f-next", ACTIONS);
+    fill("f-build", ["Easy", "Moderate", "Hard", "Blocked"].filter(function (b) { return builds[b]; }));
+  }
+  function fill(id, values) {
+    var sel = el(id);
+    values.forEach(function (v) {
+      var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o);
+    });
+  }
+
+  function catalogRows() {
+    var q = (el("q").value || "").toLowerCase().trim();
+    var fc = el("f-cat").value, fn = el("f-next").value, fb = el("f-build").value;
+    return RESULTS.filter(function (r) {
+      if (fc && r.category !== fc) return false;
+      if (fn && r.recommended_next_action !== fn) return false;
+      if (fb && r.buildability !== fb) return false;
+      if (q) {
+        var hay = [r.app, r.category, (r.auth_methods || []).join(" "), r.main_blocker, r.api_type].join(" ").toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+  }
+  function renderCatalog() {
+    var rows = catalogRows();
+    el("catalog-count").textContent = rows.length + " of " + RESULTS.length + " apps — open any row for full reasoning and sources.";
+    el("catalog-body").innerHTML = rows.map(function (r) {
+      var cov = coverStatus(r.slug);
+      var covCls = cov === "Active" ? "s-active" : (cov === "Catalog-only" ? "s-catalog" : "s-missing");
+      var kind = (r.access_model || {}).kind || "—";
+      return '<tr data-slug="' + esc(r.slug) + '">' +
+        '<td class="c-app"><b>' + esc(r.app) + '</b><small>' + esc(r.category) + '</small></td>' +
+        '<td>' + esc((r.auth_methods || []).join(", ") || "—") + '</td>' +
+        '<td>' + chip(kind, kind === "Self-Serve" ? "s-active" : "s-missing") + '</td>' +
+        '<td>' + esc(r.api_type) + '</td>' +
+        '<td>' + esc(r.existing_mcp) + '</td>' +
+        '<td>' + chip(cov, covCls) + '</td>' +
+        '<td>' + esc(r.buildability) + '</td>' +
+        '<td>' + chip(r.recommended_next_action, ACTION_CLASS[r.recommended_next_action]) + '</td>' +
+        '<td class="c-conf">' + confBar(r.confidence) + '</td>' +
+        '<td class="c-open">›</td>' +
+        '</tr>';
+    }).join("");
+  }
+
+  function renderSdkSummary() {
+    var s = COVERAGE.summary;
+    if (!s) { el("sdk-summary").textContent = "Composio SDK coverage unavailable."; return; }
+    el("sdk-summary").innerHTML =
+      '<b>Composio SDK audit</b> · ' +
+      '<span class="s-active">' + s.active + ' active</span> · ' +
+      s.catalog_only + ' catalog-only · ' +
+      '<span class="s-missing">' + s.missing + ' missing</span> · ' +
+      Number(s.tools_total).toLocaleString() + ' tools · ' + s.trigger_enabled + ' trigger-enabled';
+  }
+
+  // --- detail drawer ---------------------------------------------------------
+  function mdSection(md, heading) {
+    if (!md) return "";
+    var re = new RegExp("##\\s*" + heading + "\\s*\\n([\\s\\S]*?)(?:\\n##\\s|$)", "i");
+    var m = md.match(re);
+    return m ? m[1].trim() : "";
+  }
+  function openDetail(slug) {
+    var r = RESULTS.filter(function (x) { return x.slug === slug; })[0];
+    if (!r) return;
+    el("detail-title").textContent = r.app;
+    el("detail-sub").textContent = r.category + " · " + r.slug + " · verified " + (r.last_verified || "—");
+    var access = r.access_model || {};
+    var cov = COVER_APPS[slug] || {};
+    var reasoning = mdSection(REASONING[slug], "Model reasoning");
+
+    function row(dt, dd) { return '<div class="d-row"><dt>' + esc(dt) + '</dt><dd>' + dd + '</dd></div>'; }
+    var links = (r.evidence_urls || []).map(function (u) {
+      return '<li><a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u) + '</a></li>';
+    }).join("");
+
+    el("detail-body").innerHTML =
+      '<p class="d-liner">' + esc(r.one_liner || "") + '</p>' +
+      '<div class="d-badges">' +
+        chip(r.recommended_next_action, ACTION_CLASS[r.recommended_next_action]) +
+        chip(access.kind || "—", access.kind === "Self-Serve" ? "s-active" : "s-missing") +
+        chip(r.buildability, "") +
+        chip(r.verification_status, "s-catalog") +
+      '</div>' +
+      '<dl class="d-grid">' +
+        row("API type", esc(r.api_type) + " · " + esc(r.api_breadth) + " breadth") +
+        row("Auth methods", esc((r.auth_methods || []).join(", ") || "—")) +
+        row("Production access", '<b>' + esc(access.kind || "—") + '</b> — ' + esc(access.note || "")) +
+        row("Existing MCP", esc(r.existing_mcp)) +
+        row("Composio", esc(cov.status || "—") + (cov.tools_count != null ? " · " + cov.tools_count + " tools" : "")) +
+        row("Main blocker", esc(r.main_blocker || "—")) +
+        row("Rate limits", esc(r.rate_limit_note || "—")) +
+        row("Confidence", pct(r.confidence) + "%") +
+      '</dl>' +
+      (reasoning ? '<div class="d-section"><h3>Model reasoning</h3><p>' + esc(reasoning) + '</p></div>' : '') +
+      (links ? '<div class="d-section"><h3>Evidence</h3><ul class="d-links">' + links + '</ul></div>' : '');
+
+    var dlg = el("detail-dialog");
+    if (typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open", "");
+  }
+
+  // --- verification ----------------------------------------------------------
+  function vcard(title, note, stats) {
+    var body = stats.map(function (s) {
+      return '<div class="v-stat"><span>' + esc(s[0]) + '</span><b>' + esc(s[1]) + '</b></div>';
+    }).join("");
+    return '<div class="v-card"><h3>' + esc(title) + '</h3>' +
+      (note ? '<p>' + esc(note) + '</p>' : '') + '<div class="v-stats">' + body + '</div></div>';
+  }
+  function renderVerification() {
+    var out = [];
+    var hc = METRICS.handcheck;
+    if (hc) {
+      out.push(vcard("Official-doc adjudication", hc.metric_scope || "", [
+        ["Apps", hc.n],
+        ["API type", pct(hc.api_type_accuracy) + "%"],
+        ["Auth set", pct(hc.auth_accuracy) + "%"],
+        ["Access", pct(hc.access_accuracy) + "%"],
+        ["MCP", pct(hc.mcp_accuracy) + "%"],
+      ]));
+    }
+    var am = METRICS.accuracy_movement;
+    if (am) {
+      out.push(vcard("Correction replay", "First-pass snapshot vs corrected dataset against the same truth set.", [
+        ["First pass", am.first_pass != null ? pct(am.first_pass) + "%" : "—"],
+        ["Corrected", am.corrected != null ? pct(am.corrected) + "%" : "—"],
+        ["Truth apps", am.n != null ? am.n : "—"],
+      ]));
+    }
+    var bu = METRICS.browser_use;
+    if (bu) {
+      out.push(vcard("Independent browser check", "Browser Use Cloud re-derived key fields from live docs.", [
+        ["Sampled", bu.sample != null ? bu.sample : (bu.n != null ? bu.n : "—")],
+        ["Agreed", bu.agreement != null ? pct(bu.agreement) + "%" : (bu.agreed != null ? bu.agreed : "—")],
+      ]));
+    }
+    if (!out.length) out.push('<p class="empty">Verification metrics will populate after a run.</p>');
+    el("verification-grid").innerHTML = out.join("");
+  }
+
+  // --- reproduce tabs --------------------------------------------------------
+  var COMMANDS = {
+    research: "python research.py --all --fresh-run --model gpt-4.1\npython research.py --metrics\npython research.py --build-report",
+    verify: "python browser_verify.py --sample 12\npython research.py --fold-handcheck\npython research.py --apply-handcheck\npython research.py --accuracy-movement",
+    composio: "python research.py --composio-audit\npython research.py --composio-agent otter-ai\npython research.py --build-report",
+  };
+  function bindTabs() {
+    el("command-output").textContent = COMMANDS.research;
+    Array.prototype.forEach.call(document.querySelectorAll(".command-tab"), function (btn) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".command-tab").forEach(function (b) { b.classList.remove("active"); b.setAttribute("aria-selected", "false"); });
+        btn.classList.add("active"); btn.setAttribute("aria-selected", "true");
+        el("command-output").textContent = COMMANDS[btn.dataset.command] || "";
+      });
+    });
+  }
+
+  // --- chrome ----------------------------------------------------------------
+  function renderChrome() {
+    el("reasoning-count").textContent = Object.keys(REASONING).length;
+    if (METRICS.generated) el("generated-note").textContent = "Generated " + String(METRICS.generated).slice(0, 10);
+    var repo = METRICS.repo_url;
+    if (repo) el("repo-link").href = repo;
+    var live = METRICS.live_url;
+    el("footer").innerHTML =
+      '<div><b>Composio × OpenAI Integration Readiness</b><span>' + RESULTS.length + ' apps · static build from audited JSON</span></div>' +
+      '<div class="footer-links">' +
+      (repo ? '<a href="' + esc(repo) + '" target="_blank" rel="noopener">Source ↗</a>' : '') +
+      (live ? '<a href="' + esc(live) + '" target="_blank" rel="noopener">Live report ↗</a>' : '') +
+      '</div>';
+  }
+
+  // --- wire up ---------------------------------------------------------------
+  function bindEvents() {
+    ["q", "f-cat", "f-next", "f-build"].forEach(function (id) {
+      el(id).addEventListener("input", renderCatalog);
+      el(id).addEventListener("change", renderCatalog);
+    });
+    el("catalog-body").addEventListener("click", function (e) {
+      var tr = e.target.closest("tr[data-slug]");
+      if (tr) openDetail(tr.dataset.slug);
+    });
+    el("priority-queue").addEventListener("click", function (e) {
+      var card = e.target.closest("[data-slug]");
+      if (card) openDetail(card.dataset.slug);
+    });
+    var dlg = el("detail-dialog");
+    dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });
+  }
+
+  function init() {
+    if (!RESULTS.length) {
+      el("decision-title").textContent = "No data loaded. Run `python research.py --build-report` to generate report/data.js.";
+      return;
+    }
+    renderPulse();
+    renderKpis();
+    renderPriorities();
+    renderFilters();
+    renderSdkSummary();
+    renderCatalog();
+    renderVerification();
+    renderChrome();
+    bindTabs();
+    bindEvents();
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
