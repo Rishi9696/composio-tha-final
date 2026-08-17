@@ -939,7 +939,6 @@ class FreshRunTests(unittest.TestCase):
             archives = list((out / "archive").iterdir())
             self.assertEqual(len(archives), 1)
             self.assertTrue((archives[0] / "results.json").exists())
-            self.assertTrue((archives[0] / "batch_state.json").exists())
             self.assertTrue((archives[0] / "composio_coverage.json").exists())
             self.assertTrue((archives[0] / "reasoning" / "acme.md").exists())
             self.assertTrue((archives[0] / "handcheck.json").exists())

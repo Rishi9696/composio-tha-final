@@ -1,6 +1,6 @@
 # Single official paid provider: OpenAI for both web-search discovery (Responses
 # API `web_search` tool) and structured record synthesis. No model gateway.
-openai>=1.40,<2
+openai>=2.48,<3
 pydantic>=2.7,<3
 python-dotenv>=1.0
 requests>=2.31
@@ -9,5 +9,5 @@ tenacity>=8.2
 # Composio SDK for authoritative catalog depth plus the read-only OpenAI Session
 # agent. Keep the provider on the same minor line as core because their tool-call
 # adapters evolve together.
-composio>=0.17,<0.18; python_version >= "3.10"
-composio-openai>=0.17,<0.18; python_version >= "3.10"
+composio>=0.19,<0.20; python_version >= "3.10"
+composio-openai>=0.19,<0.20; python_version >= "3.10"
