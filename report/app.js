@@ -294,7 +294,7 @@
         '<div class="flow-num">' + String(i + 1).padStart(2, "0") + '</div>' +
         '<div class="flow-body"><b>' + esc(s[0]) + '</b><p>' + esc(s[1]) + '</p><code>' + esc(s[2]) + '</code></div>' +
         '</div>';
-    }).join('<div class="flow-link" aria-hidden="true"></div>');
+    }).join("");
   }
   var COMMANDS = {
     research: "python research.py --all --fresh-run --model gpt-5\npython research.py --metrics\npython research.py --build-report",

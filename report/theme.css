@@ -218,15 +218,12 @@ table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 620p
 .sc-stat b { font-family: var(--mono); font-size: 19px; font-variant-numeric: tabular-nums; }
 
 /* ---------------------------------------------------------------- method flow */
-.flow { display: flex; align-items: stretch; gap: 0; margin-bottom: 20px; overflow-x: auto; padding-bottom: 6px; }
-.flow-node { flex: 1 1 0; min-width: 150px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 14px 12px; box-shadow: var(--shadow); }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.flow-node { min-width: 0; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 14px 12px; box-shadow: var(--shadow); }
 .flow-num { font-family: var(--mono); font-size: 11px; color: var(--accent-ink); font-weight: 700; }
 .flow-body b { display: block; font-size: 13px; margin: 6px 0 5px; }
 .flow-body p { font-size: 11.5px; color: var(--ink-2); margin: 0 0 8px; line-height: 1.4; }
-.flow-body code { font-family: var(--mono); font-size: 10.5px; background: var(--panel-2); padding: 2px 6px; border-radius: 5px; color: var(--ink-2); }
-.flow-link { flex: 0 0 18px; align-self: center; height: 1px; background: var(--line-2); position: relative; }
-.flow-link::after { content: "›"; position: absolute; right: -3px; top: 50%; transform: translateY(-50%); color: var(--ink-3); font-size: 13px; }
-@media (max-width: 760px) { .flow { flex-direction: column; } .flow-link { width: 1px; height: 14px; flex-basis: 14px; } .flow-link::after { content: "⌄"; top: auto; bottom: -8px; right: 50%; transform: translateX(50%); } }
+.flow-body code { font-family: var(--mono); font-size: 10.5px; background: var(--panel-2); padding: 2px 6px; border-radius: 5px; color: var(--ink-2); word-break: break-word; }
 
 .seg-tabs { display: flex; gap: 4px; background: var(--panel-2); border-radius: 8px; padding: 3px; }
 .seg-tab { font: inherit; font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .03em; cursor: pointer; border: 0; background: transparent; color: var(--ink-3); padding: 6px 12px; border-radius: 6px; }
