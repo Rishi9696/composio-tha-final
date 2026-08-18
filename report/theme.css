@@ -105,8 +105,11 @@ code, .mono { font-family: var(--mono); }
 .strip-stat span { font-size: 10.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
 @media (max-width: 720px) { .strip-stats { display: none; } }
 
-.view { display: none; padding: 26px 32px 60px; }
-.view.active { display: block; }
+.view { padding: 36px 32px; border-top: 1px solid var(--line); scroll-margin-top: 78px; }
+.view:first-of-type { border-top: 0; padding-top: 26px; }
+.view-head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.view-glyph { font-size: 18px; color: var(--accent); line-height: 1; }
+.view-head h2 { font-size: 19px; }
 .view-note { color: var(--ink-2); font-size: 13px; max-width: 62ch; margin: 0 0 20px; }
 
 /* ---------------------------------------------------------------- panels */

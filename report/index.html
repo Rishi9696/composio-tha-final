@@ -7,7 +7,7 @@
   <meta name="description" content="Console for reviewing evidence-backed API integration readiness across 100 requested apps." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236366f1'/%3E%3Cpath d='M28 62 L44 30 L60 62 M34 50 L54 50' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <title>Readiness Console</title>
-  <link rel="stylesheet" href="theme.css?v=20260818-2" />
+  <link rel="stylesheet" href="theme.css?v=20260818-3" />
 </head>
 
 <body>
@@ -39,14 +39,18 @@
     <div class="deck">
       <header class="strip">
         <div class="strip-title">
-          <h1 id="view-title">Overview</h1>
+          <h1>Readiness Console</h1>
           <span class="strip-sub" id="view-sub">Live audit of the assignment catalog</span>
         </div>
         <div class="strip-stats" id="strip-stats" aria-label="Quick stats"></div>
       </header>
 
       <!-- ============ OVERVIEW ============ -->
-      <section class="view active" id="view-overview" data-view="overview">
+      <section class="view" id="view-overview" data-view="overview">
+        <div class="view-head">
+          <span class="view-glyph">◇</span>
+          <h2>Overview</h2>
+        </div>
         <div class="ov-grid">
           <div class="ov-primary">
             <div class="panel">
@@ -80,6 +84,10 @@
 
       <!-- ============ QUEUE ============ -->
       <section class="view" id="view-queue" data-view="queue">
+        <div class="view-head">
+          <span class="view-glyph">▤</span>
+          <h2>Queue</h2>
+        </div>
         <p class="view-note">Build-ready apps with no active Composio toolkit — ranked by production access, then buildability, then source confidence.</p>
         <div class="table-shell">
           <table class="rank-table">
@@ -93,6 +101,10 @@
 
       <!-- ============ CATALOG (master-detail) ============ -->
       <section class="view" id="view-catalog" data-view="catalog">
+        <div class="view-head">
+          <span class="view-glyph">▦</span>
+          <h2>Catalog</h2>
+        </div>
         <div class="split">
           <div class="split-list">
             <div class="list-toolbar">
@@ -111,12 +123,20 @@
 
       <!-- ============ VERIFY ============ -->
       <section class="view" id="view-verify" data-view="verify">
+        <div class="view-head">
+          <span class="view-glyph">◈</span>
+          <h2>Verify</h2>
+        </div>
         <p class="view-note">Official-doc adjudication, correction replay, and independent browser verification, reported separately.</p>
         <div class="score-grid" id="score-grid"></div>
       </section>
 
       <!-- ============ METHOD ============ -->
       <section class="view" id="view-method" data-view="method">
+        <div class="view-head">
+          <span class="view-glyph">↝</span>
+          <h2>Method</h2>
+        </div>
         <p class="view-note">OpenAI synthesizes fetched evidence into a locked schema; deterministic checks own citations, catalog identity, and executable toolkit depth.</p>
         <div class="flow" id="flow"></div>
         <div class="panel">
@@ -134,8 +154,8 @@
     </div>
   </div>
 
-  <script src="data.js?v=20260818-2"></script>
-  <script src="app.js?v=20260818-2"></script>
+  <script src="data.js?v=20260818-3"></script>
+  <script src="app.js?v=20260818-3"></script>
 </body>
 
 </html>

@@ -17,13 +17,6 @@
     "Partner-Gated": "tag-partner", "Blocked": "tag-blocked",
   };
   var BUILD_RANK = { Easy: 0, Moderate: 1, Hard: 2, Blocked: 3 };
-  var VIEW_META = {
-    overview: ["Overview", "Live audit — " + RESULTS.length + " of 100 requested apps resolved"],
-    queue: ["Queue", "Uncovered, build-ready apps ranked for engineering"],
-    catalog: ["Catalog", "Every app, every cited decision"],
-    verify: ["Verify", "Independent checks against official documentation"],
-    method: ["Method", "How a raw evidence trail becomes a locked record"],
-  };
 
   function el(id) { return document.getElementById(id); }
   function esc(s) {
@@ -36,18 +29,31 @@
   function coverStatus(slug) { return (COVER_APPS[slug] || {}).status || "Missing"; }
   function tag(text, cls) { return '<span class="tag ' + (cls || "") + '">' + esc(text) + '</span>'; }
 
-  // ---------------------------------------------------------------- routing
-  function setView(name) {
-    if (!VIEW_META[name]) name = "overview";
-    document.querySelectorAll(".view").forEach(function (v) {
-      v.classList.toggle("active", v.dataset.view === name);
-    });
+  // ---------------------------------------------------------------- navigation
+  // Single scrolling page: rail buttons scroll to their section, and an
+  // IntersectionObserver keeps the rail's active state in sync with scroll.
+  function scrollToView(name) {
+    var section = document.getElementById("view-" + name);
+    if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (history.replaceState) history.replaceState(null, "", "#" + name);
+  }
+
+  function setActiveRailItem(name) {
     document.querySelectorAll(".rail-item").forEach(function (b) {
       b.classList.toggle("active", b.dataset.view === name);
     });
-    el("view-title").textContent = VIEW_META[name][0];
-    el("view-sub").textContent = VIEW_META[name][1];
-    if (history.replaceState) history.replaceState(null, "", "#" + name);
+  }
+
+  function bindScrollSpy() {
+    var sections = Array.prototype.slice.call(document.querySelectorAll(".view"));
+    if (!("IntersectionObserver" in window) || !sections.length) return;
+    var observer = new IntersectionObserver(function (entries) {
+      var visible = entries.filter(function (e) { return e.isIntersecting; });
+      if (!visible.length) return;
+      visible.sort(function (a, b) { return b.intersectionRatio - a.intersectionRatio; });
+      setActiveRailItem(visible[0].target.dataset.view);
+    }, { rootMargin: "-15% 0px -55% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] });
+    sections.forEach(function (s) { observer.observe(s); });
   }
 
   // ---------------------------------------------------------------- overview
@@ -309,7 +315,7 @@
   // ---------------------------------------------------------------- wire up
   function bindEvents() {
     document.querySelectorAll(".rail-item").forEach(function (b) {
-      b.addEventListener("click", function () { setView(b.dataset.view); });
+      b.addEventListener("click", function () { scrollToView(b.dataset.view); });
     });
     ["q", "f-cat", "f-next"].forEach(function (id) {
       el(id).addEventListener("input", renderCatalogList);
@@ -324,14 +330,11 @@
     el("queue-body").addEventListener("click", function (e) {
       var tr = e.target.closest("tr[data-slug]");
       if (!tr) return;
-      setView("catalog");
       renderDetail(tr.dataset.slug);
       renderCatalogList();
+      scrollToView("catalog");
     });
     if (el("repo-link") && METRICS.repo_url) el("repo-link").href = METRICS.repo_url;
-    window.addEventListener("hashchange", function () {
-      setView(location.hash.replace("#", ""));
-    });
   }
 
   function init() {
@@ -339,6 +342,7 @@
       el("decision-title").textContent = "No data loaded. Run `python research.py --build-report` to generate report/data.js.";
       return;
     }
+    el("view-sub").textContent = "Live audit — " + RESULTS.length + " of 100 requested apps resolved";
     renderStrip();
     renderOverview();
     renderQueue();
@@ -348,7 +352,12 @@
     renderMethod();
     bindMethodTabs();
     bindEvents();
-    setView(location.hash ? location.hash.replace("#", "") : "overview");
+    bindScrollSpy();
+    setActiveRailItem("overview");
+    if (location.hash) {
+      var target = document.getElementById("view-" + location.hash.replace("#", ""));
+      if (target) target.scrollIntoView({ block: "start" });
+    }
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
