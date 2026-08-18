@@ -265,7 +265,7 @@
     if (hc) out.push(scoreCard("Human hand-check", hc.metric_scope || "Analyst adjudication vs official docs.", [
       ["apps", hc.n],
       ["api type", pct(hc.api_type_accuracy) + "%"],
-      ["auth set", pct(hc.auth_accuracy) + "%"],
+      ["auth (exact set)", pct(hc.auth_accuracy) + "%"],
       ["access", pct(hc.access_accuracy) + "%"],
       ["mcp", pct(hc.mcp_accuracy) + "%"],
     ]));
@@ -303,6 +303,18 @@
       ["after fixes", am.post_verification_accuracy != null ? pct(am.post_verification_accuracy) + "%" : "—"],
       ["truth apps", am.n != null ? am.n : "—"],
     ]));
+
+    // Auth is scored two ways deliberately: exact set match (in the hand-check
+    // card above) is strict — any missing/extra label is a miss. These two are
+    // softer companions on the SAME raw, uncorrected first-pass agent output,
+    // isolating the real failure mode: under-listing a second co-equal method,
+    // not naming the wrong scheme.
+    if (am && am.first_pass_auth_overlap_accuracy != null) {
+      out.push(scoreCard("Auth accuracy, unpacked", "Raw first-pass agent output vs hand truth (" + am.n + " apps).", [
+        ["any-correct", pct(am.first_pass_auth_overlap_accuracy) + "%"],
+        ["avg overlap", pct(am.first_pass_auth_jaccard_mean) + "%"],
+      ]));
+    }
 
     el("score-grid").innerHTML = out.join("") || '<p class="empty">Verification metrics populate after a run.</p>';
     renderUnresolved();

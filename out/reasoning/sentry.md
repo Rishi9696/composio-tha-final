@@ -65,7 +65,7 @@ _generated 2026-08-18 | model openai:gpt-5_
 
 <!-- final-state:start -->
 ## Final pipeline state
-_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
 
 ```json
 {

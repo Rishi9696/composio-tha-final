@@ -122,6 +122,8 @@ def fold() -> dict:
     by_slug = {record["slug"]: record for record in results}
 
     n = api_n = api_hits = mcp_n = mcp_hits = auth_hits = access_hits = 0
+    auth_overlap_hits = 0
+    auth_jaccard_sum = 0.0
     misses, checked = [], []
     for row in rows:
         slug = row["slug"]
@@ -132,6 +134,16 @@ def fold() -> dict:
         n += 1
         current_auth = normalize.normalize_auth_list(record.get("auth_methods", []), strict=True)
         auth_ok = verify._auth_agree(current_auth, truth["auth_methods"])
+        # auth_accuracy (exact set equality) is intentionally strict: any
+        # missing or extra label counts as a miss. Two softer, honest measures
+        # sit alongside it because a real weakness in the exact metric is
+        # under-listing a second co-equal method, not naming the wrong scheme:
+        # "overlap" = the record names at least one correct method (never
+        # fully wrong); "jaccard" = average size of the correct overlap.
+        truth_set, current_set = set(truth["auth_methods"]), set(current_auth)
+        auth_overlap_hits += int(bool(truth_set & current_set))
+        union = truth_set | current_set
+        auth_jaccard_sum += (len(truth_set & current_set) / len(union)) if union else 1.0
         current_access = (record.get("access_model") or {}).get("kind")
         access_ok = current_access == truth["access_model"]
         auth_hits += int(auth_ok)
@@ -194,7 +206,11 @@ def fold() -> dict:
         "metric_scope": "Staged cumulative official-doc check at fold time",
         "method": (
             "Analyst adjudication against official docs for api_type, exact canonical auth set, "
-            "production access, and MCP ownership. No historical agent values are substituted."
+            "production access, and MCP ownership. No historical agent values are substituted. "
+            "auth_accuracy requires an exact method-set match (any missing/extra label is a miss); "
+            "auth_overlap_accuracy and auth_jaccard_mean are reported alongside it because the "
+            "dominant failure mode is under-listing a second co-equal method, not naming the "
+            "wrong scheme."
         ),
         "access_rubric": payload.get("access_rubric") or ACCESS_RUBRIC,
         "selection": payload.get("selection") or "Risk-biased, category-spread sample.",
@@ -202,6 +218,8 @@ def fold() -> dict:
         "api_type_accuracy": round(api_hits / api_n, 3) if api_n else None,
         "mcp_accuracy": round(mcp_hits / mcp_n, 3) if mcp_n else None,
         "auth_accuracy": round(auth_hits / n, 3) if n else None,
+        "auth_overlap_accuracy": round(auth_overlap_hits / n, 3) if n else None,
+        "auth_jaccard_mean": round(auth_jaccard_sum / n, 3) if n else None,
         "access_accuracy": round(access_hits / n, 3) if n else None,
         "accuracy": round((api_hits + auth_hits + access_hits + mcp_hits) / total, 3) if total else None,
         "misses": misses,
@@ -224,7 +242,8 @@ def fold() -> dict:
     verify.rebuild_metrics()
     print(
         f"handcheck CURRENT n={n}: api_type={handcheck['api_type_accuracy']} "
-        f"auth={handcheck['auth_accuracy']} access={handcheck['access_accuracy']} "
+        f"auth_exact={handcheck['auth_accuracy']} auth_overlap={handcheck['auth_overlap_accuracy']} "
+        f"auth_jaccard={handcheck['auth_jaccard_mean']} access={handcheck['access_accuracy']} "
         f"mcp={handcheck['mcp_accuracy']} "
         f"overall={handcheck['accuracy']} misses={len(misses)}"
     )
@@ -316,6 +335,20 @@ def apply_corrections() -> int:
     return corrected
 
 
+def _auth_overlap_stats(record: dict, canonical_truth: list[str]) -> tuple[bool, float]:
+    """Return (any-method-correct, Jaccard overlap) for one record vs. truth.
+
+    Softer companions to the strict exact-set match: they isolate whether the
+    dominant failure mode is under/over-listing a co-equal method rather than
+    naming the wrong scheme entirely.
+    """
+    truth_set = set(canonical_truth)
+    current_set = set(normalize.normalize_auth_list(record.get("auth_methods", []), strict=True))
+    union = truth_set | current_set
+    jaccard = (len(truth_set & current_set) / len(union)) if union else 1.0
+    return bool(truth_set & current_set), jaccard
+
+
 def accuracy_movement() -> dict:
     """Compare archived first-pass and current results against the same hand truth."""
     payload = config.load_json(config.HANDCHECK_PATH) or {}
@@ -330,7 +363,9 @@ def accuracy_movement() -> dict:
         raise SystemExit("need filled handcheck.json + out/results_firstpass.json")
 
     first_hits = first_total = current_hits = current_total = 0
+    first_auth_overlap_hits = first_auth_jaccard_sum = 0.0
     per_app, improved, regressed = [], [], []
+    n_auth = 0
     for row in rows:
         slug = row["slug"]
         if slug not in first_pass or slug not in current:
@@ -342,6 +377,10 @@ def accuracy_movement() -> dict:
         first_total += before_total
         current_hits += after_hits
         current_total += after_total
+        n_auth += 1
+        overlap_ok, jaccard = _auth_overlap_stats(first_pass[slug], truth["auth_methods"])
+        first_auth_overlap_hits += int(overlap_ok)
+        first_auth_jaccard_sum += jaccard
         per_app.append({
             "slug": slug,
             "first_pass": f"{before_hits}/{before_total}",
@@ -355,11 +394,15 @@ def accuracy_movement() -> dict:
     movement = {
         "method": (
             "Field-level accuracy against one hand-verified truth set, comparing the archived "
-            "first pass to current results. Auth uses exact canonical-set equality."
+            "first pass to current results. Auth uses exact canonical-set equality; "
+            "first_pass_auth_overlap/jaccard are softer companions computed on the raw, "
+            "uncorrected agent output, isolating under/over-listing from naming the wrong scheme."
         ),
         "n": len(per_app),
         "first_pass_accuracy": round(first_hits / first_total, 3) if first_total else None,
         "post_verification_accuracy": round(current_hits / current_total, 3) if current_total else None,
+        "first_pass_auth_overlap_accuracy": round(first_auth_overlap_hits / n_auth, 3) if n_auth else None,
+        "first_pass_auth_jaccard_mean": round(first_auth_jaccard_sum / n_auth, 3) if n_auth else None,
         "improved_apps": improved,
         "regressed_apps": regressed,
         "per_app": per_app,
@@ -372,6 +415,8 @@ def accuracy_movement() -> dict:
     print(
         f"ACCURACY MOVEMENT | first-pass {movement['first_pass_accuracy']} -> "
         f"current {movement['post_verification_accuracy']} (n={len(per_app)}) | "
+        f"first-pass auth: overlap={movement['first_pass_auth_overlap_accuracy']} "
+        f"jaccard={movement['first_pass_auth_jaccard_mean']} | "
         f"improved: {improved}; regressed: {regressed}"
     )
     return movement

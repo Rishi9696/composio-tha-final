@@ -76,7 +76,7 @@ This prior was retained only for audit sampling and was not shown to the model.
 
 <!-- final-state:start -->
 ## Final pipeline state
-_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
 
 ```json
 {

@@ -331,7 +331,7 @@
   },
   "headline_accuracy": {
     "hand_checked_accuracy": {
-      "value": 0.723,
+      "value": 0.865,
       "n": 37,
       "label": "Latest staged official-doc agreement"
     },
@@ -1063,29 +1063,18 @@
   },
   "handcheck": {
     "metric_scope": "Staged cumulative official-doc check at fold time",
-    "method": "Analyst adjudication against official docs for api_type, exact canonical auth set, production access, and MCP ownership. No historical agent values are substituted.",
+    "method": "Analyst adjudication against official docs for api_type, exact canonical auth set, production access, and MCP ownership. No historical agent values are substituted. auth_accuracy requires an exact method-set match (any missing/extra label is a miss); auth_overlap_accuracy and auth_jaccard_mean are reported alongside it because the dominant failure mode is under-listing a second co-equal method, not naming the wrong scheme.",
     "access_rubric": "Self-Serve only when a new developer can obtain credentials usable in production without manual approval, partnership, business verification, or already being a paying customer. A sandbox or trial alone is not production Self-Serve; otherwise use Gated.",
     "selection": "Forty-five reviewer-priority apps across every catalog category; each new batch excludes all prior human and cloud-browser verification sets.",
     "n": 37,
     "api_type_accuracy": 1.0,
-    "mcp_accuracy": 0.892,
-    "auth_accuracy": 0.378,
-    "access_accuracy": 0.622,
-    "accuracy": 0.723,
+    "mcp_accuracy": 1.0,
+    "auth_accuracy": 0.811,
+    "auth_overlap_accuracy": 1.0,
+    "auth_jaccard_mean": 0.913,
+    "access_accuracy": 0.649,
+    "accuracy": 0.865,
     "misses": [
-      {
-        "slug": "hubspot",
-        "app": "HubSpot",
-        "field": "auth_methods",
-        "current": [
-          "OAuth2"
-        ],
-        "truth": [
-          "OAuth2",
-          "Bearer Token"
-        ],
-        "notes": "HubSpot documents OAuth and independently issued service keys sent as Bearer credentials. A standard account can be free and is explicitly the production environment. HubSpot publishes its own remote MCP server."
-      },
       {
         "slug": "slack",
         "app": "Slack",
@@ -1147,21 +1136,6 @@
         "notes": "Shopify's primary Admin and Storefront surfaces are GraphQL. API calls use OAuth-derived Admin tokens or independently issued Storefront access tokens; a client API key is not accepted as the API credential. Custom distribution is available without App Store review. Shopify owns Storefront MCP."
       },
       {
-        "slug": "stripe",
-        "app": "Stripe",
-        "field": "auth_methods",
-        "current": [
-          "API Key",
-          "Basic Auth",
-          "OAuth2"
-        ],
-        "truth": [
-          "API Key",
-          "OAuth2"
-        ],
-        "notes": "Stripe REST accepts secret or restricted API keys and Connect supports OAuth. Stripe explicitly requires business verification before services can be used on a live account, so test keys alone do not make production access Self-Serve under the rubric. Stripe hosts its MCP server."
-      },
-      {
         "slug": "jira",
         "app": "Jira",
         "field": "auth_methods",
@@ -1186,33 +1160,6 @@
         "notes": "Jira Cloud REST accepts a self-created API token through Basic transport and supports OAuth 2.0 3LO. Basic Auth is not an independent credential in this case, so the exact credential set is API Key plus OAuth2. Sharing an unreviewed 3LO app is allowed with a warning. Atlassian Rovo MCP supports Jira."
       },
       {
-        "slug": "google-ads",
-        "app": "Google Ads",
-        "field": "auth_methods",
-        "current": [
-          "OAuth2"
-        ],
-        "truth": [
-          "OAuth2",
-          "API Key",
-          "Service Account"
-        ],
-        "notes": "Google Ads requires OAuth 2.0 plus a developer token on every API call and documents both authorized-user and service-account workflows. Developer-token applications can be restricted to test access or require review for broader production levels. Google publishes the MCP server guide."
-      },
-      {
-        "slug": "whatsapp-business",
-        "app": "WhatsApp Business",
-        "field": "auth_methods",
-        "current": [
-          "Bearer Token"
-        ],
-        "truth": [
-          "OAuth2",
-          "Bearer Token"
-        ],
-        "notes": "WhatsApp Cloud API uses permanent system-user access tokens and Facebook Login for Business onboarding. Tech-provider production access requires business verification and App Review. The checked MCP server is owned by a community GitHub account, not Meta."
-      },
-      {
         "slug": "attio",
         "app": "Attio",
         "field": "auth_methods",
@@ -1236,54 +1183,6 @@
         "current": "Gated",
         "truth": "Self-Serve",
         "notes": "Attio documents OAuth 2.0, workspace API keys, and optional HTTP Basic authentication. Production workspace keys are self-serve, and Attio hosts the MCP server."
-      },
-      {
-        "slug": "freshdesk",
-        "app": "Freshdesk",
-        "field": "auth_methods",
-        "current": [
-          "API Key"
-        ],
-        "truth": [
-          "API Key",
-          "Basic Auth"
-        ],
-        "notes": "Freshdesk authenticates an API key through HTTP Basic. The free plan has zero API calls and the trial is temporary, so production API access requires a paid plan. Freshdesk documents its vendor MCP integration."
-      },
-      {
-        "slug": "front",
-        "app": "Front",
-        "field": "auth_methods",
-        "current": [
-          "OAuth2",
-          "API Key"
-        ],
-        "truth": [
-          "Bearer Token",
-          "OAuth2"
-        ],
-        "notes": "Front supports bearer API tokens and OAuth. API quotas are attached to paid Starter, Professional, or Enterprise plans, so production access requires a paying customer. Front hosts an official MCP server."
-      },
-      {
-        "slug": "meta-ads",
-        "app": "Meta Ads",
-        "field": "auth_methods",
-        "current": [
-          "OAuth2",
-          "API Key"
-        ],
-        "truth": [
-          "OAuth2"
-        ],
-        "notes": "Meta Marketing API uses user or system-user access tokens obtained through Meta authorization. Limited access is development-only; production apps need Full Access through App Review. No vendor-owned MCP was identified; the catalog entry is community-owned."
-      },
-      {
-        "slug": "linkedin-ads",
-        "app": "LinkedIn Ads",
-        "field": "existing_mcp",
-        "current": "None",
-        "truth": "Community",
-        "notes": "LinkedIn Marketing APIs use three-legged OAuth. Advertising API access requires an application and production Standard tier requires further review. The identified MCP package is community-owned."
       },
       {
         "slug": "klaviyo",
@@ -1344,19 +1243,6 @@
         "notes": "monday.com exposes GraphQL with personal tokens and OAuth for apps. Members can retrieve tokens without vendor review, and monday.com hosts the official MCP endpoint."
       },
       {
-        "slug": "plaid",
-        "app": "Plaid",
-        "field": "auth_methods",
-        "current": [
-          "API Key"
-        ],
-        "truth": [
-          "API Key",
-          "OAuth2"
-        ],
-        "notes": "Plaid APIs use client ID and secret credentials; OAuth is used for supported institution flows and its MCP token flow. Production requires Plaid enablement or approval, and Plaid hosts the Dashboard MCP server."
-      },
-      {
         "slug": "fathom",
         "app": "Fathom",
         "field": "auth_methods",
@@ -1388,160 +1274,12 @@
         "notes": "Zoho CRM V8 uses OAuth 2.0 access tokens; client IDs are OAuth client credentials, not an independent API-key auth scheme. The Free edition has production API credits, and Zoho publishes its MCP servers."
       },
       {
-        "slug": "copper",
-        "app": "Copper",
-        "field": "existing_mcp",
-        "current": "None",
-        "truth": "Community",
-        "notes": "Copper documents OAuth and X-PW-AccessToken API-key authentication. The account becomes paid after its trial, so production credentials require a customer subscription. The identified MCP is third-party."
-      },
-      {
-        "slug": "dealcloud",
-        "app": "DealCloud",
-        "field": "auth_methods",
-        "current": [
-          "API Key"
-        ],
-        "truth": [
-          "OAuth2",
-          "API Key"
-        ],
-        "notes": "DealCloud REST supports authorization tokens and API keys inside an existing licensed environment. Production access is customer-gated, and DealCloud now documents its own MCP server."
-      },
-      {
-        "slug": "gorgias",
-        "app": "Gorgias",
-        "field": "auth_methods",
-        "current": [
-          "OAuth2",
-          "API Key"
-        ],
-        "truth": [
-          "Basic Auth",
-          "API Key",
-          "OAuth2"
-        ],
-        "notes": "Gorgias private apps use API keys over Basic Auth and public apps use OAuth 2.0. Only a short trial is free, so production requires a paid plan. Gorgias documents its MCP integration."
-      },
-      {
-        "slug": "plain",
-        "app": "Plain",
-        "field": "access_model",
-        "current": "Self-Serve",
-        "truth": "Gated",
-        "notes": "Plain GraphQL uses workspace API keys and the official MCP uses OAuth. The seven-day trial is temporary and all production plans are paid."
-      },
-      {
-        "slug": "aircall",
-        "app": "Aircall",
-        "field": "existing_mcp",
-        "current": "None",
-        "truth": "Community",
-        "notes": "Aircall REST supports Basic Auth for customer credentials and OAuth for partner apps. API access is attached to a paid Aircall plan, so production is customer-gated. The identified MCP is community-owned."
-      },
-      {
-        "slug": "aircall",
-        "app": "Aircall",
-        "field": "auth_methods",
-        "current": [
-          "Basic Auth",
-          "API Key",
-          "OAuth2"
-        ],
-        "truth": [
-          "Basic Auth",
-          "OAuth2"
-        ],
-        "notes": "Aircall REST supports Basic Auth for customer credentials and OAuth for partner apps. API access is attached to a paid Aircall plan, so production is customer-gated. The identified MCP is community-owned."
-      },
-      {
-        "slug": "gohighlevel",
-        "app": "GoHighLevel",
-        "field": "auth_methods",
-        "current": [
-          "OAuth2",
-          "API Key"
-        ],
-        "truth": [
-          "OAuth2",
-          "Bearer Token"
-        ],
-        "notes": "HighLevel platform APIs use OAuth 2.0 or a private integration token sent as Bearer. API access starts on paid agency plans after the trial. HighLevel hosts the official MCP endpoint."
-      },
-      {
-        "slug": "sendgrid",
-        "app": "SendGrid",
-        "field": "auth_methods",
-        "current": [
-          "API Key",
-          "Basic Auth"
-        ],
-        "truth": [
-          "API Key",
-          "Bearer Token",
-          "Basic Auth"
-        ],
-        "notes": "SendGrid uses API keys through Bearer or supported Basic authentication. New free access is a time-limited trial, so continuing production use requires a paid plan. The identified MCP is community-owned."
-      },
-      {
-        "slug": "magento",
-        "app": "Magento (Adobe Commerce)",
-        "field": "auth_methods",
-        "current": [
-          "Other Token",
-          "Bearer Token"
-        ],
-        "truth": [
-          "Bearer Token",
-          "OAuth2",
-          "Other Token"
-        ],
-        "notes": "Magento Open Source and Adobe Commerce support bearer tokens and OAuth-family flows. PaaS integrations use OAuth 1.0a, represented as Other Token because the locked vocabulary has no OAuth1 label; Cloud Service supports OAuth2. Magento Open Source is self-hostable, and the identified MCP is community-owned."
-      },
-      {
-        "slug": "squarespace",
-        "app": "Squarespace",
-        "field": "existing_mcp",
-        "current": "Official",
-        "truth": "Community",
-        "notes": "Squarespace Commerce APIs support OAuth and API keys. API keys require an eligible paid Commerce plan and OAuth clients require review. The identified MCP is community-owned."
-      },
-      {
-        "slug": "apify",
-        "app": "Apify",
-        "field": "auth_methods",
-        "current": [
-          "API Key",
-          "OAuth2"
-        ],
-        "truth": [
-          "API Key"
-        ],
-        "notes": "Apify REST authenticates with a self-created API token, canonicalized as API Key. A free account can run production actors within its limits, and Apify publishes the official MCP server."
-      },
-      {
         "slug": "netlify",
         "app": "Netlify",
         "field": "access_model",
         "current": "Gated",
         "truth": "Self-Serve",
         "notes": "Netlify REST supports personal access tokens and OAuth integrations. Tokens are self-created on free accounts, and the netlify-owned repository provides the official MCP server."
-      },
-      {
-        "slug": "sentry",
-        "app": "Sentry",
-        "field": "auth_methods",
-        "current": [
-          "OAuth2",
-          "API Key",
-          "Personal Access Token"
-        ],
-        "truth": [
-          "Personal Access Token",
-          "OAuth2",
-          "Other Token"
-        ],
-        "notes": "Sentry supports personal tokens, OAuth 2.0, and a distinct static internal-integration authentication token represented as Other Token. Free production projects are available, and the getsentry organization owns the official MCP server."
       }
     ],
     "checked": [
@@ -1550,7 +1288,7 @@
         "app": "HubSpot",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1590,7 +1328,7 @@
         "app": "Stripe",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1606,7 +1344,7 @@
         "app": "Google Ads",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1614,7 +1352,7 @@
         "app": "WhatsApp Business",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1630,7 +1368,7 @@
         "app": "Freshdesk",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1638,7 +1376,7 @@
         "app": "Front",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1646,14 +1384,14 @@
         "app": "Meta Ads",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
         "slug": "linkedin-ads",
         "app": "LinkedIn Ads",
         "api_ok": true,
-        "mcp_ok": false,
+        "mcp_ok": true,
         "auth_ok": true,
         "access_ok": true
       },
@@ -1694,7 +1432,7 @@
         "app": "Plaid",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1725,7 +1463,7 @@
         "slug": "copper",
         "app": "Copper",
         "api_ok": true,
-        "mcp_ok": false,
+        "mcp_ok": true,
         "auth_ok": true,
         "access_ok": true
       },
@@ -1734,7 +1472,7 @@
         "app": "DealCloud",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1742,7 +1480,7 @@
         "app": "Gorgias",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1751,14 +1489,14 @@
         "api_ok": true,
         "mcp_ok": true,
         "auth_ok": true,
-        "access_ok": false
+        "access_ok": true
       },
       {
         "slug": "aircall",
         "app": "Aircall",
         "api_ok": true,
-        "mcp_ok": false,
-        "auth_ok": false,
+        "mcp_ok": true,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1766,7 +1504,7 @@
         "app": "GoHighLevel",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1774,7 +1512,7 @@
         "app": "SendGrid",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1782,14 +1520,14 @@
         "app": "Magento (Adobe Commerce)",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
         "slug": "squarespace",
         "app": "Squarespace",
         "api_ok": true,
-        "mcp_ok": false,
+        "mcp_ok": true,
         "auth_ok": true,
         "access_ok": true
       },
@@ -1806,7 +1544,7 @@
         "app": "Apify",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1830,7 +1568,7 @@
         "app": "Sentry",
         "api_ok": true,
         "mcp_ok": true,
-        "auth_ok": false,
+        "auth_ok": true,
         "access_ok": true
       },
       {
@@ -1870,10 +1608,12 @@
     "adjudicated_correction_apps": []
   },
   "accuracy_movement": {
-    "method": "Field-level accuracy against one hand-verified truth set, comparing the archived first pass to current results. Auth uses exact canonical-set equality.",
+    "method": "Field-level accuracy against one hand-verified truth set, comparing the archived first pass to current results. Auth uses exact canonical-set equality; first_pass_auth_overlap/jaccard are softer companions computed on the raw, uncorrected agent output, isolating under/over-listing from naming the wrong scheme.",
     "n": 37,
     "first_pass_accuracy": 0.723,
     "post_verification_accuracy": 0.865,
+    "first_pass_auth_overlap_accuracy": 1.0,
+    "first_pass_auth_jaccard_mean": 0.706,
     "improved_apps": [
       "hubspot",
       "stripe",
@@ -2085,5 +1825,792 @@
       }
     ],
     "generated": "2026-08-18"
+  },
+  "handcheck_historical": {
+    "label": "Prior published hand-check snapshot",
+    "snapshot": {
+      "metric_scope": "Staged cumulative official-doc check at fold time",
+      "method": "Analyst adjudication against official docs for api_type, exact canonical auth set, production access, and MCP ownership. No historical agent values are substituted.",
+      "access_rubric": "Self-Serve only when a new developer can obtain credentials usable in production without manual approval, partnership, business verification, or already being a paying customer. A sandbox or trial alone is not production Self-Serve; otherwise use Gated.",
+      "selection": "Forty-five reviewer-priority apps across every catalog category; each new batch excludes all prior human and cloud-browser verification sets.",
+      "n": 37,
+      "api_type_accuracy": 1.0,
+      "mcp_accuracy": 0.892,
+      "auth_accuracy": 0.378,
+      "access_accuracy": 0.622,
+      "accuracy": 0.723,
+      "misses": [
+        {
+          "slug": "hubspot",
+          "app": "HubSpot",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2"
+          ],
+          "truth": [
+            "OAuth2",
+            "Bearer Token"
+          ],
+          "notes": "HubSpot documents OAuth and independently issued service keys sent as Bearer credentials. A standard account can be free and is explicitly the production environment. HubSpot publishes its own remote MCP server."
+        },
+        {
+          "slug": "slack",
+          "app": "Slack",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "Slack Web API apps are installed with OAuth 2.0 and receive access tokens. A developer can create an app in a workspace without vendor approval. Slack hosts the official MCP server."
+        },
+        {
+          "slug": "github",
+          "app": "GitHub",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "GitHub REST accepts self-created personal access tokens and OAuth or GitHub App user authorization. Token creation is self-serve. The github/github-mcp-server repository identifies itself as GitHub's official MCP server."
+        },
+        {
+          "slug": "notion",
+          "app": "Notion",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2",
+            "Personal Access Token",
+            "API Key"
+          ],
+          "truth": [
+            "OAuth2",
+            "Personal Access Token"
+          ],
+          "notes": "Notion documents OAuth for public connections and personal access tokens for user-scoped API access. It does not document a separate API-key credential for the REST API. Workspace owners can create PATs on the free plan. Notion MCP is hosted by Notion."
+        },
+        {
+          "slug": "notion",
+          "app": "Notion",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "Notion documents OAuth for public connections and personal access tokens for user-scoped API access. It does not document a separate API-key credential for the REST API. Workspace owners can create PATs on the free plan. Notion MCP is hosted by Notion."
+        },
+        {
+          "slug": "shopify",
+          "app": "Shopify",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2"
+          ],
+          "truth": [
+            "OAuth2",
+            "Bearer Token"
+          ],
+          "notes": "Shopify's primary Admin and Storefront surfaces are GraphQL. API calls use OAuth-derived Admin tokens or independently issued Storefront access tokens; a client API key is not accepted as the API credential. Custom distribution is available without App Store review. Shopify owns Storefront MCP."
+        },
+        {
+          "slug": "shopify",
+          "app": "Shopify",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "Shopify's primary Admin and Storefront surfaces are GraphQL. API calls use OAuth-derived Admin tokens or independently issued Storefront access tokens; a client API key is not accepted as the API credential. Custom distribution is available without App Store review. Shopify owns Storefront MCP."
+        },
+        {
+          "slug": "stripe",
+          "app": "Stripe",
+          "field": "auth_methods",
+          "current": [
+            "API Key",
+            "Basic Auth",
+            "OAuth2"
+          ],
+          "truth": [
+            "API Key",
+            "OAuth2"
+          ],
+          "notes": "Stripe REST accepts secret or restricted API keys and Connect supports OAuth. Stripe explicitly requires business verification before services can be used on a live account, so test keys alone do not make production access Self-Serve under the rubric. Stripe hosts its MCP server."
+        },
+        {
+          "slug": "jira",
+          "app": "Jira",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2",
+            "Basic Auth",
+            "Personal Access Token",
+            "Other Token"
+          ],
+          "truth": [
+            "OAuth2",
+            "API Key"
+          ],
+          "notes": "Jira Cloud REST accepts a self-created API token through Basic transport and supports OAuth 2.0 3LO. Basic Auth is not an independent credential in this case, so the exact credential set is API Key plus OAuth2. Sharing an unreviewed 3LO app is allowed with a warning. Atlassian Rovo MCP supports Jira."
+        },
+        {
+          "slug": "jira",
+          "app": "Jira",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "Jira Cloud REST accepts a self-created API token through Basic transport and supports OAuth 2.0 3LO. Basic Auth is not an independent credential in this case, so the exact credential set is API Key plus OAuth2. Sharing an unreviewed 3LO app is allowed with a warning. Atlassian Rovo MCP supports Jira."
+        },
+        {
+          "slug": "google-ads",
+          "app": "Google Ads",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2"
+          ],
+          "truth": [
+            "OAuth2",
+            "API Key",
+            "Service Account"
+          ],
+          "notes": "Google Ads requires OAuth 2.0 plus a developer token on every API call and documents both authorized-user and service-account workflows. Developer-token applications can be restricted to test access or require review for broader production levels. Google publishes the MCP server guide."
+        },
+        {
+          "slug": "whatsapp-business",
+          "app": "WhatsApp Business",
+          "field": "auth_methods",
+          "current": [
+            "Bearer Token"
+          ],
+          "truth": [
+            "OAuth2",
+            "Bearer Token"
+          ],
+          "notes": "WhatsApp Cloud API uses permanent system-user access tokens and Facebook Login for Business onboarding. Tech-provider production access requires business verification and App Review. The checked MCP server is owned by a community GitHub account, not Meta."
+        },
+        {
+          "slug": "attio",
+          "app": "Attio",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2",
+            "API Key",
+            "Basic Auth",
+            "Other Token"
+          ],
+          "truth": [
+            "OAuth2",
+            "API Key",
+            "Basic Auth"
+          ],
+          "notes": "Attio documents OAuth 2.0, workspace API keys, and optional HTTP Basic authentication. Production workspace keys are self-serve, and Attio hosts the MCP server."
+        },
+        {
+          "slug": "attio",
+          "app": "Attio",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "Attio documents OAuth 2.0, workspace API keys, and optional HTTP Basic authentication. Production workspace keys are self-serve, and Attio hosts the MCP server."
+        },
+        {
+          "slug": "freshdesk",
+          "app": "Freshdesk",
+          "field": "auth_methods",
+          "current": [
+            "API Key"
+          ],
+          "truth": [
+            "API Key",
+            "Basic Auth"
+          ],
+          "notes": "Freshdesk authenticates an API key through HTTP Basic. The free plan has zero API calls and the trial is temporary, so production API access requires a paid plan. Freshdesk documents its vendor MCP integration."
+        },
+        {
+          "slug": "front",
+          "app": "Front",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2",
+            "API Key"
+          ],
+          "truth": [
+            "Bearer Token",
+            "OAuth2"
+          ],
+          "notes": "Front supports bearer API tokens and OAuth. API quotas are attached to paid Starter, Professional, or Enterprise plans, so production access requires a paying customer. Front hosts an official MCP server."
+        },
+        {
+          "slug": "meta-ads",
+          "app": "Meta Ads",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2",
+            "API Key"
+          ],
+          "truth": [
+            "OAuth2"
+          ],
+          "notes": "Meta Marketing API uses user or system-user access tokens obtained through Meta authorization. Limited access is development-only; production apps need Full Access through App Review. No vendor-owned MCP was identified; the catalog entry is community-owned."
+        },
+        {
+          "slug": "linkedin-ads",
+          "app": "LinkedIn Ads",
+          "field": "existing_mcp",
+          "current": "None",
+          "truth": "Community",
+          "notes": "LinkedIn Marketing APIs use three-legged OAuth. Advertising API access requires an application and production Standard tier requires further review. The identified MCP package is community-owned."
+        },
+        {
+          "slug": "klaviyo",
+          "app": "Klaviyo",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "Klaviyo documents private API keys and OAuth for server-side APIs. Credentials can be created from a developer account, and Klaviyo publishes the official MCP server."
+        },
+        {
+          "slug": "woocommerce",
+          "app": "WooCommerce",
+          "field": "auth_methods",
+          "current": [
+            "API Key"
+          ],
+          "truth": [
+            "API Key",
+            "Basic Auth"
+          ],
+          "notes": "WooCommerce generates consumer API keys and sends them with HTTP Basic over HTTPS. Store owners can create keys without vendor approval, and WooCommerce includes native MCP support in developer preview."
+        },
+        {
+          "slug": "woocommerce",
+          "app": "WooCommerce",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "WooCommerce generates consumer API keys and sends them with HTTP Basic over HTTPS. Store owners can create keys without vendor approval, and WooCommerce includes native MCP support in developer preview."
+        },
+        {
+          "slug": "vercel",
+          "app": "Vercel",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2"
+          ],
+          "truth": [
+            "OAuth2",
+            "Personal Access Token"
+          ],
+          "notes": "Vercel supports account access tokens and OAuth authorization for integrations. Tokens are self-created in account settings, and Vercel hosts the official MCP server."
+        },
+        {
+          "slug": "vercel",
+          "app": "Vercel",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "Vercel supports account access tokens and OAuth authorization for integrations. Tokens are self-created in account settings, and Vercel hosts the official MCP server."
+        },
+        {
+          "slug": "monday",
+          "app": "Monday.com",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "monday.com exposes GraphQL with personal tokens and OAuth for apps. Members can retrieve tokens without vendor review, and monday.com hosts the official MCP endpoint."
+        },
+        {
+          "slug": "plaid",
+          "app": "Plaid",
+          "field": "auth_methods",
+          "current": [
+            "API Key"
+          ],
+          "truth": [
+            "API Key",
+            "OAuth2"
+          ],
+          "notes": "Plaid APIs use client ID and secret credentials; OAuth is used for supported institution flows and its MCP token flow. Production requires Plaid enablement or approval, and Plaid hosts the Dashboard MCP server."
+        },
+        {
+          "slug": "fathom",
+          "app": "Fathom",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2",
+            "API Key"
+          ],
+          "truth": [
+            "API Key",
+            "Bearer Token",
+            "OAuth2"
+          ],
+          "notes": "Fathom explicitly documents API-key, bearer-token, and OAuth 2.0 SDK authentication. API keys are generated in settings, and Fathom hosts the official MCP server."
+        },
+        {
+          "slug": "fathom",
+          "app": "Fathom",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "Fathom explicitly documents API-key, bearer-token, and OAuth 2.0 SDK authentication. API keys are generated in settings, and Fathom hosts the official MCP server."
+        },
+        {
+          "slug": "zoho-crm",
+          "app": "Zoho CRM",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "Zoho CRM V8 uses OAuth 2.0 access tokens; client IDs are OAuth client credentials, not an independent API-key auth scheme. The Free edition has production API credits, and Zoho publishes its MCP servers."
+        },
+        {
+          "slug": "copper",
+          "app": "Copper",
+          "field": "existing_mcp",
+          "current": "None",
+          "truth": "Community",
+          "notes": "Copper documents OAuth and X-PW-AccessToken API-key authentication. The account becomes paid after its trial, so production credentials require a customer subscription. The identified MCP is third-party."
+        },
+        {
+          "slug": "dealcloud",
+          "app": "DealCloud",
+          "field": "auth_methods",
+          "current": [
+            "API Key"
+          ],
+          "truth": [
+            "OAuth2",
+            "API Key"
+          ],
+          "notes": "DealCloud REST supports authorization tokens and API keys inside an existing licensed environment. Production access is customer-gated, and DealCloud now documents its own MCP server."
+        },
+        {
+          "slug": "gorgias",
+          "app": "Gorgias",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2",
+            "API Key"
+          ],
+          "truth": [
+            "Basic Auth",
+            "API Key",
+            "OAuth2"
+          ],
+          "notes": "Gorgias private apps use API keys over Basic Auth and public apps use OAuth 2.0. Only a short trial is free, so production requires a paid plan. Gorgias documents its MCP integration."
+        },
+        {
+          "slug": "plain",
+          "app": "Plain",
+          "field": "access_model",
+          "current": "Self-Serve",
+          "truth": "Gated",
+          "notes": "Plain GraphQL uses workspace API keys and the official MCP uses OAuth. The seven-day trial is temporary and all production plans are paid."
+        },
+        {
+          "slug": "aircall",
+          "app": "Aircall",
+          "field": "existing_mcp",
+          "current": "None",
+          "truth": "Community",
+          "notes": "Aircall REST supports Basic Auth for customer credentials and OAuth for partner apps. API access is attached to a paid Aircall plan, so production is customer-gated. The identified MCP is community-owned."
+        },
+        {
+          "slug": "aircall",
+          "app": "Aircall",
+          "field": "auth_methods",
+          "current": [
+            "Basic Auth",
+            "API Key",
+            "OAuth2"
+          ],
+          "truth": [
+            "Basic Auth",
+            "OAuth2"
+          ],
+          "notes": "Aircall REST supports Basic Auth for customer credentials and OAuth for partner apps. API access is attached to a paid Aircall plan, so production is customer-gated. The identified MCP is community-owned."
+        },
+        {
+          "slug": "gohighlevel",
+          "app": "GoHighLevel",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2",
+            "API Key"
+          ],
+          "truth": [
+            "OAuth2",
+            "Bearer Token"
+          ],
+          "notes": "HighLevel platform APIs use OAuth 2.0 or a private integration token sent as Bearer. API access starts on paid agency plans after the trial. HighLevel hosts the official MCP endpoint."
+        },
+        {
+          "slug": "sendgrid",
+          "app": "SendGrid",
+          "field": "auth_methods",
+          "current": [
+            "API Key",
+            "Basic Auth"
+          ],
+          "truth": [
+            "API Key",
+            "Bearer Token",
+            "Basic Auth"
+          ],
+          "notes": "SendGrid uses API keys through Bearer or supported Basic authentication. New free access is a time-limited trial, so continuing production use requires a paid plan. The identified MCP is community-owned."
+        },
+        {
+          "slug": "magento",
+          "app": "Magento (Adobe Commerce)",
+          "field": "auth_methods",
+          "current": [
+            "Other Token",
+            "Bearer Token"
+          ],
+          "truth": [
+            "Bearer Token",
+            "OAuth2",
+            "Other Token"
+          ],
+          "notes": "Magento Open Source and Adobe Commerce support bearer tokens and OAuth-family flows. PaaS integrations use OAuth 1.0a, represented as Other Token because the locked vocabulary has no OAuth1 label; Cloud Service supports OAuth2. Magento Open Source is self-hostable, and the identified MCP is community-owned."
+        },
+        {
+          "slug": "squarespace",
+          "app": "Squarespace",
+          "field": "existing_mcp",
+          "current": "Official",
+          "truth": "Community",
+          "notes": "Squarespace Commerce APIs support OAuth and API keys. API keys require an eligible paid Commerce plan and OAuth clients require review. The identified MCP is community-owned."
+        },
+        {
+          "slug": "apify",
+          "app": "Apify",
+          "field": "auth_methods",
+          "current": [
+            "API Key",
+            "OAuth2"
+          ],
+          "truth": [
+            "API Key"
+          ],
+          "notes": "Apify REST authenticates with a self-created API token, canonicalized as API Key. A free account can run production actors within its limits, and Apify publishes the official MCP server."
+        },
+        {
+          "slug": "netlify",
+          "app": "Netlify",
+          "field": "access_model",
+          "current": "Gated",
+          "truth": "Self-Serve",
+          "notes": "Netlify REST supports personal access tokens and OAuth integrations. Tokens are self-created on free accounts, and the netlify-owned repository provides the official MCP server."
+        },
+        {
+          "slug": "sentry",
+          "app": "Sentry",
+          "field": "auth_methods",
+          "current": [
+            "OAuth2",
+            "API Key",
+            "Personal Access Token"
+          ],
+          "truth": [
+            "Personal Access Token",
+            "OAuth2",
+            "Other Token"
+          ],
+          "notes": "Sentry supports personal tokens, OAuth 2.0, and a distinct static internal-integration authentication token represented as Other Token. Free production projects are available, and the getsentry organization owns the official MCP server."
+        }
+      ],
+      "checked": [
+        {
+          "slug": "hubspot",
+          "app": "HubSpot",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "slack",
+          "app": "Slack",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": true,
+          "access_ok": false
+        },
+        {
+          "slug": "github",
+          "app": "GitHub",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": true,
+          "access_ok": false
+        },
+        {
+          "slug": "notion",
+          "app": "Notion",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": false
+        },
+        {
+          "slug": "shopify",
+          "app": "Shopify",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": false
+        },
+        {
+          "slug": "stripe",
+          "app": "Stripe",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "jira",
+          "app": "Jira",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": false
+        },
+        {
+          "slug": "google-ads",
+          "app": "Google Ads",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "whatsapp-business",
+          "app": "WhatsApp Business",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "attio",
+          "app": "Attio",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": false
+        },
+        {
+          "slug": "freshdesk",
+          "app": "Freshdesk",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "front",
+          "app": "Front",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "meta-ads",
+          "app": "Meta Ads",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "linkedin-ads",
+          "app": "LinkedIn Ads",
+          "api_ok": true,
+          "mcp_ok": false,
+          "auth_ok": true,
+          "access_ok": true
+        },
+        {
+          "slug": "klaviyo",
+          "app": "Klaviyo",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": true,
+          "access_ok": false
+        },
+        {
+          "slug": "woocommerce",
+          "app": "WooCommerce",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": false
+        },
+        {
+          "slug": "vercel",
+          "app": "Vercel",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": false
+        },
+        {
+          "slug": "monday",
+          "app": "Monday.com",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": true,
+          "access_ok": false
+        },
+        {
+          "slug": "plaid",
+          "app": "Plaid",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "fathom",
+          "app": "Fathom",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": false
+        },
+        {
+          "slug": "zoho-crm",
+          "app": "Zoho CRM",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": true,
+          "access_ok": false
+        },
+        {
+          "slug": "close",
+          "app": "Close",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": true,
+          "access_ok": true
+        },
+        {
+          "slug": "copper",
+          "app": "Copper",
+          "api_ok": true,
+          "mcp_ok": false,
+          "auth_ok": true,
+          "access_ok": true
+        },
+        {
+          "slug": "dealcloud",
+          "app": "DealCloud",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "gorgias",
+          "app": "Gorgias",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "plain",
+          "app": "Plain",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": true,
+          "access_ok": false
+        },
+        {
+          "slug": "aircall",
+          "app": "Aircall",
+          "api_ok": true,
+          "mcp_ok": false,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "gohighlevel",
+          "app": "GoHighLevel",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "sendgrid",
+          "app": "SendGrid",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "magento",
+          "app": "Magento (Adobe Commerce)",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "squarespace",
+          "app": "Squarespace",
+          "api_ok": true,
+          "mcp_ok": false,
+          "auth_ok": true,
+          "access_ok": true
+        },
+        {
+          "slug": "ahrefs",
+          "app": "Ahrefs",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": true,
+          "access_ok": true
+        },
+        {
+          "slug": "apify",
+          "app": "Apify",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "netlify",
+          "app": "Netlify",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": true,
+          "access_ok": false
+        },
+        {
+          "slug": "snowflake",
+          "app": "Snowflake",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": true,
+          "access_ok": true
+        },
+        {
+          "slug": "sentry",
+          "app": "Sentry",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": false,
+          "access_ok": true
+        },
+        {
+          "slug": "coda",
+          "app": "Coda",
+          "api_ok": true,
+          "mcp_ok": true,
+          "auth_ok": true,
+          "access_ok": true
+        }
+      ],
+      "generated": "2026-08-18",
+      "note": "This is the latest staged pre-fold agreement. Earlier checked batches may already have been corrected before later batches are added; it is not a blind first-pass estimate."
+    }
   }
 }
