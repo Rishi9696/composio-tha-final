@@ -4,7 +4,7 @@ Can an agent be wired up against 100 requested apps today? This pipeline answers
 
 **Provider:** OpenAI, exclusively — Responses API `web_search` for documentation discovery, structured Chat Completions output for synthesis. No gateway, no fallback model.
 
-→ **[Live console](https://composio-tha-final-ltbpjdgh7-rishi96.vercel.app/)** · [Source](https://github.com/Rishi9696/composio-tha-final)
+→ **[Live console](https://composio-tha-final-6ujf6e98c-rishi96.vercel.app/)** · [Source](https://github.com/Rishi9696/composio-tha-final)
 
 ---
 
