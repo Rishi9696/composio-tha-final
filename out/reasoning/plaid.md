@@ -75,3 +75,42 @@ This prior was retained only for audit sampling and was not shown to the model.
   "note": "Capture as 'self-serve trial, gated production', not a flat label."
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Plaid",
+  "category": "Fintech",
+  "one_liner": "Plaid offers a broad REST API and official MCP, but full production access requires approval or a paid plan.",
+  "auth_methods": [
+    "API Key",
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Support docs describe a Trial with up to 10 Production Items prior to full Production approval and require a paid upgrade beyond that; Exchange OAuth setup also references working with a Plaid contact."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "No",
+  "buildability": "Hard",
+  "main_blocker": "Full production use requires approval and/or a paid upgrade beyond a limited Trial plan.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://plaid.com/docs/api/",
+    "https://plaid.com/docs/link/oauth/",
+    "https://plaid.com/docs/resources/mcp/"
+  ],
+  "confidence": 0.64,
+  "verification_status": "Hand-Checked",
+  "slug": "plaid",
+  "primary_docs_url": "https://plaid.com/docs/api/",
+  "rate_limit_note": "No rate limit details found in the fetched documentation.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

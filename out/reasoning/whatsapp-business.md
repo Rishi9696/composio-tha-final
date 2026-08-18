@@ -76,3 +76,43 @@ This prior was retained only for audit sampling and was not shown to the model.
   "main_blocker": "API exists but requires Meta business verification + app review before production access."
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "WhatsApp Business",
+  "category": "Comms",
+  "one_liner": "WhatsApp Business Cloud API uses bearer tokens; production access appears gated; community MCP servers exist.",
+  "auth_methods": [
+    "OAuth2",
+    "Bearer Token"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Fetched Meta docs do not explicitly confirm self-serve production credentials; third-party guide mentions a free tier but is not authoritative. Expect business verification/number setup before production."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Community",
+  "composio_toolkit": "No",
+  "buildability": "Hard",
+  "main_blocker": "No explicit self-serve production entitlement in official docs; need to confirm Meta business verification and number provisioning.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://developers.facebook.com/documentation/business-messaging/whatsapp/get-started",
+    "https://developers.facebook.com/documentation/business-messaging/whatsapp/embedded-signup/overview",
+    "https://developers.facebook.com/documentation/development/create-an-app/whatsapp-use-case#permissions-and-features",
+    "https://github.com/mattcoatsworth/Whatsapp-MCP-Server"
+  ],
+  "confidence": 0.56,
+  "verification_status": "Hand-Checked",
+  "slug": "whatsapp-business",
+  "primary_docs_url": "https://developers.facebook.com/documentation/business-messaging/whatsapp/get-started",
+  "rate_limit_note": "Third-party guide claims 1000 service conversations/month free tier; verify limits and pricing on Meta’s official pricing docs.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

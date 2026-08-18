@@ -71,3 +71,43 @@ This prior was retained only for audit sampling and was not shown to the model.
   "main_blocker": "Sub-account API keys are self-serve; public marketplace app listing needs review (public-vs-private app distinction)."
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "GoHighLevel",
+  "category": "Ads/Marketing",
+  "one_liner": "GoHighLevel offers a broad REST API and official MCP, but production access requires higher‑tier paid plans.",
+  "auth_methods": [
+    "OAuth2",
+    "Bearer Token"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "HighLevel API access is available on paid agency plans after the temporary trial."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "No",
+  "buildability": "Moderate",
+  "main_blocker": "Production credentials require an existing paid customer account.",
+  "recommended_next_action": "Partner-Gated",
+  "evidence_urls": [
+    "https://marketplace.gohighlevel.com/docs/Authorization/authorization_doc/",
+    "https://marketplace.gohighlevel.com/docs/",
+    "https://www.gohighlevel.com/pricing",
+    "https://marketplace.gohighlevel.com/docs/other/mcp/index.html"
+  ],
+  "confidence": 0.72,
+  "verification_status": "Hand-Checked",
+  "slug": "gohighlevel",
+  "primary_docs_url": "https://marketplace.gohighlevel.com/docs/Authorization/authorization_doc/",
+  "rate_limit_note": "Rate limits are referenced in the support doc but specific values were not visible in the fetched excerpts.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

@@ -74,3 +74,42 @@ This prior was retained only for audit sampling and was not shown to the model.
   "main_blocker": "Broad, well-documented REST/OAuth2 API, but keys are only issuable by an admin on an existing paid DealCloud site; no public trial/signup."
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "DealCloud",
+  "category": "CRM",
+  "one_liner": "DealCloud exposes a broad REST API and an official MCP (preview), but production access is sales-gated.",
+  "auth_methods": [
+    "OAuth2",
+    "API Key"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Docs describe API Keys, but no proof of self-serve production issuance. Pricing is sales-led with no public tiers; every CTA to contact sales. The MCP server is in client preview starting July 2026."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "No",
+  "buildability": "Hard",
+  "main_blocker": "Production credentials appear to require sales approval/customer status; MCP is limited to a client preview.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://api.docs.dealcloud.com/docs/token",
+    "https://api.docs.dealcloud.com/docs/apikeys",
+    "https://api.docs.dealcloud.com/releases"
+  ],
+  "confidence": 0.62,
+  "verification_status": "Hand-Checked",
+  "slug": "dealcloud",
+  "primary_docs_url": "https://api.docs.dealcloud.com/docs/token",
+  "rate_limit_note": "Docs include a Rate Limits section; specific limits not shown in the fetched text.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

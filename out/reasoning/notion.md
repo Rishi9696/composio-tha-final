@@ -70,3 +70,48 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Notion",
+  "category": "Productivity/PM",
+  "one_liner": "Notion offers a broad REST API and official hosted MCP, but production terms need confirmation.",
+  "auth_methods": [
+    "OAuth2",
+    "Personal Access Token",
+    "API Key"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Docs show PATs, internal tokens, and OAuth connections, but no explicit vendor statement confirms free self-serve PRODUCTION access; Marketplace/public distribution may require review. Confirm production entitlement and any plan or approval requirements."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "No explicit vendor doc confirming self-serve production entitlement; potential review for public apps/Marketplace.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://developers.notion.com/reference/authentication",
+    "https://developers.notion.com/guides/get-started/personal-access-tokens",
+    "https://developers.notion.com",
+    "https://developers.notion.com/guides/mcp/overview",
+    "https://developers.notion.com/guides/mcp/get-started-with-mcp",
+    "https://www.notion.com/help/notion-mcp",
+    "https://www.notion.com/blog/notions-hosted-mcp-server-an-inside-look",
+    "https://apiterms.com/api/notion.so/"
+  ],
+  "confidence": 0.64,
+  "verification_status": "Hand-Checked",
+  "slug": "notion",
+  "primary_docs_url": "https://developers.notion.com/guides/get-started/personal-access-tokens",
+  "rate_limit_note": "Per API Terms: ~3 req/s per connection with bursts; shared per-workspace limit scaled by plan; 429 on exceed.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

@@ -63,3 +63,42 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Front",
+  "category": "Support",
+  "one_liner": "Front offers a broad REST API with OAuth2/API tokens; production access requires a paid plan.",
+  "auth_methods": [
+    "Bearer Token",
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Front API access is included with paid plans; the self-serve trial is temporary and does not satisfy the production-access rubric."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "Production API use requires an existing paid Front customer account.",
+  "recommended_next_action": "Partner-Gated",
+  "evidence_urls": [
+    "https://dev.frontapp.com/docs/authentication",
+    "https://help.front.com/en/articles/2438",
+    "https://dev.frontapp.com/docs/mcp-server"
+  ],
+  "confidence": 0.66,
+  "verification_status": "Hand-Checked",
+  "slug": "front",
+  "primary_docs_url": "https://dev.frontapp.com/docs/authentication",
+  "rate_limit_note": "Not specified in the cited pages.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

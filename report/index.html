@@ -7,7 +7,7 @@
   <meta name="description" content="Console for reviewing evidence-backed API integration readiness across 100 requested apps." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236366f1'/%3E%3Cpath d='M28 62 L44 30 L60 62 M34 50 L54 50' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <title>Readiness Console</title>
-  <link rel="stylesheet" href="theme.css?v=20260818-4" />
+  <link rel="stylesheet" href="theme.css?v=20260818-7" />
 </head>
 
 <body>
@@ -17,6 +17,9 @@
       <nav class="rail-nav">
         <button class="rail-item active" data-view="overview" type="button">
           <span class="rail-glyph">◇</span><span>Overview</span>
+        </button>
+        <button class="rail-item" data-view="patterns" type="button">
+          <span class="rail-glyph">◆</span><span>Patterns</span>
         </button>
         <button class="rail-item" data-view="queue" type="button">
           <span class="rail-glyph">▤</span><span>Queue</span>
@@ -82,6 +85,30 @@
         </div>
       </section>
 
+      <!-- ============ PATTERNS ============ -->
+      <section class="view" id="view-patterns" data-view="patterns">
+        <div class="view-head">
+          <span class="view-glyph">◆</span>
+          <h2>Patterns</h2>
+        </div>
+        <p class="view-note pat-headline" id="patterns-headline">—</p>
+        <div class="pat-grid">
+          <div class="panel">
+            <div class="panel-head"><h2>Auth methods</h2></div>
+            <div class="pbar-list" id="auth-bars"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2>Self-serve vs gated, by category</h2></div>
+            <div class="split-list" id="access-splits"></div>
+            <p class="split-legend"><span class="dot s-serve"></span>self-serve <span class="dot s-gate"></span>gated</p>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2>Most common blocker</h2></div>
+            <div class="pbar-list" id="blocker-bars"></div>
+          </div>
+        </div>
+      </section>
+
       <!-- ============ QUEUE ============ -->
       <section class="view" id="view-queue" data-view="queue">
         <div class="view-head">
@@ -127,8 +154,18 @@
           <span class="view-glyph">◈</span>
           <h2>Verify</h2>
         </div>
-        <p class="view-note">Official-doc adjudication, correction replay, and independent browser verification, reported separately.</p>
+        <p class="view-note">Three independent loops — a human hand-check against official docs, an OpenAI agent blind re-research, and a Browser-Use cloud re-check — plus how accuracy moved once corrections were folded in. All three converge on the same honest weakness: production-access (self-serve vs gated) is the hardest call and the agent errs conservative, while auth is the least reliably extracted field.</p>
         <div class="score-grid" id="score-grid"></div>
+        <div class="panel unresolved-panel">
+          <div class="panel-head"><h2>What defeated the agent</h2><span class="tag tag-blocked" id="unresolved-count">—</span></div>
+          <p class="unresolved-note">Apps that failed closed rather than receiving a guessed record. Nothing here was fabricated — a documented block is a valid finding.</p>
+          <div class="table-shell">
+            <table class="rank-table">
+              <thead><tr><th>App</th><th>Stage</th><th>Why it failed</th></tr></thead>
+              <tbody id="unresolved-body"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- ============ METHOD ============ -->
@@ -154,8 +191,8 @@
     </div>
   </div>
 
-  <script src="data.js?v=20260818-4"></script>
-  <script src="app.js?v=20260818-4"></script>
+  <script src="data.js?v=20260818-7"></script>
+  <script src="app.js?v=20260818-7"></script>
 </body>
 
 </html>

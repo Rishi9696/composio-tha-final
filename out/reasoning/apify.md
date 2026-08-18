@@ -63,3 +63,40 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Apify",
+  "category": "Research/Scraping",
+  "one_liner": "Apify offers a broad REST API and official MCP server with API token and OAuth-based access ready to build now.",
+  "auth_methods": [
+    "API Key"
+  ],
+  "access_model": {
+    "kind": "Self-Serve",
+    "note": "Docs show usage with an API token and a hosted MCP using OAuth, with no stated approval or paid-plan prerequisites."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Easy",
+  "main_blocker": "None; API token and hosted MCP OAuth flows appear directly usable per docs.",
+  "recommended_next_action": "Build Now",
+  "evidence_urls": [
+    "https://docs.apify.com/api/v2/getting-started",
+    "https://docs.apify.com/platform/integrations/mcp"
+  ],
+  "confidence": 0.55,
+  "verification_status": "Hand-Checked",
+  "slug": "apify",
+  "primary_docs_url": "https://docs.apify.com/api/v2/getting-started",
+  "rate_limit_note": "No rate limit details found on the cited pages.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

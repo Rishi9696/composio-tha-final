@@ -78,3 +78,45 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Jira",
+  "category": "Productivity/PM",
+  "one_liner": "Jira offers a broad REST API and an official MCP server, but production access terms aren’t explicitly self-serve.",
+  "auth_methods": [
+    "OAuth2",
+    "Basic Auth",
+    "Personal Access Token",
+    "Other Token"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Docs show OAuth2/API token and an official MCP server, but no explicit statement that production API/MCP access is self-serve; pricing page doesn’t confirm production API entitlement."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "No explicit evidence of self-serve production entitlement; may require existing Jira site/admin and plan confirmation.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://developer.atlassian.com/server/jira/platform/basic-authentication/",
+    "https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-oauth-authentication-6291692/",
+    "https://support.atlassian.com/atlassian-rovo-mcp-server/docs/getting-started-with-the-atlassian-remote-mcp-server/",
+    "https://www.atlassian.com/software/jira/jira/pricing?utm_source=openai"
+  ],
+  "confidence": 0.53,
+  "verification_status": "Hand-Checked",
+  "slug": "jira",
+  "primary_docs_url": "https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-oauth-authentication-6291692/",
+  "rate_limit_note": "No rate limit details in the cited sources; check Jira REST API limits per plan/site.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

@@ -259,24 +259,123 @@
   }
   function renderVerify() {
     var out = [];
+
+    // Loop 1 — human hand-check against official docs.
     var hc = METRICS.handcheck;
-    if (hc) out.push(scoreCard("Official-doc adjudication", hc.metric_scope || "", [
-      ["apps", hc.n], ["api type", pct(hc.api_type_accuracy) + "%"],
-      ["auth set", pct(hc.auth_accuracy) + "%"], ["access", pct(hc.access_accuracy) + "%"],
+    if (hc) out.push(scoreCard("Human hand-check", hc.metric_scope || "Analyst adjudication vs official docs.", [
+      ["apps", hc.n],
+      ["api type", pct(hc.api_type_accuracy) + "%"],
+      ["auth set", pct(hc.auth_accuracy) + "%"],
+      ["access", pct(hc.access_accuracy) + "%"],
       ["mcp", pct(hc.mcp_accuracy) + "%"],
     ]));
+
+    // Loop 2 — OpenAI agent re-researches blind and agrees or not.
+    var vr = METRICS.verification;
+    if (vr) out.push(scoreCard("Agent blind re-check", "OpenAI re-researched from scratch, excluding the first-pass sources.", [
+      ["checked", Array.isArray(vr.checks) ? vr.checks.length : (vr.checks != null ? vr.checks : "—")],
+      ["auth agree", vr.auth_methods_exact_agreement_rate != null ? pct(vr.auth_methods_exact_agreement_rate) + "%" : "—"],
+      ["access agree", vr.access_model_agreement_rate != null ? pct(vr.access_model_agreement_rate) + "%" : "—"],
+      ["overall", vr.overall_agreement_rate != null ? pct(vr.overall_agreement_rate) + "%" : "—"],
+    ]));
+
+    // Loop 3 — Browser-Use Cloud navigates live docs. Per-field agreement is
+    // fairer than whole-record: the cloud agent is noisy and over-claims
+    // self-serve from marketing pages, so a single record-level number misleads.
+    var bu = METRICS.browser_use;
+    if (bu && bu.n_checked != null) {
+      var fd = bu.field_disagreements || {};
+      var fagree = function (field) {
+        return bu.n_checked ? pct((bu.n_checked - (fd[field] || 0)) / bu.n_checked) + "%" : "—";
+      };
+      out.push(scoreCard("Browser-Use cloud", "An independent cloud browser navigated live docs; per-field agreement.", [
+        ["checked", bu.n_checked],
+        ["api type", fagree("api_type")],
+        ["auth", fagree("auth_methods")],
+        ["access", fagree("access_model")],
+      ]));
+    }
+
+    // Accuracy movement — pre-correction agreement is the honest number.
     var am = METRICS.accuracy_movement;
-    if (am) out.push(scoreCard("Correction replay", "First pass vs corrected, same truth set.", [
-      ["first pass", am.first_pass != null ? pct(am.first_pass) + "%" : "—"],
-      ["corrected", am.corrected != null ? pct(am.corrected) + "%" : "—"],
+    if (am) out.push(scoreCard("Accuracy movement", "Agent first pass vs after folding human corrections, same truth set.", [
+      ["first pass", am.first_pass_accuracy != null ? pct(am.first_pass_accuracy) + "%" : "—"],
+      ["after fixes", am.post_verification_accuracy != null ? pct(am.post_verification_accuracy) + "%" : "—"],
       ["truth apps", am.n != null ? am.n : "—"],
     ]));
-    var bu = METRICS.browser_use;
-    if (bu) out.push(scoreCard("Independent browser check", "Browser Use Cloud re-derived key fields.", [
-      ["sampled", bu.sample != null ? bu.sample : (bu.n != null ? bu.n : "—")],
-      ["agreed", bu.agreement != null ? pct(bu.agreement) + "%" : (bu.agreed != null ? bu.agreed : "—")],
-    ]));
+
     el("score-grid").innerHTML = out.join("") || '<p class="empty">Verification metrics populate after a run.</p>';
+    renderUnresolved();
+  }
+
+  function renderUnresolved() {
+    var body = el("unresolved-body");
+    if (!body) return;
+    var resolved = {};
+    RESULTS.forEach(function (r) { resolved[r.slug] = 1; });
+    // An app is unresolved only if it has no record. Collapse the per-phase
+    // failure rows to one per slug, preferring the pipeline-phase (final) cause.
+    var bySlug = {};
+    (METRICS.unresolved_failures || []).forEach(function (f) {
+      if (resolved[f.slug]) return;
+      var cur = bySlug[f.slug];
+      if (!cur || f.phase === "pipeline") bySlug[f.slug] = f;
+    });
+    var rows = Object.keys(bySlug).sort().map(function (slug) {
+      var f = bySlug[slug];
+      var degraded = /degraded|insufficient/i.test(f.message || "");
+      return {
+        slug: slug,
+        stage: degraded ? "evidence" : "synthesis",
+        reason: String(f.message || "").split(";")[0].trim(),
+        bucket: degraded ? "tag-outreach" : "tag-blocked",
+      };
+    });
+    el("unresolved-count").textContent = rows.length + " of 100";
+    body.innerHTML = rows.map(function (r) {
+      return '<tr><td><b>' + esc(r.slug) + '</b></td>' +
+        '<td>' + tag(r.stage, r.bucket) + '</td>' +
+        '<td class="u-reason">' + esc(r.reason) + '</td></tr>';
+    }).join("") || '<tr><td colspan="3" class="empty">No unresolved apps.</td></tr>';
+  }
+
+  // ---------------------------------------------------------------- patterns
+  function pbar(label, n, max, cls) {
+    var w = max ? Math.round((n / max) * 100) : 0;
+    return '<div class="pbar-row"><div class="pbar-label"><span>' + esc(label) + '</span><b>' + n + '</b></div>' +
+      '<div class="pbar-track"><span class="' + (cls || "") + '" style="width:' + w + '%"></span></div></div>';
+  }
+  function renderPatterns() {
+    var auth = PATTERNS.auth_methods_top || [];
+    var maxAuth = auth.length ? auth[0][1] : 1;
+    el("auth-bars").innerHTML = auth.map(function (a) { return pbar(a[0], a[1], maxAuth); }).join("") || '<p class="empty">—</p>';
+
+    var blockers = PATTERNS.top_blockers || [];
+    var maxBlk = blockers.length ? blockers[0][1] : 1;
+    el("blocker-bars").innerHTML = blockers.map(function (b) {
+      var good = /buildable/i.test(b[0]);
+      return pbar(b[0], b[1], maxBlk, good ? "seg-build" : "");
+    }).join("") || '<p class="empty">—</p>';
+
+    var abc = PATTERNS.access_by_category || {};
+    var rows = Object.keys(abc).map(function (cat) {
+      var ss = abc[cat]["Self-Serve"] || 0, g = abc[cat]["Gated"] || 0;
+      return { cat: cat, ss: ss, g: g, tot: ss + g };
+    }).sort(function (a, b) { return b.tot - a.tot; });
+    el("access-splits").innerHTML = rows.map(function (r) {
+      return '<div class="split-row"><span>' + esc(r.cat) + '</span>' +
+        '<div class="split-bar"><span class="s-serve" style="flex:' + r.ss + '"></span>' +
+        '<span class="s-gate" style="flex:' + r.g + '"></span></div>' +
+        '<b>' + r.ss + '/' + r.tot + '</b></div>';
+    }).join("");
+
+    var am = PATTERNS.access_model || {};
+    var gated = am.Gated || 0, selfserve = am["Self-Serve"] || 0;
+    var parts = [];
+    if (auth.length) parts.push("<b>" + esc(auth[0][0]) + "</b> is the dominant auth method (" + auth[0][1] + " of " + RESULTS.length + " apps)");
+    if (gated + selfserve) parts.push("<b>" + gated + " of " + (gated + selfserve) + "</b> resolved apps are gated rather than self-serve");
+    if (blockers.length) parts.push("the most common blocker is <b>" + esc(blockers[0][0]) + "</b> (" + blockers[0][1] + " apps)");
+    el("patterns-headline").innerHTML = parts.join("; ") + ".";
   }
 
   // ---------------------------------------------------------------- method
@@ -345,6 +444,7 @@
     el("view-sub").textContent = "Live audit — " + RESULTS.length + " of 100 requested apps resolved";
     renderStrip();
     renderOverview();
+    renderPatterns();
     renderQueue();
     initFilters();
     renderCatalogList();

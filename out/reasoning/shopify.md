@@ -75,3 +75,43 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Shopify",
+  "category": "Commerce",
+  "one_liner": "Shopify provides OAuth2 APIs and an official MCP server, but production access requires a paid store plan.",
+  "auth_methods": [
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "API access is bundled with a merchant’s paid Shopify store plan; a short free trial exists but continued production use requires a subscription."
+  },
+  "api_type": "GraphQL",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "Production credentials require a paid Shopify store plan; no evidence of free, self-serve production entitlement.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://shopify.dev/docs/api/usage/authentication",
+    "https://shopify.dev/docs/apps/build/storefront-mcp",
+    "https://shopify.dev/docs/apps/build/storefront-mcp/index",
+    "https://mcp.so/servers/shopify",
+    "https://apispine.com/shopify-api/pricing"
+  ],
+  "confidence": 0.64,
+  "verification_status": "Hand-Checked",
+  "slug": "shopify",
+  "primary_docs_url": "https://shopify.dev/docs/api/usage/authentication",
+  "rate_limit_note": "No rate-limit specifics were present in the cited evidence.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

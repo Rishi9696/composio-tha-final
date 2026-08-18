@@ -87,3 +87,43 @@ This prior was retained only for audit sampling and was not shown to the model.
   "main_blocker": "Requires a developer token approval + OAuth; not instant self-serve."
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Google Ads",
+  "category": "Ads/Marketing",
+  "one_liner": "Google Ads API uses OAuth2; production access is gated; an official read-only MCP server exists for GAQL querying.",
+  "auth_methods": [
+    "OAuth2",
+    "API Key",
+    "Service Account"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Production use appears subject to access levels/approval per the Google Ads API productionize/access-levels page; no evidence of self-serve production credentials."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Hard",
+  "main_blocker": "Production access requires access-level approval; explicit self-serve production entitlement is not shown in fetched docs.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://developers.google.com/google-ads/api/docs/oauth/overview",
+    "https://developers.google.com/google-ads/api/docs/api-policy/developer-token",
+    "https://developers.google.com/google-ads/api/docs/developer-toolkit/mcp-server"
+  ],
+  "confidence": 0.56,
+  "verification_status": "Hand-Checked",
+  "slug": "google-ads",
+  "primary_docs_url": "https://developers.google.com/google-ads/api/docs/oauth/overview",
+  "rate_limit_note": "Rate limits are not described in the fetched excerpts.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

@@ -72,3 +72,44 @@ This prior was retained only for audit sampling and was not shown to the model.
   "main_blocker": "May be webhook/Zapier-only; unclear whether a fully public REST API exists — verify against docs, do not trust memory."
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Fathom",
+  "category": "AI/Meeting-tools",
+  "one_liner": "Fathom provides a REST API (API keys/OAuth) and an official MCP, but production access terms are unclear.",
+  "auth_methods": [
+    "OAuth2",
+    "API Key"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Docs show self-generated API keys and OAuth app registration, but no explicit statement that production API/MCP access is available without approval or a paid plan; pricing page does not confirm API entitlements. MCP auth details conflict across third-party listings."
+  },
+  "api_type": "REST",
+  "api_breadth": "Moderate",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "Unclear production entitlement and plan requirements; conflicting MCP auth method (OAuth vs API key) across sources.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://developers.fathom.ai/quickstart",
+    "https://developers.fathom.ai/sdks/oauth",
+    "https://developers.fathom.ai/mcp-docs",
+    "https://mcpservers.org/remote-mcp-servers/fathom",
+    "https://www.fathom.ai/pricing"
+  ],
+  "confidence": 0.46,
+  "verification_status": "Hand-Checked",
+  "slug": "fathom",
+  "primary_docs_url": "https://developers.fathom.ai/sdks/oauth",
+  "rate_limit_note": "OAuth docs reference an 'OAuth Rate limits' section, but specific limits are not provided in the fetched excerpts.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

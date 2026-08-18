@@ -62,3 +62,43 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Stripe",
+  "category": "Fintech",
+  "one_liner": "Stripe provides a broad REST API with API keys and an official MCP server; production access appears gated.",
+  "auth_methods": [
+    "API Key",
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Test keys are immediate, but live Stripe services require business verification and account activation."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Hard",
+  "main_blocker": "Production use requires Stripe business verification and activation of the applicable live service.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://docs.stripe.com/api/authentication",
+    "https://docs.stripe.com/connect/oauth-reference",
+    "https://docs.stripe.com/get-started/account/set-up",
+    "https://docs.stripe.com/mcp"
+  ],
+  "confidence": 0.66,
+  "verification_status": "Hand-Checked",
+  "slug": "stripe",
+  "primary_docs_url": "https://docs.stripe.com/api/authentication",
+  "rate_limit_note": "Not specified in the cited pages.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

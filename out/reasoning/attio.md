@@ -67,3 +67,47 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Attio",
+  "category": "CRM",
+  "one_liner": "Attio offers REST and an official hosted MCP; OAuth2/API keys supported, MCP is self-serve; REST access unclear.",
+  "auth_methods": [
+    "OAuth2",
+    "API Key",
+    "Basic Auth",
+    "Other Token"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "REST API: docs show OAuth2, API keys, and Basic Auth but do not confirm self-serve production access by plan. MCP: Help Center states “Available on all plans. Available for all workspace members,” using OAuth with one‑click setup."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "No explicit proof that REST API production use is self-serve; plan/approval requirements are not stated.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://docs.attio.com/rest-api/guides/authentication",
+    "https://docs.attio.com/sdk/server/attio-api-token",
+    "https://docs.attio.com/mcp/overview",
+    "https://attio.com/help/reference/attio-ai/attio-mcp",
+    "https://mcp.attio.com/",
+    "https://attio.com/pricing?utm_source=openai"
+  ],
+  "confidence": 0.6,
+  "verification_status": "Hand-Checked",
+  "slug": "attio",
+  "primary_docs_url": "https://docs.attio.com/rest-api/guides/authentication",
+  "rate_limit_note": "Docs mention rate limits and handling but no concrete numeric limits are specified on the cited pages.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

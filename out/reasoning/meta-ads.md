@@ -90,3 +90,40 @@ This prior was retained only for audit sampling and was not shown to the model.
   "main_blocker": "Marketing API is behind Meta app review + business verification."
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Meta Ads",
+  "category": "Ads/Marketing",
+  "one_liner": "Meta Ads offers a REST Marketing API and community MCPs; production access appears gated and needs outreach.",
+  "auth_methods": [
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Official docs fetched do not show self-serve production entitlement. Community MCP uses a hosted token (PIPEBOARD_API_TOKEN) and OAuth login, but production status is not stated; expect review/approval."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Community",
+  "composio_toolkit": "Yes",
+  "buildability": "Hard",
+  "main_blocker": "No explicit self-serve production access in official docs; likely requires app review/approval and permissions.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization",
+    "https://www.augmentcode.com/mcp/meta-ads-mcp"
+  ],
+  "confidence": 0.58,
+  "verification_status": "Hand-Checked",
+  "slug": "meta-ads",
+  "primary_docs_url": "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization",
+  "rate_limit_note": "Docs reference Rate Limiting but specifics were not captured in the fetched snippets.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

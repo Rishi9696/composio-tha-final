@@ -78,3 +78,44 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Monday.com",
+  "category": "Productivity/PM",
+  "one_liner": "GraphQL API and official MCP with PAT/OAuth; production likely gated by plan and admin approvals.",
+  "auth_methods": [
+    "OAuth2",
+    "Personal Access Token"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Platform GraphQL API and official hosted MCP are documented. No explicit proof of self-serve production credentials; API capacity increases require admin purchase and may involve contacting account team/support. Expect plan/admin enablement for production."
+  },
+  "api_type": "GraphQL",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "No explicit self-serve production entitlement; plan/admin approval and API call add-on purchases may be required.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://support.monday.com/hc/en-us/articles/360005144659-Does-monday-com-have-an-API",
+    "https://developer.monday.com/api-reference/docs/authentication",
+    "https://developer.monday.com",
+    "https://support.monday.com/hc/en-us/articles/28515034903314-Get-started-with-monday-MCP",
+    "https://developer.monday.com/api-reference/docs/monday-mcp-security-overview"
+  ],
+  "confidence": 0.64,
+  "verification_status": "Hand-Checked",
+  "slug": "monday",
+  "primary_docs_url": "https://developer.monday.com/api-reference/docs/authentication",
+  "rate_limit_note": "Daily API calls apply; admins can buy 25,000-call units via an add-on by contacting account team or support.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

@@ -80,3 +80,43 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "HubSpot",
+  "category": "CRM",
+  "one_liner": "HubSpot provides REST APIs and an official MCP server with self-serve OAuth access across all plans.",
+  "auth_methods": [
+    "OAuth2",
+    "Bearer Token"
+  ],
+  "access_model": {
+    "kind": "Self-Serve",
+    "note": "Official MCP server is GA and available on every HubSpot plan at no extra cost; authenticate via OAuth2 with PKCE (developers.hubspot.com; hubjoy.co). REST access is available via OAuth apps; API access is included with HubSpot subscriptions and a free tier exists; rate limits vary by tier (apispine.com)."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Easy",
+  "main_blocker": "None beyond requiring a HubSpot portal and adhering to plan-based API limits.",
+  "recommended_next_action": "Build Now",
+  "evidence_urls": [
+    "https://developers.hubspot.com/docs/api-reference/latest/authentication/manage-oauth-tokens",
+    "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/account-service-keys",
+    "https://developers.hubspot.com/docs/getting-started/account-types",
+    "https://developers.hubspot.com/ai-tools/mcp"
+  ],
+  "confidence": 0.72,
+  "verification_status": "Hand-Checked",
+  "slug": "hubspot",
+  "primary_docs_url": "https://developers.hubspot.com/docs/api-reference/latest/authentication/manage-oauth-tokens",
+  "rate_limit_note": "API limits vary by subscription tier; MCP usage counts against normal API limits.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

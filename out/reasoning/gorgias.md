@@ -61,3 +61,44 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Gorgias",
+  "category": "Support",
+  "one_liner": "Gorgias offers a broad REST API with OAuth2/API keys and an official MCP, but production access is gated.",
+  "auth_methods": [
+    "Basic Auth",
+    "API Key",
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Gorgias provides a seven-day trial; continued production API and MCP use requires a paid plan."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "Production credentials require an existing paid customer account.",
+  "recommended_next_action": "Partner-Gated",
+  "evidence_urls": [
+    "https://developers.gorgias.com/reference/authentication",
+    "https://developers.gorgias.com/docs/access-tokens-api-keys",
+    "https://www.gorgias.com/pricing/choose-your-plan",
+    "https://docs.gorgias.com/en-US/connect-your-ai-assistant-to-the-gorgias-mcp-6310546"
+  ],
+  "confidence": 0.71,
+  "verification_status": "Hand-Checked",
+  "slug": "gorgias",
+  "primary_docs_url": "https://developers.gorgias.com/reference/authentication",
+  "rate_limit_note": "Rate limit details are in the API Reference but not specified in the fetched excerpts.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

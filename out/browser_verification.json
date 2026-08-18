@@ -1,0 +1,532 @@
+[
+  {
+    "slug": "sherlock",
+    "app": "Sherlock",
+    "first_pass": {
+      "api_type": "None",
+      "auth_methods": [
+        "None / Not Applicable"
+      ],
+      "access_model": "Gated",
+      "recommended_next_action": "Blocked",
+      "confidence": 0.34
+    },
+    "browser": {
+      "slug": "sherlock",
+      "app": "Sherlock",
+      "has_public_api": true,
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2"
+      ],
+      "access_model": "Gated",
+      "evidence_url": "https://docs.c-core.app/docs/legacy/sherlock/sherlock-authorization",
+      "notes": "Legacy geospatial tool. API documentation describes AWS Cognito OAuth2 flows with specific scopes, but it is marked as legacy and appears project-based rather than a standard public SaaS."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": false,
+        "auth_methods": false,
+        "access_model": true
+      },
+      "disagreed_fields": [
+        "api_type",
+        "auth_methods"
+      ]
+    },
+    "adjudication": {
+      "status": "Pending",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  },
+  {
+    "slug": "mermaid-cli",
+    "app": "Mermaid CLI",
+    "first_pass": {
+      "api_type": "None",
+      "auth_methods": [
+        "None / Not Applicable"
+      ],
+      "access_model": "Gated",
+      "recommended_next_action": "Blocked",
+      "confidence": 0.34
+    },
+    "browser": {
+      "slug": "mermaid-cli",
+      "app": "Mermaid CLI",
+      "has_public_api": false,
+      "api_type": "None",
+      "auth_methods": [
+        "None / Not Applicable"
+      ],
+      "access_model": "Gated",
+      "evidence_url": "https://github.com/mermaid-js/mermaid-cli",
+      "notes": "Command-line interface for Mermaid; a local utility, not a hosted service with a public API."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": true,
+        "auth_methods": true,
+        "access_model": true
+      },
+      "disagreed_fields": []
+    },
+    "adjudication": {
+      "status": "Not Needed",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  },
+  {
+    "slug": "fathom",
+    "app": "Fathom",
+    "first_pass": {
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2",
+        "API Key"
+      ],
+      "access_model": "Gated",
+      "recommended_next_action": "Needs Outreach",
+      "confidence": 0.46
+    },
+    "browser": {
+      "slug": "fathom",
+      "app": "Fathom",
+      "has_public_api": true,
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2",
+        "API Key"
+      ],
+      "access_model": "Self-Serve",
+      "evidence_url": "https://developers.fathom.ai/sdks/oauth",
+      "notes": "Supports both API Keys and OAuth2 for production use. Developers can create an account and access the API self-serve."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": true,
+        "auth_methods": true,
+        "access_model": false
+      },
+      "disagreed_fields": [
+        "access_model"
+      ]
+    },
+    "adjudication": {
+      "status": "Pending",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  },
+  {
+    "slug": "binance",
+    "app": "Binance",
+    "first_pass": {
+      "api_type": "MCP-only",
+      "auth_methods": [
+        "API Key"
+      ],
+      "access_model": "Gated",
+      "recommended_next_action": "Needs Outreach",
+      "confidence": 0.48
+    },
+    "browser": {
+      "slug": "binance",
+      "app": "Binance",
+      "has_public_api": true,
+      "api_type": "MCP-only",
+      "auth_methods": [
+        "API Key"
+      ],
+      "access_model": "Self-Serve",
+      "evidence_url": "https://mcp-hub.ink/servers/binance/?utm_source=openai",
+      "notes": "The provided link specifically points to an MCP (Model Context Protocol) server wrapper for the Binance API."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": true,
+        "auth_methods": true,
+        "access_model": false
+      },
+      "disagreed_fields": [
+        "access_model"
+      ]
+    },
+    "adjudication": {
+      "status": "Pending",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  },
+  {
+    "slug": "xero",
+    "app": "Xero",
+    "first_pass": {
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2"
+      ],
+      "access_model": "Gated",
+      "recommended_next_action": "Needs Outreach",
+      "confidence": 0.48
+    },
+    "browser": {
+      "slug": "xero",
+      "app": "Xero",
+      "has_public_api": true,
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2"
+      ],
+      "access_model": "Self-Serve",
+      "evidence_url": "https://developer.xero.com/documentation/guides/oauth2/overview/",
+      "notes": "Standard OAuth2 (Code/PKCE/Client Credentials) used for all integrations; self-serve signup for developer accounts and production app creation."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": true,
+        "auth_methods": true,
+        "access_model": false
+      },
+      "disagreed_fields": [
+        "access_model"
+      ]
+    },
+    "adjudication": {
+      "status": "Pending",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  },
+  {
+    "slug": "neo4j",
+    "app": "Neo4j",
+    "first_pass": {
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2",
+        "Basic Auth"
+      ],
+      "access_model": "Gated",
+      "recommended_next_action": "Needs Outreach",
+      "confidence": 0.49
+    },
+    "browser": {
+      "slug": "neo4j",
+      "app": "Neo4j",
+      "has_public_api": true,
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2",
+        "Basic Auth"
+      ],
+      "access_model": "Self-Serve",
+      "evidence_url": "https://neo4j.com/docs/aura/api/authentication/",
+      "notes": "Aura API uses OAuth2. The token endpoint requires Basic Auth with an API Key/Secret pair available via the Aura console."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": true,
+        "auth_methods": true,
+        "access_model": false
+      },
+      "disagreed_fields": [
+        "access_model"
+      ]
+    },
+    "adjudication": {
+      "status": "Pending",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  },
+  {
+    "slug": "vercel",
+    "app": "Vercel",
+    "first_pass": {
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2"
+      ],
+      "access_model": "Gated",
+      "recommended_next_action": "Needs Outreach",
+      "confidence": 0.5
+    },
+    "browser": {
+      "slug": "vercel",
+      "app": "Vercel",
+      "has_public_api": true,
+      "api_type": "REST",
+      "auth_methods": [
+        "Bearer Token"
+      ],
+      "access_model": "Self-Serve",
+      "evidence_url": "https://vercel.com/docs/rest-api",
+      "notes": "Uses Vercel Access Tokens (Bearer). Hobby plan is free and allows immediate API access."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": true,
+        "auth_methods": false,
+        "access_model": false
+      },
+      "disagreed_fields": [
+        "auth_methods",
+        "access_model"
+      ]
+    },
+    "adjudication": {
+      "status": "Pending",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  },
+  {
+    "slug": "mongodb-atlas",
+    "app": "MongoDB Atlas",
+    "first_pass": {
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2",
+        "API Key"
+      ],
+      "access_model": "Self-Serve",
+      "recommended_next_action": "Build Now",
+      "confidence": 0.52
+    },
+    "browser": {
+      "slug": "mongodb-atlas",
+      "app": "MongoDB Atlas",
+      "has_public_api": true,
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2",
+        "API Key"
+      ],
+      "access_model": "Self-Serve",
+      "evidence_url": "https://www.mongodb.com/docs/api/doc/atlas-admin-api-v2",
+      "notes": "Supports Service Account (OAuth2) and API Key (HTTP Digest). Free tier allows users to manage their own projects via API without approval."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": true,
+        "auth_methods": true,
+        "access_model": true
+      },
+      "disagreed_fields": []
+    },
+    "adjudication": {
+      "status": "Not Needed",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  },
+  {
+    "slug": "jira",
+    "app": "Jira",
+    "first_pass": {
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2",
+        "Basic Auth",
+        "Personal Access Token",
+        "Other Token"
+      ],
+      "access_model": "Gated",
+      "recommended_next_action": "Needs Outreach",
+      "confidence": 0.53
+    },
+    "browser": {
+      "slug": "jira",
+      "app": "Jira",
+      "has_public_api": true,
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2",
+        "Basic Auth"
+      ],
+      "access_model": "Self-Serve",
+      "evidence_url": "https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/",
+      "notes": "Supports OAuth2 and Basic Auth (using API Tokens). Cloud Free plan allows immediate setup and API usage for up to 10 users."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": true,
+        "auth_methods": false,
+        "access_model": false
+      },
+      "disagreed_fields": [
+        "auth_methods",
+        "access_model"
+      ]
+    },
+    "adjudication": {
+      "status": "Pending",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  },
+  {
+    "slug": "copper",
+    "app": "Copper",
+    "first_pass": {
+      "api_type": "REST",
+      "auth_methods": [
+        "API Key",
+        "OAuth2"
+      ],
+      "access_model": "Gated",
+      "recommended_next_action": "Needs Outreach",
+      "confidence": 0.55
+    },
+    "browser": {
+      "slug": "copper",
+      "app": "Copper",
+      "has_public_api": true,
+      "api_type": "REST",
+      "auth_methods": [
+        "API Key",
+        "OAuth2"
+      ],
+      "access_model": "Self-Serve",
+      "evidence_url": "https://developer.copper.com/introduction/authentication.html",
+      "notes": "Supports API Keys and OAuth2. While there is no permanent free tier, the 14-day trial allows immediate access to generate API keys."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": true,
+        "auth_methods": true,
+        "access_model": false
+      },
+      "disagreed_fields": [
+        "access_model"
+      ]
+    },
+    "adjudication": {
+      "status": "Pending",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  },
+  {
+    "slug": "plain",
+    "app": "Plain",
+    "first_pass": {
+      "api_type": "GraphQL",
+      "auth_methods": [
+        "API Key",
+        "OAuth2"
+      ],
+      "access_model": "Self-Serve",
+      "recommended_next_action": "Build Now",
+      "confidence": 0.55
+    },
+    "browser": {
+      "slug": "plain",
+      "app": "Plain",
+      "has_public_api": true,
+      "api_type": "GraphQL",
+      "auth_methods": [
+        "API Key"
+      ],
+      "access_model": "Self-Serve",
+      "evidence_url": "https://help.plain.com/article/api-quickstart",
+      "notes": "Uses GraphQL API with Bearer tokens (API keys). Offers a Free tier for new workspaces."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": true,
+        "auth_methods": false,
+        "access_model": true
+      },
+      "disagreed_fields": [
+        "auth_methods"
+      ]
+    },
+    "adjudication": {
+      "status": "Pending",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  },
+  {
+    "slug": "zoho-cliq",
+    "app": "Zoho Cliq",
+    "first_pass": {
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2",
+        "API Key"
+      ],
+      "access_model": "Gated",
+      "recommended_next_action": "Needs Outreach",
+      "confidence": 0.55
+    },
+    "browser": {
+      "slug": "zoho-cliq",
+      "app": "Zoho Cliq",
+      "has_public_api": true,
+      "api_type": "REST",
+      "auth_methods": [
+        "OAuth2"
+      ],
+      "access_model": "Self-Serve",
+      "evidence_url": "https://www.zoho.com/cliq/help/restapi/v2/oauth/",
+      "notes": "Uses OAuth2 with a specific header format. Free tier available for small teams, allowing API access."
+    },
+    "comparison": {
+      "matches": {
+        "api_type": true,
+        "auth_methods": false,
+        "access_model": false
+      },
+      "disagreed_fields": [
+        "auth_methods",
+        "access_model"
+      ]
+    },
+    "adjudication": {
+      "status": "Pending",
+      "notes": "",
+      "evidence_urls": [],
+      "applied_to_results": false
+    },
+    "browser_model": "browser-use-2.0",
+    "generated": "2026-08-18"
+  }
+]

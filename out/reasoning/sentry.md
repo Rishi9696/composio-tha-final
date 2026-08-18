@@ -62,3 +62,42 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Sentry",
+  "category": "DevInfra",
+  "one_liner": "Sentry offers a REST API and official MCP server with self-serve OAuth and token-based authentication.",
+  "auth_methods": [
+    "Personal Access Token",
+    "OAuth2",
+    "Other Token"
+  ],
+  "access_model": {
+    "kind": "Self-Serve",
+    "note": "Docs show self-created tokens (internal integrations and Personal Tokens) and an official OAuth flow for the hosted MCP; no mention of approvals or paid gating."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Easy",
+  "main_blocker": "None; ensure correct scopes when creating tokens.",
+  "recommended_next_action": "Build Now",
+  "evidence_urls": [
+    "https://docs.sentry.io/api/auth/",
+    "https://github.com/getsentry/sentry-mcp"
+  ],
+  "confidence": 0.79,
+  "verification_status": "Hand-Checked",
+  "slug": "sentry",
+  "primary_docs_url": "https://docs.sentry.io/api/auth/",
+  "rate_limit_note": "Rate limits are documented in the API docs; review the Rate Limits section and apply appropriate scopes.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

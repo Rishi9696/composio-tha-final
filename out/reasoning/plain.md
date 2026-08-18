@@ -59,3 +59,42 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Plain",
+  "category": "Support",
+  "one_liner": "Plain offers a self-serve GraphQL API and official MCP server with API key and OAuth login.",
+  "auth_methods": [
+    "API Key",
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Plain provides a seven-day trial; production API and MCP use requires a paid Foundation, Horizon, or Frontier workspace."
+  },
+  "api_type": "GraphQL",
+  "api_breadth": "Moderate",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "Production credentials require an existing paid customer account.",
+  "recommended_next_action": "Partner-Gated",
+  "evidence_urls": [
+    "https://help.plain.com/article/api-quickstart",
+    "https://help.plain.com/article/mcp-server",
+    "https://www.plain.com/pricing"
+  ],
+  "confidence": 0.55,
+  "verification_status": "Hand-Checked",
+  "slug": "plain",
+  "primary_docs_url": "https://help.plain.com/article/api-quickstart",
+  "rate_limit_note": "No rate limit details are provided in the cited docs.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

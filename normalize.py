@@ -121,3 +121,62 @@ def auth_sets_overlap(left, right, *, strict: bool = False) -> bool:
     a = auth_set(left, strict=strict)
     b = auth_set(right, strict=strict)
     return (not a and not b) or bool(a & b)
+
+
+# --------------------------------------------------------------------------- #
+# Blocker clustering
+# --------------------------------------------------------------------------- #
+# The raw ``main_blocker`` field is free text and near-unique per app, so a plain
+# frequency count is not a pattern. classify_blocker() buckets each record into a
+# small, stable set of causes using the structured decision fields first (which
+# already encode most of the signal) and only falling back to keyword matching on
+# the blocker/access text to split within the Gated set.
+BLOCKER_BUCKETS = [
+    "None — buildable now",
+    "Requires partner / sales contact",
+    "Requires approval / app review",
+    "Requires a paid plan or existing account",
+    "No usable public API / MCP-only",
+    "Access terms unclear in docs",
+    "Other",
+]
+
+
+def classify_blocker(record: dict) -> str:
+    """Return one stable blocker bucket for a synthesized record."""
+    action = str(record.get("recommended_next_action") or "")
+    kind = str((record.get("access_model") or {}).get("kind") or "")
+    api_type = str(record.get("api_type") or "")
+    text = " ".join([
+        str(record.get("main_blocker") or ""),
+        str((record.get("access_model") or {}).get("note") or ""),
+    ]).lower()
+
+    # No usable programmatic surface dominates everything else.
+    if api_type in {"None", "MCP-only"} or "no usable" in text or "no public api" in text:
+        if api_type == "MCP-only":
+            return "No usable public API / MCP-only"
+        if api_type == "None":
+            return "No usable public API / MCP-only"
+
+    if action == "Build Now" and kind == "Self-Serve":
+        return "None — buildable now"
+
+    if action == "Partner-Gated" or "partner" in text or "contact sales" in text or "contact us" in text:
+        return "Requires partner / sales contact"
+
+    # Split the remaining gated / outreach apps by the dominant reason in the text.
+    approval_markers = ("approval", "review", "verification", "verify your", "allowlist", "allow list", "waitlist", "request access", "apply for")
+    paid_markers = ("paid plan", "paid tier", "paid account", "existing customer", "existing paid", "subscription", "upgrade", "billing", "enterprise plan", "not free")
+
+    if any(m in text for m in approval_markers):
+        return "Requires approval / app review"
+    if any(m in text for m in paid_markers):
+        return "Requires a paid plan or existing account"
+
+    if kind == "Gated":
+        # Gated but the text does not name the specific mechanism.
+        return "Access terms unclear in docs"
+    if action == "Needs Outreach":
+        return "Requires approval / app review"
+    return "Other"

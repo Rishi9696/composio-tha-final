@@ -75,3 +75,43 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Aircall",
+  "category": "Comms",
+  "one_liner": "Aircall provides a REST API with API key (Basic) and OAuth2, but production access is gated to customers/partners.",
+  "auth_methods": [
+    "Basic Auth",
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Aircall API access is bundled with paid Aircall plans and therefore requires an existing customer account."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Community",
+  "composio_toolkit": "No",
+  "buildability": "Moderate",
+  "main_blocker": "Production credentials require an existing paid customer account.",
+  "recommended_next_action": "Partner-Gated",
+  "evidence_urls": [
+    "https://developer.aircall.io/tutorials/basic-authentication/",
+    "https://developer.aircall.io/api-references/",
+    "https://aircall.io/pricing/",
+    "https://lobehub.com/mcp/themobilefirstco-aircall-mcp-server"
+  ],
+  "confidence": 0.64,
+  "verification_status": "Hand-Checked",
+  "slug": "aircall",
+  "primary_docs_url": "https://developer.aircall.io/tutorials/basic-authentication/",
+  "rate_limit_note": "apis.io notes 120 requests per minute per API key.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

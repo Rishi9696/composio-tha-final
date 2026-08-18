@@ -83,3 +83,42 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Coda",
+  "category": "Productivity/PM",
+  "one_liner": "Coda (Superhuman Docs) offers a broad REST API and official MCP with self-serve OAuth2/PAT access.",
+  "auth_methods": [
+    "OAuth2",
+    "Personal Access Token"
+  ],
+  "access_model": {
+    "kind": "Self-Serve",
+    "note": "Official help shows OAuth2/PAT flows to connect MCP without approvals; community docs show self-serve API tokens; FinOps profile states the public API is free across tiers."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Easy",
+  "main_blocker": "MCP is in beta; behavior and tools may change.",
+  "recommended_next_action": "Build Now",
+  "evidence_urls": [
+    "https://coda.io/developers/apis/v1",
+    "https://help.coda.io/hc/en-us/articles/44722769665549-Security-recommendations-for-the-Coda-MCP",
+    "https://help.coda.io/hc/en-us/articles/44722661982989-Connect-to-the-Coda-MCP"
+  ],
+  "confidence": 0.72,
+  "verification_status": "Hand-Checked",
+  "slug": "coda",
+  "primary_docs_url": "https://coda.io/developers/apis/v1",
+  "rate_limit_note": "API reference includes a Rate Limiting section, but specific limits aren’t shown in the excerpt.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

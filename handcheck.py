@@ -1,6 +1,7 @@
 """Risk-biased human hand-check harness and current-vs-historical metrics."""
 from __future__ import annotations
 
+import copy
 import datetime as dt
 
 import config
@@ -9,7 +10,6 @@ import pipeline
 import synthesis
 import verify
 from schema import validate_record
-
 
 ACCESS_RUBRIC = (
     "Self-Serve only when a new developer can obtain credentials usable in production without "
@@ -259,6 +259,7 @@ def apply_corrections() -> int:
         "recommended_next_action", "rate_limit_note", "confidence",
     }
     corrected = 0
+    skipped: list[str] = []
     for row in rows:
         slug = row["slug"]
         record = by_slug.get(slug)
@@ -270,6 +271,11 @@ def apply_corrections() -> int:
         if unknown:
             raise ValueError(f"{slug}: unsupported correction fields={sorted(unknown)}")
 
+        # Snapshot so a row whose truth would leave the record rubric-inconsistent
+        # (e.g. human says Self-Serve but no corrected recommended_next_action was
+        # supplied, which the agent had set to a Gated-only action) can be skipped
+        # cleanly instead of aborting the whole apply or being force-reconciled.
+        snapshot = copy.deepcopy(record)
         record["api_type"] = truth["api_type"]
         record["auth_methods"] = truth["auth_methods"]
         record["access_model"] = {
@@ -288,8 +294,13 @@ def apply_corrections() -> int:
             if key in correction:
                 record[key] = correction[key]
         record["verification_status"] = "Hand-Checked"
-        validate_record(record)
-        synthesis._validate_semantics(record)
+        try:
+            validate_record(record)
+            synthesis._validate_semantics(record)
+        except ValueError as exc:
+            by_slug[slug] = snapshot
+            skipped.append(f"{slug} ({exc})")
+            continue
         synthesis.append_final_state(record, reason="current human handcheck correction")
         corrected += 1
 
@@ -300,6 +311,8 @@ def apply_corrections() -> int:
     )
     verify.rebuild_metrics()
     print(f"applied current human handcheck truth to {corrected} rows")
+    if skipped:
+        print(f"skipped {len(skipped)} rubric-inconsistent rows: {', '.join(skipped)}")
     return corrected
 
 

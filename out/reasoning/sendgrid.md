@@ -78,3 +78,44 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "SendGrid",
+  "category": "Ads/Marketing",
+  "one_liner": "SendGrid’s REST v3 API uses API keys (Bearer or Basic); production needs a paid plan after a 60‑day trial.",
+  "auth_methods": [
+    "API Key",
+    "Bearer Token",
+    "Basic Auth"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "New SendGrid accounts receive a time-limited trial; continuing production email API use requires a paid plan."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Community",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "Production credentials require an existing paid customer account.",
+  "recommended_next_action": "Partner-Gated",
+  "evidence_urls": [
+    "https://www.twilio.com/docs/sendgrid/api-reference/how-to-use-the-sendgrid-v3-api/authentication",
+    "https://www.twilio.com/docs/sendgrid/for-developers/sending-email/authentication",
+    "https://support.sendgrid.com/hc/en-us/articles/35270136965403-Twilio-SendGrid-Trial-Account-Plan",
+    "https://github.com/Garoth/sendgrid-mcp"
+  ],
+  "confidence": 0.71,
+  "verification_status": "Hand-Checked",
+  "slug": "sendgrid",
+  "primary_docs_url": "https://www.twilio.com/docs/sendgrid/api-reference/how-to-use-the-sendgrid-v3-api/authentication",
+  "rate_limit_note": "A Rate Limits section exists in the v3 docs, but specific limit values were not captured.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

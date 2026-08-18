@@ -62,3 +62,43 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Vercel",
+  "category": "DevInfra",
+  "one_liner": "Vercel offers REST and official MCP; OAuth is documented, but production access appears gated.",
+  "auth_methods": [
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Docs show OAuth for MCP deployments; no explicit statement that production API access is self-serve. Pricing indicates the free Hobby plan is non-commercial, implying paid plans for production."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "No explicit self-serve production access or clear REST auth details; likely need a paid plan for commercial use.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://vercel.com/docs/rest-api",
+    "https://vercel.com/docs/integrations/create-integration/marketplace-api/reference/vercel",
+    "https://vercel.com/docs/mcp/deploy-mcp-servers-to-vercel",
+    "https://vercel.com/docs/agent-resources/vercel-mcp",
+    "https://www.sasanova.com/pricing/vercel"
+  ],
+  "confidence": 0.5,
+  "verification_status": "Hand-Checked",
+  "slug": "vercel",
+  "primary_docs_url": "https://vercel.com/docs/rest-api",
+  "rate_limit_note": "No public rate-limit details found in the cited docs.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

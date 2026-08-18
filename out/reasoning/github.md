@@ -61,3 +61,43 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "GitHub",
+  "category": "DevInfra",
+  "one_liner": "GitHub offers a broad REST API with PAT/OAuth auth, but production access terms aren’t explicitly self-serve in docs.",
+  "auth_methods": [
+    "OAuth2",
+    "Personal Access Token"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Docs show PAT and OAuth token mechanics, and pricing shows a Free plan, but no explicit statement confirms self‑serve PRODUCTION API entitlement or a hosted self‑serve MCP connection."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "No explicit evidence of self‑serve production API entitlement; potential plan or approval requirements unclear.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api",
+    "https://docs.github.com/rest",
+    "https://github.com/pricing?utm_source=openai",
+    "https://github.com/github/github-mcp-server"
+  ],
+  "confidence": 0.62,
+  "verification_status": "Hand-Checked",
+  "slug": "github",
+  "primary_docs_url": "https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api",
+  "rate_limit_note": "Authenticated requests have higher limits; exact limits and plan impacts not confirmed in provided evidence.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

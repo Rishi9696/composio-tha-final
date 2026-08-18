@@ -59,3 +59,43 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Copper",
+  "category": "CRM",
+  "one_liner": "Copper CRM exposes a broad REST API with API keys and OAuth; production access terms are not clearly stated.",
+  "auth_methods": [
+    "OAuth2",
+    "API Key"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Copper provides a temporary trial; continued production API use requires a paid Copper subscription."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Community",
+  "composio_toolkit": "No",
+  "buildability": "Moderate",
+  "main_blocker": "Production credentials require an existing paid customer account.",
+  "recommended_next_action": "Partner-Gated",
+  "evidence_urls": [
+    "https://developer.copper.com/introduction/oauth/index.html",
+    "https://developer.copper.com/introduction/requests.html",
+    "https://www.copper.com/pricing",
+    "https://www.synchub.io/connectors/copper/knowledge-base/mcp"
+  ],
+  "confidence": 0.55,
+  "verification_status": "Hand-Checked",
+  "slug": "copper",
+  "primary_docs_url": "https://developer.copper.com/introduction/oauth/index.html",
+  "rate_limit_note": "No rate limit details found on the cited pages.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

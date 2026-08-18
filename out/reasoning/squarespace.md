@@ -61,3 +61,42 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Squarespace",
+  "category": "Commerce",
+  "one_liner": "Squarespace offers REST Commerce APIs with API keys and OAuth, but production access is gated.",
+  "auth_methods": [
+    "OAuth2",
+    "API Key"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "OAuth clients require manual review (Squarespace responds with client_id/secret), and API keys for custom apps require a Commerce Advanced plan."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Community",
+  "composio_toolkit": "No",
+  "buildability": "Hard",
+  "main_blocker": "Manual OAuth client approval and paid Commerce Advanced plan needed for API key-based custom apps.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://developers.squarespace.com/oauth",
+    "https://developers.squarespace.com/commerce-apis/authentication-and-permissions",
+    "https://github.com/BusyBee3333/squarespace-mcp-2026-complete"
+  ],
+  "confidence": 0.68,
+  "verification_status": "Hand-Checked",
+  "slug": "squarespace",
+  "primary_docs_url": "https://developers.squarespace.com/oauth",
+  "rate_limit_note": "No rate limits documented on the cited pages.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

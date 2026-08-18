@@ -2,19 +2,20 @@
   "patterns": {
     "n": 78,
     "buildability": {
-      "Easy": 8,
-      "Moderate": 48,
-      "Hard": 20,
+      "Easy": 7,
+      "Moderate": 50,
+      "Hard": 19,
       "Blocked": 2
     },
     "recommended_next_action": {
-      "Build Now": 10,
-      "Needs Outreach": 66,
+      "Build Now": 9,
+      "Needs Outreach": 58,
+      "Partner-Gated": 9,
       "Blocked": 2
     },
     "access_model": {
-      "Self-Serve": 10,
-      "Gated": 68
+      "Self-Serve": 9,
+      "Gated": 69
     },
     "api_type": {
       "REST": 68,
@@ -23,9 +24,9 @@
       "None": 2
     },
     "existing_mcp": {
-      "Official": 62,
-      "None": 7,
-      "Community": 9
+      "Official": 61,
+      "Community": 13,
+      "None": 4
     },
     "composio_toolkit": {
       "Yes": 45,
@@ -34,11 +35,11 @@
     "auth_methods_top": [
       [
         "OAuth2",
-        56
+        59
       ],
       [
         "API Key",
-        45
+        41
       ],
       [
         "Personal Access Token",
@@ -46,23 +47,23 @@
       ],
       [
         "Basic Auth",
-        11
+        12
       ],
       [
         "Bearer Token",
-        6
+        10
       ],
       [
         "Other Token",
-        4
+        5
+      ],
+      [
+        "Service Account",
+        2
       ],
       [
         "None / Not Applicable",
         2
-      ],
-      [
-        "Service Account",
-        1
       ]
     ],
     "access_by_category": {
@@ -71,8 +72,7 @@
         "Gated": 7
       },
       "Support": {
-        "Gated": 7,
-        "Self-Serve": 1
+        "Gated": 8
       },
       "Comms": {
         "Gated": 6,
@@ -106,32 +106,32 @@
     },
     "top_blockers": [
       [
-        "None beyond requiring a HubSpot portal and adhering to plan-based API limits.",
-        1
+        "Requires approval / app review",
+        29
       ],
       [
-        "No confirmed self-serve production access; ongoing use requires a paid account and public apps face approval.",
-        1
+        "Requires partner / sales contact",
+        14
       ],
       [
-        "No explicit proof that REST API production use is self-serve; plan/approval requirements are not stated.",
-        1
+        "Access terms unclear in docs",
+        13
       ],
       [
-        "No explicit confirmation of free, self-serve production entitlement; need to verify production access terms or plan requirements.",
-        1
+        "None — buildable now",
+        9
       ],
       [
-        "Production API use appears tied to an active Zoho CRM org/plan; self-serve production entitlement is not documented.",
-        1
+        "Requires a paid plan or existing account",
+        7
       ],
       [
-        "No explicit proof of self-serve production access; likely requires an active (paid) Close org to use API in production.",
-        1
+        "No usable public API / MCP-only",
+        6
       ]
     ],
-    "build_now": 10,
-    "partner_gated": 0,
+    "build_now": 9,
+    "partner_gated": 9,
     "avg_confidence": 0.624
   },
   "n_results": 78,
@@ -331,9 +331,14 @@
   },
   "headline_accuracy": {
     "hand_checked_accuracy": {
-      "value": null,
-      "n": null,
+      "value": 0.723,
+      "n": 37,
       "label": "Latest staged official-doc agreement"
+    },
+    "automated_agreement": {
+      "value": 0.731,
+      "n": 13,
+      "label": "Automated blind re-search agreement (not accuracy)"
     }
   },
   "repo_url": "https://github.com/dheeraj3587/composio-ai-product-ops",
@@ -348,5 +353,1737 @@
     "tools_median": 86.0,
     "trigger_enabled": 17,
     "without_triggers": 37
+  },
+  "verification": {
+    "method": "Blind re-search with three fresh queries, independent fetched URLs, and a model blind to pass-1 values. Automated output is retained as a disagreement, never auto-folded.",
+    "n_verified": 13,
+    "n_skipped_no_independent_source": 12,
+    "auth_methods_exact_agreement_rate": 0.462,
+    "auth_methods_overlap_rate": 0.692,
+    "auth_methods_agreement_rate": 0.462,
+    "access_model_agreement_rate": 1.0,
+    "overall_agreement_rate": 0.731,
+    "confidence_policy": "Verification does not mutate record confidence or facts before adjudication.",
+    "checks": [
+      {
+        "slug": "binance",
+        "app": "Binance",
+        "model": "openai:gpt-5",
+        "queries": [
+          "Binance official API authentication OAuth API key developer documentation",
+          "Binance API production access approval sandbox existing customer official documentation",
+          "Binance official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://voiceofchain.com/academy/binance-api-pricing?utm_source=openai",
+          "https://docs.binance.us/"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": false,
+          "excluded_url_count": 2
+        },
+        "before": {
+          "auth_methods": [
+            "API Key"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "No evidence of self-serve production credentials; the only path shown is using an existing Binance API key/secret via an unofficial community MCP server. Production use depends on a user’s Binance account and its API permissions."
+          },
+          "confidence": 0.48
+        },
+        "verifier": {
+          "auth_methods": [
+            "API Key"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "While the official Binance.US docs describe generating and using API keys, the evidence does not explicitly confirm free, self-serve production access without additional approvals or requirements. Therefore, production entitlement cannot be established as self-serve from the provided documentation."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": true,
+          "auth_methods_overlap": true,
+          "access_model": true
+        },
+        "adjudication": "Not Needed"
+      },
+      {
+        "slug": "whatsapp-business",
+        "app": "WhatsApp Business",
+        "model": "openai:gpt-5",
+        "queries": [
+          "WhatsApp Business official API authentication OAuth API key developer documentation",
+          "WhatsApp Business API production access approval sandbox existing customer official documentation",
+          "WhatsApp Business official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://www.wati.io/en/pricing/",
+          "https://waomate.com/pricing",
+          "https://whatsappbusiness.com/pt-br/developers/developer-hub/?utm_source=openai",
+          "https://whatsappbusiness.com/products/platform-pricing/"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": false,
+          "excluded_url_count": 6
+        },
+        "before": {
+          "auth_methods": [
+            "Bearer Token"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Fetched Meta docs do not explicitly confirm self-serve production credentials; third-party guide mentions a free tier but is not authoritative. Expect business verification/number setup before production."
+          },
+          "confidence": 0.56
+        },
+        "verifier": {
+          "auth_methods": [
+            "None / Not Applicable"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "The official pages highlight free sandbox/test numbers for development (Developer Hub mentions a sandbox and test numbers) and the Business Platform pricing page emphasizes working with partners (“Find a partner”). No evidence in the supplied pages describes the production authentication mechanism, so the auth method cannot be established from this evidence; production access appears gated via partners or approval."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": false,
+          "auth_methods_overlap": false,
+          "access_model": true
+        },
+        "adjudication": "Pending"
+      },
+      {
+        "slug": "google-ads",
+        "app": "Google Ads",
+        "model": "openai:gpt-5",
+        "queries": [
+          "Google Ads official API authentication OAuth API key developer documentation",
+          "Google Ads API production access approval sandbox existing customer official documentation",
+          "Google Ads official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://developers.google.com/google-ads/api/docs/productionize/access-levels?hl=en&utm_source=openai",
+          "https://developers.google.com/google-ads/api/docs/oauth/overview?utm_source=openai",
+          "https://developers.google.com/google-ads/api/docs/client-libs/python/authentication?authuser=0&hl=en&utm_source=openai",
+          "https://developers.google.com/google-ads/api/docs/api-policy/access-levels?utm_source=openai"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": true,
+          "excluded_url_count": 5
+        },
+        "before": {
+          "auth_methods": [
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Production use appears subject to access levels/approval per the Google Ads API productionize/access-levels page; no evidence of self-serve production credentials."
+          },
+          "confidence": 0.56
+        },
+        "verifier": {
+          "auth_methods": [
+            "OAuth2",
+            "API Key",
+            "Service Account"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Google Ads API requires a developer token on API requests and OAuth2 (including service account support via client libraries). Production use is gated: you start with Test Account Access and must apply to increase your developer token access level (Explorer/Basic/Standard) to access production accounts, with reviews per the Access Levels and Permissible Use policy."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": false,
+          "auth_methods_overlap": true,
+          "access_model": true
+        },
+        "adjudication": "Pending"
+      },
+      {
+        "slug": "plain",
+        "app": "Plain",
+        "model": "openai:gpt-5",
+        "queries": [
+          "Plain official API authentication OAuth API key developer documentation",
+          "Plain API production access approval sandbox existing customer official documentation",
+          "Plain official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://developer.close.com/api/overview/api-key-authentication",
+          "https://support.plaid.com/hc/en-us/articles/16110110883479-How-are-Sandbox-Production-Trial-plan-and-Limited-Production-different",
+          "https://developer.va.gov/production-access",
+          "https://www.plain.com/pricing"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": false,
+          "excluded_url_count": 3
+        },
+        "before": {
+          "auth_methods": [
+            "API Key",
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Self-Serve",
+            "note": "Docs show a workspace user can generate an API key and use it, and the MCP server uses OAuth login with an existing Plain account—no approval or paid gating is mentioned."
+          },
+          "confidence": 0.55
+        },
+        "verifier": {
+          "auth_methods": [
+            "None / Not Applicable"
+          ],
+          "access_model": {
+            "kind": "Self-Serve",
+            "note": "Plain’s pricing page indicates self-serve onboarding for paid tiers (\"Start today, no credit card required\"; Onboarding: Self-serve), implying production access without manual approval. No official Plain API authentication documentation was provided in the evidence, so the specific auth method cannot be determined."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": false,
+          "auth_methods_overlap": false,
+          "access_model": true
+        },
+        "adjudication": "Pending"
+      },
+      {
+        "slug": "ahrefs",
+        "app": "Ahrefs",
+        "model": "openai:gpt-5",
+        "queries": [
+          "Ahrefs official API authentication OAuth API key developer documentation",
+          "Ahrefs API production access approval sandbox existing customer official documentation",
+          "Ahrefs official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://docs.ahrefs.com/en/ahrefs-connect/docs/oauth-guide",
+          "https://ahrefs.com/pricing?utm_source=openai",
+          "https://help.ahrefs.com/en/articles/6117209-what-s-the-difference-between-all-ahrefs-subscription-plans?utm_source=openai",
+          "https://docs.ahrefs.com/"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": true,
+          "excluded_url_count": 5
+        },
+        "before": {
+          "auth_methods": [
+            "API Key",
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "REST API v3 is available on eligible paid plans; others get only limited free test queries. Ahrefs Connect apps must be approved before production. MCP access is available on paid plans (Lite+)."
+          },
+          "confidence": 0.88
+        },
+        "verifier": {
+          "auth_methods": [
+            "OAuth2",
+            "API Key"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Ahrefs Connect uses OAuth 2.0 Authorization Code Flow with PKCE for user-authorized apps, and the REST API documentation references API keys. Production access is gated: apps require review/activation per the Approval process, and REST API usage beyond free test queries requires an Enterprise plan."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": true,
+          "auth_methods_overlap": true,
+          "access_model": true
+        },
+        "adjudication": "Not Needed"
+      },
+      {
+        "slug": "fathom",
+        "app": "Fathom",
+        "model": "openai:gpt-5",
+        "queries": [
+          "Fathom official API authentication OAuth API key developer documentation",
+          "Fathom API production access approval sandbox existing customer official documentation",
+          "Fathom official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://api-docs.fathom.global/onboarding.html?utm_source=openai",
+          "https://docs.fathom.ai/?utm_source=openai",
+          "https://usefathom.com/pricing?utm_source=openai"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": false,
+          "excluded_url_count": 5
+        },
+        "before": {
+          "auth_methods": [
+            "OAuth2",
+            "API Key"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Docs show self-generated API keys and OAuth app registration, but no explicit statement that production API/MCP access is available without approval or a paid plan; pricing page does not confirm API entitlements. MCP auth details conflict across third-party listings."
+          },
+          "confidence": 0.46
+        },
+        "verifier": {
+          "auth_methods": [
+            "API Key",
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Auth methods: docs.fathom.ai states “Generate an API key and make your first call in minutes” and includes “Building with OAuth/Build a Fathom OAuth app,” indicating API Key and OAuth2. Production access: api-docs.fathom.global describes only trial/onboarding credentials with limited datasets (implying production requires further arrangement), and usefathom.com/pricing shows API access as part of paid plans. There is no evidence that a new developer can obtain unrestricted production credentials without payment or approval, so access is treated as Gated."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": true,
+          "auth_methods_overlap": true,
+          "access_model": true
+        },
+        "adjudication": "Not Needed"
+      },
+      {
+        "slug": "ramp",
+        "app": "Ramp",
+        "model": "openai:gpt-5",
+        "queries": [
+          "Ramp official API authentication OAuth API key developer documentation",
+          "Ramp API production access approval sandbox existing customer official documentation",
+          "Ramp official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://developer-docs.ramp.com/developer-api/v1/guides/oauth?utm_source=openai",
+          "https://docs.ramp.com/developer-api/v1/sandbox-access?utm_source=openai",
+          "https://docs.ramp.com/developer-api/v1/sandbox?utm_source=openai",
+          "https://docs.rampnow.io/api-reference/authentication?utm_source=openai"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": false,
+          "excluded_url_count": 4
+        },
+        "before": {
+          "auth_methods": [
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "No fetched doc confirms self-serve production credentials. Agents doc says API actions are scoped to a Ramp business owner’s identity; developer site emphasizes a partner program. Production access likely requires a Ramp account and approval."
+          },
+          "confidence": 0.55
+        },
+        "verifier": {
+          "auth_methods": [
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Docs indicate OAuth2. Evidence shows sandbox access is non-production only; there is no confirmation that production credentials are self-serve, so production access appears gated/unclear."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": true,
+          "auth_methods_overlap": true,
+          "access_model": true
+        },
+        "adjudication": "Not Needed"
+      },
+      {
+        "slug": "copper",
+        "app": "Copper",
+        "model": "openai:gpt-5",
+        "queries": [
+          "Copper official API authentication OAuth API key developer documentation",
+          "Copper API production access approval sandbox existing customer official documentation",
+          "Copper official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://developer.copper.com/introduction/oauth/index.html?utm_source=openai",
+          "https://developer.copper.co/api-reference/create-api-key?utm_source=openai",
+          "https://saleshive.com/vendors/copper?utm_source=openai",
+          "https://support.copper.com/en/articles/8823462-api-docs-and-tips?utm_source=openai"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": true,
+          "excluded_url_count": 3
+        },
+        "before": {
+          "auth_methods": [
+            "API Key",
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Docs show API Keys and OAuth2 but provide no evidence that new developers get production credentials self-serve; confirm plan/approval requirements."
+          },
+          "confidence": 0.55
+        },
+        "verifier": {
+          "auth_methods": [
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "The official Copper CRM docs (developer.copper.com) describe OAuth2.0 authentication and access token management but provide no clear evidence that production credentials are available self-serve to new external developers without being paying customers or approval. Separate docs at developer.copper.co show API keys/service accounts for a different Copper (digital assets) platform and are not applicable here."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": false,
+          "auth_methods_overlap": true,
+          "access_model": true
+        },
+        "adjudication": "Pending"
+      },
+      {
+        "slug": "shopify",
+        "app": "Shopify",
+        "model": "openai:gpt-5",
+        "queries": [
+          "Shopify official API authentication OAuth API key developer documentation",
+          "Shopify API production access approval sandbox existing customer official documentation",
+          "Shopify official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://shopify.dev/docs/apps/build/authentication-authorization",
+          "https://community.shopify.com/c/graphql-basics-and/api-access-scopes/m-p/1538224?utm_source=openai",
+          "https://shopify.github.io/shopify-api-ruby/usage/oauth.html",
+          "https://community.shopify.com/c/shopify-apis-and-sdks/can-t-access-protected-data-on-test-app-development-store/m-p/1802075?utm_source=openai"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": true,
+          "excluded_url_count": 5
+        },
+        "before": {
+          "auth_methods": [
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "API access is bundled with a merchant’s paid Shopify store plan; a short free trial exists but continued production use requires a subscription."
+          },
+          "confidence": 0.64
+        },
+        "verifier": {
+          "auth_methods": [
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Official docs show Shopify apps authenticate via OAuth 2.0 flows (token exchange, authorization code, client credentials). However, production use of certain scopes (for example, protected customer data) requires approval, as indicated in the Shopify Community thread describing approval for protected customer data access. While credentials can be created and OAuth performed, the presence of scope approvals means production access is gated rather than fully self-serve based on the provided evidence."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": true,
+          "auth_methods_overlap": true,
+          "access_model": true
+        },
+        "adjudication": "Not Needed"
+      },
+      {
+        "slug": "vercel",
+        "app": "Vercel",
+        "model": "openai:gpt-5",
+        "queries": [
+          "Vercel official API authentication OAuth API key developer documentation",
+          "Vercel API production access approval sandbox existing customer official documentation",
+          "Vercel official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://vercel.com/docs/ai-gateway/authentication-and-byok",
+          "https://vercel.com/pricing?utm_source=openai",
+          "https://vercel.com/kb/guide/complete-guide-authentication-vercel",
+          "https://vercel.com/docs/sandbox?utm_source=openai"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": true,
+          "excluded_url_count": 5
+        },
+        "before": {
+          "auth_methods": [
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Docs show OAuth for MCP deployments; no explicit statement that production API access is self-serve. Pricing indicates the free Hobby plan is non-commercial, implying paid plans for production."
+          },
+          "confidence": 0.5
+        },
+        "verifier": {
+          "auth_methods": [
+            "API Key",
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Docs state AI Gateway requests require either an AI Gateway API key or an OIDC token (https://vercel.com/docs/ai-gateway/authentication-and-byok), mapping to API Key and OAuth2. However, the provided pricing and docs do not explicitly confirm free, self-serve production credentials for AI Gateway; plan availability alone is insufficient. Therefore, production access cannot be verified as self-serve from the evidence and is treated as Gated."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": false,
+          "auth_methods_overlap": true,
+          "access_model": true
+        },
+        "adjudication": "Pending"
+      },
+      {
+        "slug": "dataforseo",
+        "app": "DataForSEO",
+        "model": "openai:gpt-5",
+        "queries": [
+          "DataForSEO official API authentication OAuth API key developer documentation",
+          "DataForSEO API production access approval sandbox existing customer official documentation",
+          "DataForSEO official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://docs.dataforseo.com/v3/appendix/sandbox/?utm_source=openai",
+          "https://dataforseo.com/apis/serp-api/pricing?utm_source=openai",
+          "https://dataforseo.com/help-center/how-does-your-free-unlimited-trial-work?utm_source=openai"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": true,
+          "excluded_url_count": 5
+        },
+        "before": {
+          "auth_methods": [
+            "Basic Auth"
+          ],
+          "access_model": {
+            "kind": "Self-Serve",
+            "note": "Public docs show Basic HTTP auth and usage with Sign Up available and no stated approval or paid prerequisite on cited pages."
+          },
+          "confidence": 0.55
+        },
+        "verifier": {
+          "auth_methods": [
+            "None / Not Applicable"
+          ],
+          "access_model": {
+            "kind": "Self-Serve",
+            "note": "Pricing page indicates pay-as-you-go with a free trial on signup and a self-serve minimum deposit, with no mention of manual approval, suggesting production access is self-serve. The provided evidence does not specify the authentication method."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": false,
+          "auth_methods_overlap": false,
+          "access_model": true
+        },
+        "adjudication": "Pending"
+      },
+      {
+        "slug": "pumble",
+        "app": "Pumble",
+        "model": "openai:gpt-5",
+        "queries": [
+          "Pumble official API authentication OAuth API key developer documentation",
+          "Pumble API production access approval sandbox existing customer official documentation",
+          "Pumble official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://pumble.com/pricing.html",
+          "https://pumble.com/pro-plan.html"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": true,
+          "excluded_url_count": 3
+        },
+        "before": {
+          "auth_methods": [
+            "API Key"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Docs show self-generated API keys via an API addon and MCP credentials from an addon, but there is no explicit statement guaranteeing free, self-serve production entitlement; plan-based integration limits also apply."
+          },
+          "confidence": 0.58
+        },
+        "verifier": {
+          "auth_methods": [
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Evidence only shows pricing/plan pages and a general OAuth2 signal, but no developer/API docs or clear credential self-service. Production developer access cannot be confirmed as self-serve; treating as Gated due to lack of documentation on obtaining and using credentials."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": false,
+          "auth_methods_overlap": false,
+          "access_model": true
+        },
+        "adjudication": "Pending"
+      },
+      {
+        "slug": "linkedin-ads",
+        "app": "LinkedIn Ads",
+        "model": "openai:gpt-5",
+        "queries": [
+          "LinkedIn Ads official API authentication OAuth API key developer documentation",
+          "LinkedIn Ads API production access approval sandbox existing customer official documentation",
+          "LinkedIn Ads official pricing API access free plan trial production plan"
+        ],
+        "used_urls": [
+          "https://www.attributter.com/pricing?utm_source=openai",
+          "https://zernio.com/linkedin-ads?utm_source=openai",
+          "https://atomusapi.dev/en/blog/linkedin-api-pricing/?utm_source=openai",
+          "https://linkedapi.io/pricing?utm_source=openai"
+        ],
+        "source_independence": {
+          "no_exact_url_reused": true,
+          "same_host_as_pass_1": true,
+          "excluded_url_count": 4
+        },
+        "before": {
+          "auth_methods": [
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "Advertising API requires completing an Access Request Form and passing LinkedIn’s review before production use."
+          },
+          "confidence": 0.64
+        },
+        "verifier": {
+          "auth_methods": [
+            "OAuth2"
+          ],
+          "access_model": {
+            "kind": "Gated",
+            "note": "LinkedIn’s Ads/Marketing API access runs through partner programs with an application and approval (no public self-serve production access). Atomus notes access is via partner tracks with manual approval, and Zernio highlights the usual need for Marketing Developer Platform review. Authentication to LinkedIn uses OAuth 2.0 (Atomus references basic OAuth flows; Zernio’s connection step uses a one-click OAuth flow)."
+          }
+        },
+        "agreement": {
+          "auth_methods_exact": true,
+          "auth_methods_overlap": true,
+          "access_model": true
+        },
+        "adjudication": "Not Needed"
+      }
+    ],
+    "disagreements": [
+      {
+        "slug": "whatsapp-business",
+        "app": "WhatsApp Business",
+        "field": "auth_methods",
+        "before": [
+          "Bearer Token"
+        ],
+        "verifier": [
+          "None / Not Applicable"
+        ],
+        "status": "Pending adjudication"
+      },
+      {
+        "slug": "google-ads",
+        "app": "Google Ads",
+        "field": "auth_methods",
+        "before": [
+          "OAuth2"
+        ],
+        "verifier": [
+          "OAuth2",
+          "API Key",
+          "Service Account"
+        ],
+        "status": "Pending adjudication"
+      },
+      {
+        "slug": "plain",
+        "app": "Plain",
+        "field": "auth_methods",
+        "before": [
+          "API Key",
+          "OAuth2"
+        ],
+        "verifier": [
+          "None / Not Applicable"
+        ],
+        "status": "Pending adjudication"
+      },
+      {
+        "slug": "copper",
+        "app": "Copper",
+        "field": "auth_methods",
+        "before": [
+          "API Key",
+          "OAuth2"
+        ],
+        "verifier": [
+          "OAuth2"
+        ],
+        "status": "Pending adjudication"
+      },
+      {
+        "slug": "vercel",
+        "app": "Vercel",
+        "field": "auth_methods",
+        "before": [
+          "OAuth2"
+        ],
+        "verifier": [
+          "API Key",
+          "OAuth2"
+        ],
+        "status": "Pending adjudication"
+      },
+      {
+        "slug": "dataforseo",
+        "app": "DataForSEO",
+        "field": "auth_methods",
+        "before": [
+          "Basic Auth"
+        ],
+        "verifier": [
+          "None / Not Applicable"
+        ],
+        "status": "Pending adjudication"
+      },
+      {
+        "slug": "pumble",
+        "app": "Pumble",
+        "field": "auth_methods",
+        "before": [
+          "API Key"
+        ],
+        "verifier": [
+          "OAuth2"
+        ],
+        "status": "Pending adjudication"
+      }
+    ],
+    "caveat": "Agreement is reproducibility, not accuracy. Human checks against official docs are the accuracy measure. Auth scoring uses exact canonical sets.",
+    "generated": "2026-08-18"
+  },
+  "handcheck": {
+    "metric_scope": "Staged cumulative official-doc check at fold time",
+    "method": "Analyst adjudication against official docs for api_type, exact canonical auth set, production access, and MCP ownership. No historical agent values are substituted.",
+    "access_rubric": "Self-Serve only when a new developer can obtain credentials usable in production without manual approval, partnership, business verification, or already being a paying customer. A sandbox or trial alone is not production Self-Serve; otherwise use Gated.",
+    "selection": "Forty-five reviewer-priority apps across every catalog category; each new batch excludes all prior human and cloud-browser verification sets.",
+    "n": 37,
+    "api_type_accuracy": 1.0,
+    "mcp_accuracy": 0.892,
+    "auth_accuracy": 0.378,
+    "access_accuracy": 0.622,
+    "accuracy": 0.723,
+    "misses": [
+      {
+        "slug": "hubspot",
+        "app": "HubSpot",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2"
+        ],
+        "truth": [
+          "OAuth2",
+          "Bearer Token"
+        ],
+        "notes": "HubSpot documents OAuth and independently issued service keys sent as Bearer credentials. A standard account can be free and is explicitly the production environment. HubSpot publishes its own remote MCP server."
+      },
+      {
+        "slug": "slack",
+        "app": "Slack",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "Slack Web API apps are installed with OAuth 2.0 and receive access tokens. A developer can create an app in a workspace without vendor approval. Slack hosts the official MCP server."
+      },
+      {
+        "slug": "github",
+        "app": "GitHub",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "GitHub REST accepts self-created personal access tokens and OAuth or GitHub App user authorization. Token creation is self-serve. The github/github-mcp-server repository identifies itself as GitHub's official MCP server."
+      },
+      {
+        "slug": "notion",
+        "app": "Notion",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2",
+          "Personal Access Token",
+          "API Key"
+        ],
+        "truth": [
+          "OAuth2",
+          "Personal Access Token"
+        ],
+        "notes": "Notion documents OAuth for public connections and personal access tokens for user-scoped API access. It does not document a separate API-key credential for the REST API. Workspace owners can create PATs on the free plan. Notion MCP is hosted by Notion."
+      },
+      {
+        "slug": "notion",
+        "app": "Notion",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "Notion documents OAuth for public connections and personal access tokens for user-scoped API access. It does not document a separate API-key credential for the REST API. Workspace owners can create PATs on the free plan. Notion MCP is hosted by Notion."
+      },
+      {
+        "slug": "shopify",
+        "app": "Shopify",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2"
+        ],
+        "truth": [
+          "OAuth2",
+          "Bearer Token"
+        ],
+        "notes": "Shopify's primary Admin and Storefront surfaces are GraphQL. API calls use OAuth-derived Admin tokens or independently issued Storefront access tokens; a client API key is not accepted as the API credential. Custom distribution is available without App Store review. Shopify owns Storefront MCP."
+      },
+      {
+        "slug": "shopify",
+        "app": "Shopify",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "Shopify's primary Admin and Storefront surfaces are GraphQL. API calls use OAuth-derived Admin tokens or independently issued Storefront access tokens; a client API key is not accepted as the API credential. Custom distribution is available without App Store review. Shopify owns Storefront MCP."
+      },
+      {
+        "slug": "stripe",
+        "app": "Stripe",
+        "field": "auth_methods",
+        "current": [
+          "API Key",
+          "Basic Auth",
+          "OAuth2"
+        ],
+        "truth": [
+          "API Key",
+          "OAuth2"
+        ],
+        "notes": "Stripe REST accepts secret or restricted API keys and Connect supports OAuth. Stripe explicitly requires business verification before services can be used on a live account, so test keys alone do not make production access Self-Serve under the rubric. Stripe hosts its MCP server."
+      },
+      {
+        "slug": "jira",
+        "app": "Jira",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2",
+          "Basic Auth",
+          "Personal Access Token",
+          "Other Token"
+        ],
+        "truth": [
+          "OAuth2",
+          "API Key"
+        ],
+        "notes": "Jira Cloud REST accepts a self-created API token through Basic transport and supports OAuth 2.0 3LO. Basic Auth is not an independent credential in this case, so the exact credential set is API Key plus OAuth2. Sharing an unreviewed 3LO app is allowed with a warning. Atlassian Rovo MCP supports Jira."
+      },
+      {
+        "slug": "jira",
+        "app": "Jira",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "Jira Cloud REST accepts a self-created API token through Basic transport and supports OAuth 2.0 3LO. Basic Auth is not an independent credential in this case, so the exact credential set is API Key plus OAuth2. Sharing an unreviewed 3LO app is allowed with a warning. Atlassian Rovo MCP supports Jira."
+      },
+      {
+        "slug": "google-ads",
+        "app": "Google Ads",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2"
+        ],
+        "truth": [
+          "OAuth2",
+          "API Key",
+          "Service Account"
+        ],
+        "notes": "Google Ads requires OAuth 2.0 plus a developer token on every API call and documents both authorized-user and service-account workflows. Developer-token applications can be restricted to test access or require review for broader production levels. Google publishes the MCP server guide."
+      },
+      {
+        "slug": "whatsapp-business",
+        "app": "WhatsApp Business",
+        "field": "auth_methods",
+        "current": [
+          "Bearer Token"
+        ],
+        "truth": [
+          "OAuth2",
+          "Bearer Token"
+        ],
+        "notes": "WhatsApp Cloud API uses permanent system-user access tokens and Facebook Login for Business onboarding. Tech-provider production access requires business verification and App Review. The checked MCP server is owned by a community GitHub account, not Meta."
+      },
+      {
+        "slug": "attio",
+        "app": "Attio",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2",
+          "API Key",
+          "Basic Auth",
+          "Other Token"
+        ],
+        "truth": [
+          "OAuth2",
+          "API Key",
+          "Basic Auth"
+        ],
+        "notes": "Attio documents OAuth 2.0, workspace API keys, and optional HTTP Basic authentication. Production workspace keys are self-serve, and Attio hosts the MCP server."
+      },
+      {
+        "slug": "attio",
+        "app": "Attio",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "Attio documents OAuth 2.0, workspace API keys, and optional HTTP Basic authentication. Production workspace keys are self-serve, and Attio hosts the MCP server."
+      },
+      {
+        "slug": "freshdesk",
+        "app": "Freshdesk",
+        "field": "auth_methods",
+        "current": [
+          "API Key"
+        ],
+        "truth": [
+          "API Key",
+          "Basic Auth"
+        ],
+        "notes": "Freshdesk authenticates an API key through HTTP Basic. The free plan has zero API calls and the trial is temporary, so production API access requires a paid plan. Freshdesk documents its vendor MCP integration."
+      },
+      {
+        "slug": "front",
+        "app": "Front",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2",
+          "API Key"
+        ],
+        "truth": [
+          "Bearer Token",
+          "OAuth2"
+        ],
+        "notes": "Front supports bearer API tokens and OAuth. API quotas are attached to paid Starter, Professional, or Enterprise plans, so production access requires a paying customer. Front hosts an official MCP server."
+      },
+      {
+        "slug": "meta-ads",
+        "app": "Meta Ads",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2",
+          "API Key"
+        ],
+        "truth": [
+          "OAuth2"
+        ],
+        "notes": "Meta Marketing API uses user or system-user access tokens obtained through Meta authorization. Limited access is development-only; production apps need Full Access through App Review. No vendor-owned MCP was identified; the catalog entry is community-owned."
+      },
+      {
+        "slug": "linkedin-ads",
+        "app": "LinkedIn Ads",
+        "field": "existing_mcp",
+        "current": "None",
+        "truth": "Community",
+        "notes": "LinkedIn Marketing APIs use three-legged OAuth. Advertising API access requires an application and production Standard tier requires further review. The identified MCP package is community-owned."
+      },
+      {
+        "slug": "klaviyo",
+        "app": "Klaviyo",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "Klaviyo documents private API keys and OAuth for server-side APIs. Credentials can be created from a developer account, and Klaviyo publishes the official MCP server."
+      },
+      {
+        "slug": "woocommerce",
+        "app": "WooCommerce",
+        "field": "auth_methods",
+        "current": [
+          "API Key"
+        ],
+        "truth": [
+          "API Key",
+          "Basic Auth"
+        ],
+        "notes": "WooCommerce generates consumer API keys and sends them with HTTP Basic over HTTPS. Store owners can create keys without vendor approval, and WooCommerce includes native MCP support in developer preview."
+      },
+      {
+        "slug": "woocommerce",
+        "app": "WooCommerce",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "WooCommerce generates consumer API keys and sends them with HTTP Basic over HTTPS. Store owners can create keys without vendor approval, and WooCommerce includes native MCP support in developer preview."
+      },
+      {
+        "slug": "vercel",
+        "app": "Vercel",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2"
+        ],
+        "truth": [
+          "OAuth2",
+          "Personal Access Token"
+        ],
+        "notes": "Vercel supports account access tokens and OAuth authorization for integrations. Tokens are self-created in account settings, and Vercel hosts the official MCP server."
+      },
+      {
+        "slug": "vercel",
+        "app": "Vercel",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "Vercel supports account access tokens and OAuth authorization for integrations. Tokens are self-created in account settings, and Vercel hosts the official MCP server."
+      },
+      {
+        "slug": "monday",
+        "app": "Monday.com",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "monday.com exposes GraphQL with personal tokens and OAuth for apps. Members can retrieve tokens without vendor review, and monday.com hosts the official MCP endpoint."
+      },
+      {
+        "slug": "plaid",
+        "app": "Plaid",
+        "field": "auth_methods",
+        "current": [
+          "API Key"
+        ],
+        "truth": [
+          "API Key",
+          "OAuth2"
+        ],
+        "notes": "Plaid APIs use client ID and secret credentials; OAuth is used for supported institution flows and its MCP token flow. Production requires Plaid enablement or approval, and Plaid hosts the Dashboard MCP server."
+      },
+      {
+        "slug": "fathom",
+        "app": "Fathom",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2",
+          "API Key"
+        ],
+        "truth": [
+          "API Key",
+          "Bearer Token",
+          "OAuth2"
+        ],
+        "notes": "Fathom explicitly documents API-key, bearer-token, and OAuth 2.0 SDK authentication. API keys are generated in settings, and Fathom hosts the official MCP server."
+      },
+      {
+        "slug": "fathom",
+        "app": "Fathom",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "Fathom explicitly documents API-key, bearer-token, and OAuth 2.0 SDK authentication. API keys are generated in settings, and Fathom hosts the official MCP server."
+      },
+      {
+        "slug": "zoho-crm",
+        "app": "Zoho CRM",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "Zoho CRM V8 uses OAuth 2.0 access tokens; client IDs are OAuth client credentials, not an independent API-key auth scheme. The Free edition has production API credits, and Zoho publishes its MCP servers."
+      },
+      {
+        "slug": "copper",
+        "app": "Copper",
+        "field": "existing_mcp",
+        "current": "None",
+        "truth": "Community",
+        "notes": "Copper documents OAuth and X-PW-AccessToken API-key authentication. The account becomes paid after its trial, so production credentials require a customer subscription. The identified MCP is third-party."
+      },
+      {
+        "slug": "dealcloud",
+        "app": "DealCloud",
+        "field": "auth_methods",
+        "current": [
+          "API Key"
+        ],
+        "truth": [
+          "OAuth2",
+          "API Key"
+        ],
+        "notes": "DealCloud REST supports authorization tokens and API keys inside an existing licensed environment. Production access is customer-gated, and DealCloud now documents its own MCP server."
+      },
+      {
+        "slug": "gorgias",
+        "app": "Gorgias",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2",
+          "API Key"
+        ],
+        "truth": [
+          "Basic Auth",
+          "API Key",
+          "OAuth2"
+        ],
+        "notes": "Gorgias private apps use API keys over Basic Auth and public apps use OAuth 2.0. Only a short trial is free, so production requires a paid plan. Gorgias documents its MCP integration."
+      },
+      {
+        "slug": "plain",
+        "app": "Plain",
+        "field": "access_model",
+        "current": "Self-Serve",
+        "truth": "Gated",
+        "notes": "Plain GraphQL uses workspace API keys and the official MCP uses OAuth. The seven-day trial is temporary and all production plans are paid."
+      },
+      {
+        "slug": "aircall",
+        "app": "Aircall",
+        "field": "existing_mcp",
+        "current": "None",
+        "truth": "Community",
+        "notes": "Aircall REST supports Basic Auth for customer credentials and OAuth for partner apps. API access is attached to a paid Aircall plan, so production is customer-gated. The identified MCP is community-owned."
+      },
+      {
+        "slug": "aircall",
+        "app": "Aircall",
+        "field": "auth_methods",
+        "current": [
+          "Basic Auth",
+          "API Key",
+          "OAuth2"
+        ],
+        "truth": [
+          "Basic Auth",
+          "OAuth2"
+        ],
+        "notes": "Aircall REST supports Basic Auth for customer credentials and OAuth for partner apps. API access is attached to a paid Aircall plan, so production is customer-gated. The identified MCP is community-owned."
+      },
+      {
+        "slug": "gohighlevel",
+        "app": "GoHighLevel",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2",
+          "API Key"
+        ],
+        "truth": [
+          "OAuth2",
+          "Bearer Token"
+        ],
+        "notes": "HighLevel platform APIs use OAuth 2.0 or a private integration token sent as Bearer. API access starts on paid agency plans after the trial. HighLevel hosts the official MCP endpoint."
+      },
+      {
+        "slug": "sendgrid",
+        "app": "SendGrid",
+        "field": "auth_methods",
+        "current": [
+          "API Key",
+          "Basic Auth"
+        ],
+        "truth": [
+          "API Key",
+          "Bearer Token",
+          "Basic Auth"
+        ],
+        "notes": "SendGrid uses API keys through Bearer or supported Basic authentication. New free access is a time-limited trial, so continuing production use requires a paid plan. The identified MCP is community-owned."
+      },
+      {
+        "slug": "magento",
+        "app": "Magento (Adobe Commerce)",
+        "field": "auth_methods",
+        "current": [
+          "Other Token",
+          "Bearer Token"
+        ],
+        "truth": [
+          "Bearer Token",
+          "OAuth2",
+          "Other Token"
+        ],
+        "notes": "Magento Open Source and Adobe Commerce support bearer tokens and OAuth-family flows. PaaS integrations use OAuth 1.0a, represented as Other Token because the locked vocabulary has no OAuth1 label; Cloud Service supports OAuth2. Magento Open Source is self-hostable, and the identified MCP is community-owned."
+      },
+      {
+        "slug": "squarespace",
+        "app": "Squarespace",
+        "field": "existing_mcp",
+        "current": "Official",
+        "truth": "Community",
+        "notes": "Squarespace Commerce APIs support OAuth and API keys. API keys require an eligible paid Commerce plan and OAuth clients require review. The identified MCP is community-owned."
+      },
+      {
+        "slug": "apify",
+        "app": "Apify",
+        "field": "auth_methods",
+        "current": [
+          "API Key",
+          "OAuth2"
+        ],
+        "truth": [
+          "API Key"
+        ],
+        "notes": "Apify REST authenticates with a self-created API token, canonicalized as API Key. A free account can run production actors within its limits, and Apify publishes the official MCP server."
+      },
+      {
+        "slug": "netlify",
+        "app": "Netlify",
+        "field": "access_model",
+        "current": "Gated",
+        "truth": "Self-Serve",
+        "notes": "Netlify REST supports personal access tokens and OAuth integrations. Tokens are self-created on free accounts, and the netlify-owned repository provides the official MCP server."
+      },
+      {
+        "slug": "sentry",
+        "app": "Sentry",
+        "field": "auth_methods",
+        "current": [
+          "OAuth2",
+          "API Key",
+          "Personal Access Token"
+        ],
+        "truth": [
+          "Personal Access Token",
+          "OAuth2",
+          "Other Token"
+        ],
+        "notes": "Sentry supports personal tokens, OAuth 2.0, and a distinct static internal-integration authentication token represented as Other Token. Free production projects are available, and the getsentry organization owns the official MCP server."
+      }
+    ],
+    "checked": [
+      {
+        "slug": "hubspot",
+        "app": "HubSpot",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "slack",
+        "app": "Slack",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": true,
+        "access_ok": false
+      },
+      {
+        "slug": "github",
+        "app": "GitHub",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": true,
+        "access_ok": false
+      },
+      {
+        "slug": "notion",
+        "app": "Notion",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": false
+      },
+      {
+        "slug": "shopify",
+        "app": "Shopify",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": false
+      },
+      {
+        "slug": "stripe",
+        "app": "Stripe",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "jira",
+        "app": "Jira",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": false
+      },
+      {
+        "slug": "google-ads",
+        "app": "Google Ads",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "whatsapp-business",
+        "app": "WhatsApp Business",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "attio",
+        "app": "Attio",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": false
+      },
+      {
+        "slug": "freshdesk",
+        "app": "Freshdesk",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "front",
+        "app": "Front",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "meta-ads",
+        "app": "Meta Ads",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "linkedin-ads",
+        "app": "LinkedIn Ads",
+        "api_ok": true,
+        "mcp_ok": false,
+        "auth_ok": true,
+        "access_ok": true
+      },
+      {
+        "slug": "klaviyo",
+        "app": "Klaviyo",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": true,
+        "access_ok": false
+      },
+      {
+        "slug": "woocommerce",
+        "app": "WooCommerce",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": false
+      },
+      {
+        "slug": "vercel",
+        "app": "Vercel",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": false
+      },
+      {
+        "slug": "monday",
+        "app": "Monday.com",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": true,
+        "access_ok": false
+      },
+      {
+        "slug": "plaid",
+        "app": "Plaid",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "fathom",
+        "app": "Fathom",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": false
+      },
+      {
+        "slug": "zoho-crm",
+        "app": "Zoho CRM",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": true,
+        "access_ok": false
+      },
+      {
+        "slug": "close",
+        "app": "Close",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": true,
+        "access_ok": true
+      },
+      {
+        "slug": "copper",
+        "app": "Copper",
+        "api_ok": true,
+        "mcp_ok": false,
+        "auth_ok": true,
+        "access_ok": true
+      },
+      {
+        "slug": "dealcloud",
+        "app": "DealCloud",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "gorgias",
+        "app": "Gorgias",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "plain",
+        "app": "Plain",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": true,
+        "access_ok": false
+      },
+      {
+        "slug": "aircall",
+        "app": "Aircall",
+        "api_ok": true,
+        "mcp_ok": false,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "gohighlevel",
+        "app": "GoHighLevel",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "sendgrid",
+        "app": "SendGrid",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "magento",
+        "app": "Magento (Adobe Commerce)",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "squarespace",
+        "app": "Squarespace",
+        "api_ok": true,
+        "mcp_ok": false,
+        "auth_ok": true,
+        "access_ok": true
+      },
+      {
+        "slug": "ahrefs",
+        "app": "Ahrefs",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": true,
+        "access_ok": true
+      },
+      {
+        "slug": "apify",
+        "app": "Apify",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "netlify",
+        "app": "Netlify",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": true,
+        "access_ok": false
+      },
+      {
+        "slug": "snowflake",
+        "app": "Snowflake",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": true,
+        "access_ok": true
+      },
+      {
+        "slug": "sentry",
+        "app": "Sentry",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": false,
+        "access_ok": true
+      },
+      {
+        "slug": "coda",
+        "app": "Coda",
+        "api_ok": true,
+        "mcp_ok": true,
+        "auth_ok": true,
+        "access_ok": true
+      }
+    ],
+    "generated": "2026-08-18",
+    "note": "This is the latest staged pre-fold agreement. Earlier checked batches may already have been corrected before later batches are added; it is not a blind first-pass estimate."
+  },
+  "browser_use": {
+    "method": "Independent browser reviews navigated live developer docs and re-derived API type, canonical auth, and production access. Disagreements require official-doc adjudication.",
+    "n_checked": 12,
+    "n_disagreements": 10,
+    "disagreed_apps": [
+      "sherlock",
+      "fathom",
+      "binance",
+      "xero",
+      "neo4j",
+      "vercel",
+      "jira",
+      "copper",
+      "plain",
+      "zoho-cliq"
+    ],
+    "field_disagreements": {
+      "api_type": 1,
+      "auth_methods": 5,
+      "access_model": 8
+    },
+    "n_adjudicated_corrections": 0,
+    "adjudicated_correction_apps": []
+  },
+  "accuracy_movement": {
+    "method": "Field-level accuracy against one hand-verified truth set, comparing the archived first pass to current results. Auth uses exact canonical-set equality.",
+    "n": 37,
+    "first_pass_accuracy": 0.723,
+    "post_verification_accuracy": 0.865,
+    "improved_apps": [
+      "hubspot",
+      "stripe",
+      "google-ads",
+      "whatsapp-business",
+      "freshdesk",
+      "front",
+      "meta-ads",
+      "linkedin-ads",
+      "plaid",
+      "copper",
+      "dealcloud",
+      "gorgias",
+      "plain",
+      "aircall",
+      "gohighlevel",
+      "sendgrid",
+      "magento",
+      "squarespace",
+      "apify",
+      "sentry"
+    ],
+    "regressed_apps": [],
+    "per_app": [
+      {
+        "slug": "hubspot",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "slack",
+        "first_pass": "3/4",
+        "current": "3/4"
+      },
+      {
+        "slug": "github",
+        "first_pass": "3/4",
+        "current": "3/4"
+      },
+      {
+        "slug": "notion",
+        "first_pass": "2/4",
+        "current": "2/4"
+      },
+      {
+        "slug": "shopify",
+        "first_pass": "2/4",
+        "current": "2/4"
+      },
+      {
+        "slug": "stripe",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "jira",
+        "first_pass": "2/4",
+        "current": "2/4"
+      },
+      {
+        "slug": "google-ads",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "whatsapp-business",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "attio",
+        "first_pass": "2/4",
+        "current": "2/4"
+      },
+      {
+        "slug": "freshdesk",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "front",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "meta-ads",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "linkedin-ads",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "klaviyo",
+        "first_pass": "3/4",
+        "current": "3/4"
+      },
+      {
+        "slug": "woocommerce",
+        "first_pass": "2/4",
+        "current": "2/4"
+      },
+      {
+        "slug": "vercel",
+        "first_pass": "2/4",
+        "current": "2/4"
+      },
+      {
+        "slug": "monday",
+        "first_pass": "3/4",
+        "current": "3/4"
+      },
+      {
+        "slug": "plaid",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "fathom",
+        "first_pass": "2/4",
+        "current": "2/4"
+      },
+      {
+        "slug": "zoho-crm",
+        "first_pass": "3/4",
+        "current": "3/4"
+      },
+      {
+        "slug": "close",
+        "first_pass": "4/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "copper",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "dealcloud",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "gorgias",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "plain",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "aircall",
+        "first_pass": "2/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "gohighlevel",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "sendgrid",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "magento",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "squarespace",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "ahrefs",
+        "first_pass": "4/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "apify",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "netlify",
+        "first_pass": "3/4",
+        "current": "3/4"
+      },
+      {
+        "slug": "snowflake",
+        "first_pass": "4/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "sentry",
+        "first_pass": "3/4",
+        "current": "4/4"
+      },
+      {
+        "slug": "coda",
+        "first_pass": "4/4",
+        "current": "4/4"
+      }
+    ],
+    "generated": "2026-08-18"
   }
 }

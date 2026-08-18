@@ -61,6 +61,68 @@ class NormalizeTests(unittest.TestCase):
             normalize.auth_sets_overlap(["OAuth2", "API Key"], ["OAuth2"])
         )
 
+    def test_classify_blocker_buckets_from_structured_fields(self):
+        def rec(action, kind, api="REST", blocker="", note=""):
+            return {
+                "recommended_next_action": action,
+                "access_model": {"kind": kind, "note": note},
+                "api_type": api,
+                "main_blocker": blocker,
+            }
+
+        # Self-serve build-ready → the buildable bucket.
+        self.assertEqual(
+            normalize.classify_blocker(rec("Build Now", "Self-Serve")),
+            "None — buildable now",
+        )
+        # No programmatic surface dominates regardless of access.
+        self.assertEqual(
+            normalize.classify_blocker(rec("Blocked", "Gated", api="None")),
+            "No usable public API / MCP-only",
+        )
+        self.assertEqual(
+            normalize.classify_blocker(rec("Blocked", "Gated", api="MCP-only")),
+            "No usable public API / MCP-only",
+        )
+        # Partner path.
+        self.assertEqual(
+            normalize.classify_blocker(rec("Partner-Gated", "Gated")),
+            "Requires partner / sales contact",
+        )
+        # Paid vs approval split via text.
+        self.assertEqual(
+            normalize.classify_blocker(
+                rec("Needs Outreach", "Gated", note="requires a paid plan to use in production")
+            ),
+            "Requires a paid plan or existing account",
+        )
+        self.assertEqual(
+            normalize.classify_blocker(
+                rec("Needs Outreach", "Gated", note="production access needs manual approval and review")
+            ),
+            "Requires approval / app review",
+        )
+        # Every bucket returned is a known bucket.
+        for r in (rec("Build Now", "Self-Serve"), rec("Needs Outreach", "Gated")):
+            self.assertIn(normalize.classify_blocker(r), normalize.BLOCKER_BUCKETS)
+
+    def test_top_blockers_are_clustered_not_raw_strings(self):
+        results = [
+            {"category": "X", "main_blocker": "unique sentence one",
+             "recommended_next_action": "Build Now",
+             "access_model": {"kind": "Self-Serve", "note": ""}, "api_type": "REST",
+             "buildability": "Easy", "existing_mcp": "None", "composio_toolkit": "No",
+             "confidence": 0.9, "auth_methods": ["OAuth2"]},
+            {"category": "X", "main_blocker": "unique sentence two",
+             "recommended_next_action": "Build Now",
+             "access_model": {"kind": "Self-Serve", "note": ""}, "api_type": "REST",
+             "buildability": "Easy", "existing_mcp": "None", "composio_toolkit": "No",
+             "confidence": 0.9, "auth_methods": ["OAuth2"]},
+        ]
+        agg = pipeline.compute_aggregates(results)
+        # Two distinct free-text blockers collapse into one bucket.
+        self.assertEqual(agg["top_blockers"], [("None — buildable now", 2)])
+
 
 class ProviderTests(unittest.TestCase):
     def test_server_error_is_retryable(self):

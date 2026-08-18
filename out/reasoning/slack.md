@@ -60,3 +60,42 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Slack",
+  "category": "Comms",
+  "one_liner": "Slack provides a broad REST API and official MCP server, but production use requires approvals.",
+  "auth_methods": [
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Docs show OAuth app creation but do not confirm free, self-serve production entitlement; workspace admin approval is required for installs and MCP client integrations."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "Workspace admin approval and unclear production entitlement or plan requirements.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://api.slack.com/authentication/postman",
+    "https://docs.slack.dev/ai/slack-mcp-server/",
+    "https://slack.com/help/articles/48855576908307-Guide-to-the-Slack-MCP-server",
+    "https://slack.com/pricing"
+  ],
+  "confidence": 0.6,
+  "verification_status": "Hand-Checked",
+  "slug": "slack",
+  "primary_docs_url": "https://api.slack.com/authentication/postman",
+  "rate_limit_note": "Not specified in the cited documentation.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

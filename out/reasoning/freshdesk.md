@@ -60,3 +60,42 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Freshdesk",
+  "category": "Support",
+  "one_liner": "Freshdesk has a REST API with API keys, but production access requires a paid plan; MCP is an EAP integration.",
+  "auth_methods": [
+    "API Key",
+    "Basic Auth"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Freshdesk Free currently permits zero API calls; production API use requires a paid Growth, Pro, or Enterprise account."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "Production API credentials require an existing paid Freshdesk customer account.",
+  "recommended_next_action": "Partner-Gated",
+  "evidence_urls": [
+    "https://developers.freshdesk.com/api/",
+    "https://partnersupport.freshworks.com/support/solutions/articles/225439-what-are-the-rate-limits-for-the-api-calls-to-freshdesk-",
+    "https://support.freshdesk.com/support/solutions/articles/50000012670-model-context-protocol-mcp-integration-in-freshdesk-eap-"
+  ],
+  "confidence": 0.63,
+  "verification_status": "Hand-Checked",
+  "slug": "freshdesk",
+  "primary_docs_url": "https://developers.freshdesk.com/api/",
+  "rate_limit_note": "API docs include a Rate Limit section, but exact limits are not specified in the cited excerpts.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

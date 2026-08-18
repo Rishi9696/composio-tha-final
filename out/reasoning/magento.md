@@ -63,3 +63,44 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Magento (Adobe Commerce)",
+  "category": "Commerce",
+  "one_liner": "Adobe Commerce offers REST/GraphQL APIs with OAuth 1.0a and token auth; per-store access is self-serve via Admin.",
+  "auth_methods": [
+    "Bearer Token",
+    "OAuth2",
+    "Other Token"
+  ],
+  "access_model": {
+    "kind": "Self-Serve",
+    "note": "Credentials are issued per Commerce/Magento instance by a merchant admin via Admin > System > Extensions > Integration; docs show creating integrations and tokens with no vendor approval required."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Community",
+  "composio_toolkit": "No",
+  "buildability": "Moderate",
+  "main_blocker": "Requires access to a Commerce instance and admin rights to create an integration and generate tokens.",
+  "recommended_next_action": "Build Now",
+  "evidence_urls": [
+    "https://developer.adobe.com/commerce/webapi/get-started/authentication/",
+    "https://developer.adobe.com/commerce/webapi/get-started/authentication/gs-authentication-oauth",
+    "https://developer.adobe.com/commerce/webapi/rest/authentication/user",
+    "https://lobehub.com/mcp/codexpect-adobe-commerce-mcp"
+  ],
+  "confidence": 0.69,
+  "verification_status": "Hand-Checked",
+  "slug": "magento",
+  "primary_docs_url": "https://developer.adobe.com/commerce/webapi/get-started/authentication/",
+  "rate_limit_note": "No explicit rate limits are documented in the fetched pages.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

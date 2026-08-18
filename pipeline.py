@@ -12,6 +12,7 @@ from functools import lru_cache
 import composio_lookup
 import config
 import docs_research
+import normalize
 import synthesis
 
 
@@ -189,7 +190,9 @@ def compute_aggregates(results: list[dict]) -> dict:
     for r in results:
         access_by_cat[r["category"]][r["access_model"]["kind"]] += 1
 
-    blockers = collections.Counter(r["main_blocker"] for r in results if r.get("main_blocker"))
+    # Cluster free-text blockers into stable buckets so "most common blocker"
+    # reads as a real pattern rather than 78 near-unique sentences.
+    blockers = collections.Counter(normalize.classify_blocker(r) for r in results)
 
     return {
         "n": n,

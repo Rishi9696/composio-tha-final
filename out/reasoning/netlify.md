@@ -65,3 +65,45 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Netlify",
+  "category": "DevInfra",
+  "one_liner": "Netlify offers a broad REST API and an official MCP server, but production access terms need confirmation.",
+  "auth_methods": [
+    "OAuth2",
+    "Personal Access Token"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Docs show an Authentication mechanism and pricing shows API-based deploys, but there is no explicit statement that new developers get production API credentials self-serve without approval; confirm production entitlement/plan requirements."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "No",
+  "buildability": "Moderate",
+  "main_blocker": "No explicit confirmation that production API/MCP credentials are self-serve without approval or a paid plan.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/?utm_source=openai",
+    "https://docs.netlify.com/api",
+    "https://www.netlify.com/pricing/?utm_source=openai",
+    "https://docs.netlify.com/build/build-with-ai/netlify-mcp-server/",
+    "https://www.netlify.com/press/netlify-launches-official-mcp-server-setting-the-standard-for-agent-native-development/?utm_source=openai",
+    "https://github.com/netlify/netlify-mcp?utm_source=openai"
+  ],
+  "confidence": 0.62,
+  "verification_status": "Hand-Checked",
+  "slug": "netlify",
+  "primary_docs_url": "https://www.netlify.com/pricing/?utm_source=openai",
+  "rate_limit_note": "Rate limiting is documented in the API guide, but specific limits were not captured in the fetched text.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

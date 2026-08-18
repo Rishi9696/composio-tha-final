@@ -64,3 +64,43 @@ _generated 2026-08-18 | model openai:gpt-5_
   "last_verified": "2026-08-18"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Snowflake",
+  "category": "DevInfra",
+  "one_liner": "Snowflake provides REST APIs and an official MCP server; production access requires a Snowflake account.",
+  "auth_methods": [
+    "OAuth2",
+    "Personal Access Token",
+    "Service Account"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Docs mention trials and paid editions; no evidence of free self-serve production API credentials. Production use requires a Snowflake account/plan."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "Production credentials require a Snowflake account/plan; no self-serve free production access documented.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://docs.snowflake.com/en/developer-guide/snowflake-rest-api/authentication",
+    "https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp",
+    "https://github.com/Snowflake-Labs/mcp"
+  ],
+  "confidence": 0.63,
+  "verification_status": "Hand-Checked",
+  "slug": "snowflake",
+  "primary_docs_url": "https://docs.snowflake.com/en/developer-guide/snowflake-rest-api/authentication",
+  "rate_limit_note": "No explicit public rate limit details found in the cited docs.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->

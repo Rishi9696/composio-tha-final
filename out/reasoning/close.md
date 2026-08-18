@@ -83,3 +83,44 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Close",
+  "category": "CRM",
+  "one_liner": "Close offers a REST API and official MCP server with API key or OAuth2, but production use likely requires a paid org.",
+  "auth_methods": [
+    "API Key",
+    "Basic Auth",
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Close provides a temporary trial; continued production API and MCP use requires a paid Close subscription."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "Production credentials require an existing paid customer account.",
+  "recommended_next_action": "Partner-Gated",
+  "evidence_urls": [
+    "https://developer.close.com/api/overview/api-key-authentication",
+    "https://developer.close.com/api/overview/oauth-authentication",
+    "https://developer.close.com/mcp",
+    "https://close.com/pricing"
+  ],
+  "confidence": 0.64,
+  "verification_status": "Hand-Checked",
+  "slug": "close",
+  "primary_docs_url": "https://developer.close.com/api/overview/api-key-authentication",
+  "rate_limit_note": "Not specified in the cited documentation.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

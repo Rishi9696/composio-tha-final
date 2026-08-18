@@ -66,3 +66,44 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "WooCommerce",
+  "category": "Commerce",
+  "one_liner": "WooCommerce offers a broad REST API with per-store API keys and official, preview-stage MCP support.",
+  "auth_methods": [
+    "API Key"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Production access requires each merchant to generate API keys in their WooCommerce store; core MCP is in developer preview and broader MCP connectivity is offered via a paid extension."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "No",
+  "buildability": "Moderate",
+  "main_blocker": "Per-store approval and key generation; MCP beyond basics is preview or requires a paid extension.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://woocommerce.com/document/woocommerce-rest-api",
+    "https://woocommerce.github.io/woocommerce-rest-api-docs/",
+    "https://developer.woocommerce.com/docs/apis/",
+    "https://developer.woocommerce.com/docs/features/mcp/?utm_source=openai",
+    "https://woocommerce.com/products/w7s-mcp/?utm_source=openai",
+    "https://woocommerce.com/pricing/"
+  ],
+  "confidence": 0.64,
+  "verification_status": "Hand-Checked",
+  "slug": "woocommerce",
+  "primary_docs_url": "https://developer.woocommerce.com/docs/apis/",
+  "rate_limit_note": "No global vendor rate limits documented; performance and limits depend on each store’s hosting.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

@@ -78,3 +78,44 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Klaviyo",
+  "category": "Ads/Marketing",
+  "one_liner": "Klaviyo offers REST APIs and an official MCP server with API key and OAuth auth, but production access appears gated.",
+  "auth_methods": [
+    "API Key",
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "Docs clearly show API key generation and OAuth for MCP, plus test accounts, but provide no explicit statement that new developers get production credentials without approval or paid plans. Public app distribution appears to require review."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "No explicit proof of self-serve production access; potential app review/plan requirements for production and public OAuth apps.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://developers.klaviyo.com/en/v2023-01-24/docs/authenticate_?utm_source=openai",
+    "https://developers.klaviyo.com/en/docs/authenticate_",
+    "https://developers.klaviyo.com",
+    "https://developers.klaviyo.com/en/docs/klaviyo_mcp_server",
+    "https://growthengineer.ai/mcp-servers/klaviyo"
+  ],
+  "confidence": 0.56,
+  "verification_status": "Hand-Checked",
+  "slug": "klaviyo",
+  "primary_docs_url": "https://developers.klaviyo.com/en/docs/authenticate_",
+  "rate_limit_note": "Docs reference a rate limits guide, but specific limits are not detailed in the cited pages.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

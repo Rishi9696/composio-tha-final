@@ -78,3 +78,43 @@ _generated 2026-08-17 | model openai:gpt-5_
   "last_verified": "2026-08-17"
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current handcheck fold; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Zoho CRM",
+  "category": "CRM",
+  "one_liner": "Zoho CRM offers an OAuth2 REST API and official MCP servers, but production access appears gated.",
+  "auth_methods": [
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "OAuth2 clients and tokens can be created via the Zoho API Console, but no evidence confirms self-serve production entitlements without a paid CRM org; the site emphasizes a free trial."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "No",
+  "buildability": "Moderate",
+  "main_blocker": "Production API use appears tied to an active Zoho CRM org/plan; self-serve production entitlement is not documented.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://www.zoho.com/crm/developer/docs/api/v8/auth-request.html",
+    "https://www.zoho.com/crm/developer/docs/api/v8/api-collection.html",
+    "https://www.zoho.com/crm/developer/docs/mcp/overview.html",
+    "https://www.zoho.com/mcp/?src=agents-index",
+    "https://zoho.com/crm"
+  ],
+  "confidence": 0.62,
+  "verification_status": "Hand-Checked",
+  "slug": "zoho-crm",
+  "primary_docs_url": "https://www.zoho.com/crm/developer/docs/api/v8/auth-request.html",
+  "rate_limit_note": "Not specified in the cited documentation.",
+  "last_verified": "2026-08-17"
+}
+```
+<!-- final-state:end -->

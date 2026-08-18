@@ -73,3 +73,42 @@ This prior was retained only for audit sampling and was not shown to the model.
   "main_blocker": "API access likely requires a paid Ahrefs plan at a certain tier (verify)."
 }
 ```
+
+<!-- final-state:start -->
+## Final pipeline state
+_Updated 2026-08-18 by current human handcheck correction; this supersedes earlier key decisions._
+
+```json
+{
+  "app": "Ahrefs",
+  "category": "Research/Scraping",
+  "one_liner": "Ahrefs offers REST API keys and OAuth apps; production requires a paid plan and/or app approval.",
+  "auth_methods": [
+    "API Key",
+    "OAuth2"
+  ],
+  "access_model": {
+    "kind": "Gated",
+    "note": "REST API v3 is available on eligible paid plans; others get only limited free test queries. Ahrefs Connect apps must be approved before production. MCP access is available on paid plans (Lite+)."
+  },
+  "api_type": "REST",
+  "api_breadth": "Broad",
+  "existing_mcp": "Official",
+  "composio_toolkit": "Yes",
+  "buildability": "Moderate",
+  "main_blocker": "Production use requires a paid Ahrefs plan or Ahrefs Connect app approval; no self-serve production credentials.",
+  "recommended_next_action": "Needs Outreach",
+  "evidence_urls": [
+    "https://docs.ahrefs.com/en/api/docs/introduction",
+    "https://docs.ahrefs.com/ahrefs-connect/docs/oauth-guide",
+    "https://docs.ahrefs.com/en/mcp/docs/introduction"
+  ],
+  "confidence": 0.88,
+  "verification_status": "Hand-Checked",
+  "slug": "ahrefs",
+  "primary_docs_url": "https://docs.ahrefs.com/en/api/docs/introduction",
+  "rate_limit_note": "Most endpoints consume API units; minimum 50 units per paid request. Free test queries are available; consumed units are non-refundable.",
+  "last_verified": "2026-08-18"
+}
+```
+<!-- final-state:end -->
